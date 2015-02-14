@@ -20,7 +20,7 @@ namespace
 			tess.GetEdge(edge_index[0]).vertices.second.y);
 		res[3]=max(tess.GetEdge(edge_index[0]).vertices.first.y,
 			tess.GetEdge(edge_index[0]).vertices.second.y);
-		for(size_t i=1;i<static_cast<size_t>(n);++i)
+		for(int i=1;i<n;++i)
 		{
 			res[0]=min(min(tess.GetEdge(edge_index[i]).vertices.first.x,
 				tess.GetEdge(edge_index[i]).vertices.second.x),res[0]);
@@ -30,6 +30,18 @@ namespace
 				tess.GetEdge(edge_index[i]).vertices.second.y),res[2]);
 			res[3]=max(max(tess.GetEdge(edge_index[i]).vertices.first.y,
 				tess.GetEdge(edge_index[i]).vertices.second.y),res[3]);
+		}
+		return res;
+	}
+
+	vector<Vector2D> polygon_clip(vector<Vector2D> const& points,
+		vector<Vector2D> const& vertices)
+	{
+		vector<Vector2D> res;
+		for(vector<Vector2D>::const_iterator point=points.begin(), end_position=points.end();
+			point!=end_position;++point){
+				if(PointInCell(vertices,*point))
+					res.push_back(*point);
 		}
 		return res;
 	}
@@ -45,12 +57,12 @@ namespace
 		double maxcellR(mincellR);
 		mincellR=min(mincellR,DistanceToEdge(center,etemp));
 		int npoints=static_cast<int>(cpoints.size());
-		for(size_t i=1;i<static_cast<size_t>(npoints);++i)
+		for(int i=1;i<npoints;++i)
 		{
 			double temp=abs(cpoints[i]-center);
 			maxcellR=max(maxcellR,temp);
 			etemp.vertices.first=cpoints[i];
-			etemp.vertices.second=cpoints[(i+1)%static_cast<size_t>(npoints)];
+			etemp.vertices.second=cpoints[(i+1)%npoints];
 			mincellR=min(min(mincellR,temp),DistanceToEdge(center,etemp));
 		}
 		// Get the maximum and minimum angles
@@ -70,18 +82,18 @@ namespace
 			tocheck[1]=procpoint;
 			double minusval=0,plusval=0;
 			int minusloc=0,plusloc=0;
-			for(size_t i=0;i<static_cast<size_t>(npoints);++i)
+			for(int i=0;i<npoints;++i)
 			{
 				tocheck[2]=cpoints[i];
 				const Vector2D tocpoint=cpoints[i]-center;
 				const double angle=acos(ScalarProd(tocenter,tocpoint)/(abs(tocpoint)*Rcenter));
 				if(orient2d(TripleConstRef<Vector2D>(center,
 								     procpoint,
-								     cpoints[i]))>0)
+								     cpoints[i]-center))>0)
 				{	
 					if(angle>plusval)
 					{
-					  plusloc=static_cast<int>(i);
+						plusloc=i;
 						plusval=angle;
 					}
 				}
@@ -89,14 +101,14 @@ namespace
 				{
 					if(angle>minusval)
 					{
-					  minusloc=static_cast<int>(i);
+						minusloc=i;
 						minusval=angle;
 					}
 				}
 			}
-			minangle=atan2(cpoints[static_cast<size_t>(minusloc)].y-center.y,cpoints[static_cast<size_t>(minusloc)].x-center.x);
+			minangle=atan2(cpoints[minusloc].y-center.y,cpoints[minusloc].x-center.x);
 			minangle=(minangle<0) ? (minangle+2*M_PI) : minangle;
-			maxangle=atan2(cpoints[static_cast<size_t>(plusloc)].y-center.y,cpoints[static_cast<size_t>(plusloc)].x-center.x);
+			maxangle=atan2(cpoints[plusloc].y-center.y,cpoints[plusloc].x-center.x);
 			maxangle=(maxangle<0) ? (maxangle+2*M_PI) : maxangle;
 			if(maxangle<minangle)
 				minangle-=2*M_PI;
@@ -117,16 +129,16 @@ vector<Vector2D> RandSquare(int npoints,Tessellation const& tess,
 	const boost::array<double,4> tessEdges=FindMaxEdges(tess);
 	const int rank = get_mpi_rank();
 	const double myarea=tess.GetVolume(rank);
-	int mypoints=static_cast<int>(floor(npoints*myarea/Area+0.5));
+	int mypoints=(int)floor(npoints*myarea/Area+0.5);
 	vector<Vector2D> res;
-	res.reserve(static_cast<size_t>(mypoints));
+	res.reserve(mypoints);
 	vector<Vector2D> cpoints;
 	ConvexHull(cpoints,&tess,rank);
 	double ran[2];
-	gen_type gen(static_cast<size_t>(rank));
+	gen_type gen(rank);
 	boost::random::uniform_real_distribution<> dist;
 	// change aboev to have seed==rank
-	while(static_cast<int>(res.size())<mypoints)
+	while((int)res.size()<mypoints)
 	{
 		ran[0]=dist(gen)*(tessEdges[1]-tessEdges[0])+tessEdges[0];
 		ran[1]=dist(gen)*(tessEdges[3]-tessEdges[2])+tessEdges[2];
@@ -143,12 +155,12 @@ vector<Vector2D> SquareMeshM(int nx,int ny,Tessellation const& tess,
 	const double widthx = (upperright.x-lowerleft.x)/static_cast<double>(nx);
 	const double widthy = (upperright.y-lowerleft.y)/static_cast<double>(ny);
 	const boost::array<double,4> tessEdges=FindMaxEdges(tess);
-	nx=static_cast<int>(floor((tessEdges[1]-tessEdges[0])/widthx+0.5));
-	ny=static_cast<int>(floor((tessEdges[3]-tessEdges[2])/widthy+0.5));
+	nx=(int)floor((tessEdges[1]-tessEdges[0])/widthx+0.5);
+	ny=(int)floor((tessEdges[3]-tessEdges[2])/widthy+0.5);
 	vector<Vector2D> res;
-	res.reserve(static_cast<size_t>(nx*ny));
-	const int nx0=static_cast<int>(floor((tessEdges[0]-lowerleft.x)/widthx+0.5));
-	const int ny0=static_cast<int>(floor((tessEdges[2]-lowerleft.y)/widthy+0.5));
+	res.reserve(nx*ny);
+	const int nx0=(int)floor((tessEdges[0]-lowerleft.x)/widthx+0.5);
+	const int ny0=(int)floor((tessEdges[2]-lowerleft.y)/widthy+0.5);
 	Vector2D point;
 	int rank=get_mpi_rank();
 	vector<Vector2D> cpoints;
@@ -157,8 +169,8 @@ vector<Vector2D> SquareMeshM(int nx,int ny,Tessellation const& tess,
 	{
 		for(int j=0;j<ny;j++)
 		{
-		  point.x = (static_cast<double>(i)+0.5+nx0)*widthx+lowerleft.x;
-		  point.y = (static_cast<double>(j)+0.5+ny0)*widthy+lowerleft.y;
+			point.x = ((double)i+0.5+nx0)*widthx+lowerleft.x;
+			point.y = ((double)j+0.5+ny0)*widthy+lowerleft.y;
 			if((point.x<lowerleft.x)||(point.x>upperright.x)||
 				(point.y<lowerleft.y)||(point.y>upperright.y))
 				continue;
@@ -186,15 +198,15 @@ vector<Vector2D> CirclePointsRmaxM(int PointNum,double Rmin,double Rmax,
 	double maxcellR=max(min(arc[1],Rmax),Rmin);
 	double minangle=arc[2];
 	double maxangle=arc[3];
-	int nrmin=static_cast<int>((mincellR-Rmin)/dr);
-	int nrmax=static_cast<int>((maxcellR-Rmin)/dr+0.5);
+	int nrmin=(int)((mincellR-Rmin)/dr);
+	int nrmax=(int)((maxcellR-Rmin)/dr+0.5);
 	vector<Vector2D> res;
 	for(int i=nrmin;i<nrmax;++i)
 	{
 		double r=Rmin+i*dr;
 		double dphi=A/r;
-		int phimin=static_cast<int>(minangle/dphi);
-		int phimax=static_cast<int>(maxangle/dphi+0.5);
+		int phimin=(int)(minangle/dphi);
+		int phimax=(int)(maxangle/dphi+0.5);
 		for(int j=phimin;j<phimax;++j)
 		{
 			Vector2D temp(Vector2D(r*cos(dphi*j)+xc,r*sin(dphi*j)+yc));
@@ -221,15 +233,15 @@ vector<Vector2D> CirclePointsRmax_aM(int PointNum,double Rmin,double Rmax,
 	double maxcellR=max(min(arc[1],Rmax),Rmin);
 	double minangle=arc[2];
 	double maxangle=arc[3];
-	int nrmin=static_cast<int>((pow(max(mincellR,Rmin),alpha+1)-pow(Rmin,alpha+1))/(2*M_PI*(alpha+1)/N0));
-	int nrmax=static_cast<int>((pow(min(maxcellR,Rmax),alpha+1)-pow(Rmin,alpha+1))/(2*M_PI*(alpha+1)/N0)+0.5);
+	int nrmin=(int)((pow(max(mincellR,Rmin),alpha+1)-pow(Rmin,alpha+1))/(2*M_PI*(alpha+1)/N0));
+	int nrmax=(int)((pow(min(maxcellR,Rmax),alpha+1)-pow(Rmin,alpha+1))/(2*M_PI*(alpha+1)/N0)+0.5);
 	for(int i=nrmin;i<nrmax;++i)
 	{
 		const double r=pow(2*M_PI*i*(alpha+1)/N0+pow(Rmin,alpha+1),1.0/(alpha+1));
 		const int Nphi=int(floor(N0*pow(r,1+alpha)+1.5));
 		const double dphi=2*M_PI/Nphi;
-		int phimin=static_cast<int>(minangle/dphi);
-		int phimax=static_cast<int>(maxangle/dphi+0.5);
+		int phimin=(int)(minangle/dphi);
+		int phimax=(int)(maxangle/dphi+0.5);
 		for(int j=phimin;j<phimax;++j)
 		{
 			pos.Set(r*cos(dphi*j)+xc,r*sin(dphi*j)+yc);
@@ -273,7 +285,7 @@ namespace {
 	{
 	  for(size_t i=0;i<static_cast<size_t>(tess.GetPointNo());++i){
 			vector<Vector2D> vertices;
-			ConvexHull(vertices,&tess,static_cast<int>(i));
+			ConvexHull(vertices,&tess,i);
 			if(PointInCell(vertices,point))
 				return i;
 		}
@@ -285,7 +297,7 @@ namespace {
 		Index2Member<Vector2D> const& grid_generator,
 		size_t start, size_t ending)
 	{
-	  vector<vector<Vector2D> > res(static_cast<size_t>(process_tess.GetPointNo()));
+		vector<vector<Vector2D> > res(process_tess.GetPointNo());
 		for(size_t i=start;i<ending;++i)
 		{
 			const Vector2D point = grid_generator(i);
@@ -301,27 +313,27 @@ vector<Vector2D> distribute_grid(Tessellation const& process_tess,
 	assert(get_mpi_size()==process_tess.GetPointNo() &&
 		"Number of processors must be equal to the number of cells");
 	const vector<size_t> range_list = most_uniform_range_partition
-	  (grid_generator.getLength(), static_cast<size_t>(process_tess.GetPointNo()));
+		(grid_generator.getLength(), process_tess.GetPointNo());
 	size_t start = 0;
 	for(size_t i=0;i<static_cast<size_t>(get_mpi_rank());++i)
 		start += range_list[i];
-	size_t ending = start + range_list[static_cast<size_t>(get_mpi_rank())];
+	size_t ending = start + range_list[get_mpi_rank()];
 	const vector<vector<Vector2D> > sorted_points =
 		sort_points(process_tess, grid_generator, start, ending);
-	vector<Vector2D> res = sorted_points[static_cast<size_t>(get_mpi_rank())];
+	vector<Vector2D> res = sorted_points[get_mpi_rank()];
 	for(size_t i=0;i<static_cast<size_t>(get_mpi_rank());++i){
-	  MPI_VectorSend_Vector2D(sorted_points[i],static_cast<int>(i),0,MPI_COMM_WORLD);
+		MPI_VectorSend_Vector2D(sorted_points[i],i,0,MPI_COMM_WORLD);
 		vector<Vector2D> buf;
-		MPI_VectorRecv_Vector2D(buf,static_cast<int>(i),0,MPI_COMM_WORLD);
-		res.reserve(res.size()+static_cast<size_t>(distance(buf.begin(),buf.end())));
+		MPI_VectorRecv_Vector2D(buf,i,0,MPI_COMM_WORLD);
+		res.reserve(res.size()+distance(buf.begin(),buf.end()));
 		res.insert(res.end(),buf.begin(),buf.end());
 	}
 	for(size_t i=static_cast<size_t>(get_mpi_rank())+1;
 	    i<static_cast<size_t>(get_mpi_size());++i){
 		vector<Vector2D> buf;
-		MPI_VectorRecv_Vector2D(buf,static_cast<int>(i),0,MPI_COMM_WORLD);
-		MPI_VectorSend_Vector2D(sorted_points[i],static_cast<int>(i),0,MPI_COMM_WORLD);
-		res.reserve(res.size()+static_cast<size_t>(distance(buf.begin(),buf.end())));
+		MPI_VectorRecv_Vector2D(buf,i,0,MPI_COMM_WORLD);
+		MPI_VectorSend_Vector2D(sorted_points[i],i,0,MPI_COMM_WORLD);
+		res.reserve(res.size()+distance(buf.begin(),buf.end()));
 		res.insert(res.end(),buf.begin(),buf.end());
 	}
 	return res;
@@ -341,7 +353,7 @@ Vector2D CartesianGridGenerator::operator()(size_t idx) const
 	const size_t i = idx%nx_;
 	const size_t j = idx/nx_;
 	return lower_left_ +
-	  Vector2D((upper_right_-lower_left_).x*(0.5+static_cast<double>(i))/static_cast<double>(nx_),
+		Vector2D((upper_right_-lower_left_).x*(0.5+static_cast<double>(i))/(double)nx_,
 		(upper_right_-lower_left_).y*(0.5+static_cast<double>(j))/static_cast<double>(ny_));
 }
 

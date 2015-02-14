@@ -164,7 +164,7 @@ namespace
   {
     vector<char> res(static_cast<size_t>(tess.GetPointNo()));
     for(size_t i=0;i<res.size();++i)
-      res[i] = IsShockedCell(tess,static_cast<int>(i),cells,hbc,time) ? 1 : 0;
+      res[i] = IsShockedCell(tess,(int)i,cells,hbc,time) ? 1 : 0;
     return res;
   }
 
@@ -280,7 +280,7 @@ namespace
 			  vector<vector<double> >& tracers)
   {
     if(tracers.empty())
-      tracers = vector<vector<double> >(static_cast<size_t>(num_cells),vector<double>(1,0));
+      tracers = vector<vector<double> >((size_t)num_cells,vector<double>(1,0));
     for(size_t i=0;i<tracers.size();++i){
       tracers.at(i).at(index) = eos.dp2s(cells.at(i).Density,cells.at(i).Pressure);
     }
@@ -1306,8 +1306,8 @@ namespace
 			  if(binary_search(SortedNghost[static_cast<size_t>(j)].begin(),SortedNghost[static_cast<size_t>(j)].end(),
 					   ToRemove[static_cast<size_t>(i)]))
 				{
-				  int index2=static_cast<int>(lower_bound(SortedNghost[static_cast<size_t>(j)].begin(),SortedNghost[static_cast<size_t>(j)].end(),
-									  ToRemove[static_cast<size_t>(i)])-SortedNghost[static_cast<size_t>(j)].begin());
+				  int index2=lower_bound(SortedNghost[static_cast<size_t>(j)].begin(),SortedNghost[static_cast<size_t>(j)].end(),
+							 ToRemove[static_cast<size_t>(i)])-SortedNghost[static_cast<size_t>(j)].begin();
 				  MPI_AMR_Send[static_cast<size_t>(j)].push_back(SortIndex[static_cast<size_t>(j)][static_cast<size_t>(index2)]);
 				}
 			}
@@ -1326,56 +1326,56 @@ namespace
 		int rank=get_mpi_rank();
 		int ws=get_mpi_size();
 		vector<int> procorder=GetProcOrder(rank,ws);
-		vector<vector<int> > recv(static_cast<size_t>(nlist));
+		vector<vector<int> > recv(nlist);
 		int temp;
 		MPI_Status status;
 		for(int i=0;i<static_cast<int>(procorder.size());++i)
 		{
-		  int index=static_cast<int>(Find(sentprocs.begin(),sentprocs.end(),procorder[static_cast<size_t>(i)])
-					     -sentprocs.begin());
+			int index=Find(sentprocs.begin(),sentprocs.end(),procorder[i])
+				-sentprocs.begin();
 			if(index<nlist)
 			{
-			  if(rank<procorder[static_cast<size_t>(i)])
+				if(rank<procorder[i])
 				{
-				  if(toremove[static_cast<size_t>(index)].empty())
-					  MPI_Send(&temp,1,MPI_INT,procorder[static_cast<size_t>(i)],1,MPI_COMM_WORLD);
+					if(toremove[index].empty())
+						MPI_Send(&temp,1,MPI_INT,procorder[i],1,MPI_COMM_WORLD);
 					else
-					  MPI_Send(&toremove[static_cast<size_t>(index)][0],static_cast<int>(toremove[static_cast<size_t>(index)].size()),
-						   MPI_INT,procorder[static_cast<size_t>(i)],0,MPI_COMM_WORLD);
-					MPI_Probe(procorder[static_cast<size_t>(i)],MPI_ANY_TAG,MPI_COMM_WORLD,&status);
+						MPI_Send(&toremove[index][0],(int)toremove[index].size(),
+						MPI_INT,procorder[i],0,MPI_COMM_WORLD);
+					MPI_Probe(procorder[i],MPI_ANY_TAG,MPI_COMM_WORLD,&status);
 					if(status.MPI_TAG==1)
-					  MPI_Recv(&temp,1,MPI_INT,procorder[static_cast<size_t>(i)],1,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+						MPI_Recv(&temp,1,MPI_INT,procorder[i],1,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 					else
 					{
 						int count;
 						MPI_Get_count(&status,MPI_INT,&count);
-						recv[static_cast<size_t>(index)].resize(static_cast<size_t>(count));
-						MPI_Recv(&recv[static_cast<size_t>(index)][0],count,MPI_INT,procorder[static_cast<size_t>(i)],0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+						recv[index].resize(count);
+						MPI_Recv(&recv[index][0],count,MPI_INT,procorder[i],0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 					}
 				}
 				else
 				{
-				  MPI_Probe(procorder[static_cast<size_t>(i)],MPI_ANY_TAG,MPI_COMM_WORLD,&status);
+					MPI_Probe(procorder[i],MPI_ANY_TAG,MPI_COMM_WORLD,&status);
 					if(status.MPI_TAG==1)
-					  MPI_Recv(&temp,1,MPI_INT,procorder[static_cast<size_t>(i)],1,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+						MPI_Recv(&temp,1,MPI_INT,procorder[i],1,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 					else
 					{
 						int count;
 						MPI_Get_count(&status,MPI_INT,&count);
-						recv[static_cast<size_t>(index)].resize(static_cast<size_t>(count));
-						MPI_Recv(&recv[static_cast<size_t>(index)][0],count,MPI_INT,procorder[static_cast<size_t>(i)],0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+						recv[index].resize(count);
+						MPI_Recv(&recv[index][0],count,MPI_INT,procorder[i],0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 					}
-					if(toremove[static_cast<size_t>(index)].empty())
-					  MPI_Send(&temp,1,MPI_INT,procorder[static_cast<size_t>(i)],1,MPI_COMM_WORLD);
+					if(toremove[index].empty())
+						MPI_Send(&temp,1,MPI_INT,procorder[i],1,MPI_COMM_WORLD);
 					else
-					  MPI_Send(&toremove[static_cast<size_t>(index)][0],static_cast<int>(toremove[static_cast<size_t>(index)].size()),
-						   MPI_INT,procorder[static_cast<size_t>(i)],0,MPI_COMM_WORLD);
+						MPI_Send(&toremove[index][0],(int)toremove[index].size(),
+						MPI_INT,procorder[i],0,MPI_COMM_WORLD);
 				}
 			}
 		}
 		for(int i=0;i<nlist;++i)
-		  if(!recv[static_cast<size_t>(i)].empty())
-		    RemoveVector(nghost[static_cast<size_t>(i)],recv[static_cast<size_t>(i)]);
+			if(!recv[i].empty())
+				RemoveVector(nghost[i],recv[i]);
 	}
 #endif
 }
@@ -1426,10 +1426,10 @@ namespace {
     vector<Conserved> res(total_neigh.size());
     for(size_t i=0;i<dv.size();++i){
       for(size_t j=0;j<vol_index[i].size();++j){
-	const size_t index = static_cast<size_t>(lower_bound(total_neigh.begin(),total_neigh.end(),
+	const size_t index = (size_t)(lower_bound(total_neigh.begin(),total_neigh.end(),
 						  vol_index[i][j])-total_neigh.begin());
 	if(i<static_cast<size_t>(n))
-	  res[index] += Primitive2Conserved(cells[static_cast<size_t>(to_remove[i])],dv[i][j]);
+	  res[index] += Primitive2Conserved(cells[(size_t)to_remove[i]],dv[i][j]);
 #ifdef RICH_MPI
 	else{
 	  res[index] += Primitive2Conserved(mpi_cells[i-static_cast<size_t>(n)],dv[i][j]);
@@ -1459,12 +1459,12 @@ namespace {
     vector<vector<double> > res(total_neigh.size(),vector<double>(tracers[0].size(),0));
     for(size_t i=0;i<dv.size();++i){
       for(size_t j=0;j<vol_index[i].size();++j){
-	const size_t index = static_cast<size_t>(lower_bound(total_neigh.begin(),total_neigh.end(),
+	const size_t index = (size_t)(lower_bound(total_neigh.begin(),total_neigh.end(),
 						  vol_index[i][j])-total_neigh.begin());
 				      
 	if(i<static_cast<size_t>(n)){
 	  for(size_t k=0;k<res[0].size();++k)
-	    res[index][k] += dv[i][j]*tracers[static_cast<size_t>(to_remove[i])][k]*cells[static_cast<size_t>(to_remove[i])].Density;
+	    res[index][k] += dv[i][j]*tracers[(size_t)to_remove[i]][k]*cells[(size_t)to_remove[i]].Density;
 	}
 	#ifdef RICH_MPI
 	else{
@@ -1489,18 +1489,18 @@ namespace {
 				   vector<vector<double> >& tracers)
   {
     for(size_t i=0;i<total_neigh.size();++i){
-      const size_t index = static_cast<size_t>(lower_bound(to_remove.begin(),to_remove.end(),
+      const size_t index = (size_t)(lower_bound(to_remove.begin(),to_remove.end(),
 						total_neigh[i])-to_remove.begin());
       const double volume = tess.GetVolume(total_neigh[i]-static_cast<int>(index));
-      const Conserved old_extensive = Primitive2Conserved(cells[static_cast<size_t>(total_neigh[i])],
-							  old_volumes[static_cast<size_t>(total_neigh[i])]);
-      const double old_density = cells[static_cast<size_t>(total_neigh[i])].Density;
-      cells[static_cast<size_t>(total_neigh[i])] = Conserved2Primitive((c_temp[i]+old_extensive)/volume,eos);
+      const Conserved old_extensive = Primitive2Conserved(cells[(size_t)total_neigh[i]],
+							  old_volumes[(size_t)total_neigh[i]]);
+      const double old_density = cells[(size_t)total_neigh[i]].Density;
+      cells[(size_t)total_neigh[i]] = Conserved2Primitive((c_temp[i]+old_extensive)/volume,eos);
       if(tracer_active){
-	const double new_density = cells[static_cast<size_t>(total_neigh[i])].Density;
-	tracers[static_cast<size_t>(total_neigh[i])] = (1./(new_density*volume))*
-	  (t_temp[i]+old_volumes[static_cast<size_t>(total_neigh[i])]*
-	   old_density*tracers[static_cast<size_t>(total_neigh[i])]);	  
+	const double new_density = cells[(size_t)total_neigh[i]].Density;
+	tracers[(size_t)total_neigh[i]] = (1./(new_density*volume))*
+	  (t_temp[i]+old_volumes[(size_t)total_neigh[i]]*
+	   old_density*tracers[(size_t)total_neigh[i]]);	  
       }
     }
   }
@@ -1532,7 +1532,7 @@ vector<int> hdsim::RemoveCells(RemovalStrategy const* remove)
 	vector<int> ToRemoveReduced;
 	if(n<static_cast<int>(ToRemove.size()))
 	{
-	  ToRemoveReduced.resize(ToRemove.size()-static_cast<size_t>(n));
+		ToRemoveReduced.resize((int)ToRemove.size()-n);
 		copy(ToRemove.begin()+n,ToRemove.end(),ToRemoveReduced.begin());
 		//for(int i=0;i<static_cast<int>(ToRemoveReduced.size());++i)
 		//	ToRemoveReduced[i]-=n;
@@ -1586,17 +1586,17 @@ vector<int> hdsim::RemoveCells(RemovalStrategy const* remove)
 	if(traceractive)
 		RemoveVector(tracer_,ToRemove);
 	// Fix the ghost points
-	int nprocs=static_cast<int>(_tessellation.GetDuplicatedProcs().size());
+	int nprocs=(int)_tessellation.GetDuplicatedProcs().size();
 	//sort(ToRemoveReduced.begin(),ToRemoveReduced.end());
 	vector<vector<int> > & ghostpoints=_tessellation.GetDuplicatedPoints();
 	#ifdef RICH_MPI
 	vector<vector<int> > & nghost=_tessellation.GetGhostIndeces();
-	vector<vector<int> > toremoveall(static_cast<size_t>(nprocs)); // the indeces in the ghost that are removed
+	vector<vector<int> > toremoveall(nprocs); // the indeces in the ghost that are removed
 #endif // RICH_MPI
 	for(int i=0;i<nprocs;++i)
 	{
 		vector<int> toremove2;
-		int nsent2=static_cast<int>(ghostpoints[static_cast<size_t>(i)].size());
+		int nsent2=(int)ghostpoints[static_cast<size_t>(i)].size();
 		for(int j=0;j<nsent2;++j)
 		{
 			int toReduce2=int(lower_bound(ToRemove.begin(),ToRemove.end(),ghostpoints[static_cast<size_t>(i)][static_cast<size_t>(j)])-
@@ -1610,7 +1610,7 @@ vector<int> hdsim::RemoveCells(RemovalStrategy const* remove)
 		if(!toremove2.empty())
 			RemoveVector(ghostpoints[static_cast<size_t>(i)],toremove2);
 		toremoveall[static_cast<size_t>(i)]=toremove2;
-		nsent2=static_cast<int>(nghost[static_cast<size_t>(i)].size());
+		nsent2=(int)nghost[static_cast<size_t>(i)].size();
 		for(int j=0;j<nsent2;++j)
 			nghost[static_cast<size_t>(i)][static_cast<size_t>(j)]-=static_cast<int>(ToRemove.size());
 #endif
@@ -1638,18 +1638,18 @@ vector<int> hdsim::RefineCells(RefineStrategy *refine,vector<int>
 	int n=int(PointsToRefine.size());
 	const int N=_tessellation.GetPointNo();
 	// Resize vectors
-	_cells.resize(static_cast<size_t>(N+n));
-	custom_evolution_indices.resize(static_cast<size_t>(N+n));
+	_cells.resize((size_t)(N+n));
+	custom_evolution_indices.resize((size_t)(N+n));
 	if(traceractive)
-	  tracer_.resize(static_cast<size_t>(N+n));
+	  tracer_.resize((size_t)(N+n));
 	// Change the mesh
 	_tessellation.RefineCells(PointsToRefine,directions,dr);
 	// Fill the new hydro
 	for(int i=N;i<N+n;++i)
 	{
-	  _cells[static_cast<size_t>(i)]=_cells[static_cast<size_t>(PointsToRefine[static_cast<size_t>(i-N)])];
+	  _cells[static_cast<size_t>(i)]=_cells[(size_t)PointsToRefine[(size_t)(i-N)]];
 		if(traceractive)
-		  tracer_[static_cast<size_t>(i)]=tracer_[static_cast<size_t>(PointsToRefine[static_cast<size_t>(i-N)])];
+		  tracer_[static_cast<size_t>(i)]=tracer_[(size_t)PointsToRefine[(size_t)(i-N)]];
 	}
 	_conservedextensive = CalcConservedExtensive
 	  (CalcConservedIntensive(_cells),_tessellation,*pg_);

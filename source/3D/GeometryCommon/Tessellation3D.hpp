@@ -9,9 +9,10 @@
 #include <vector>
 #include "HilbertOrder3D.hpp"
 #include "Face.hpp"
-#include "OuterBoundary3D.hpp"
 
 using std::vector;
+
+class OuterBoundary3D;
 
 /*! \brief Abstract class for tessellation in 3D
 \author Elad Steinberg
@@ -24,7 +25,7 @@ public:
 	\param points Initial position of mesh generating points
 	\param bc Boundary conditions of the computational domain
 	*/
-	virtual void Initialise(vector<Vector3D> const& points, OuterBoundary3D const* bc) = 0;
+	virtual void Initialise(vector<Vector3D> const& points, const OuterBoundary3D &bc) = 0;
 
 	/*!
 	\brief Update the tessellation
@@ -99,7 +100,7 @@ public:
 	virtual Tessellation3D* clone(void) const = 0;
 
 	//! \brief Virtual destructor
-	virtual ~Tessellation3D(void);
+	virtual ~Tessellation3D() { };
 
 	/*! 
 	\brief Returns if the cell is adjacent to a boundary
@@ -154,7 +155,6 @@ public:
 
 	/*!
 	\brief Checks if a point is a ghost point or not
-	\param index Point index
 	\return True if is a ghost point, false otherwise
 	*/
 	virtual bool IsGhostPoint(size_t index)const=0;

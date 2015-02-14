@@ -17,7 +17,6 @@
 #include "../../misc/universal_error.hpp"
 #include "../../misc/simple_io.hpp"
 
-//! \brief Tessellation debugging diagnostic that writes the data to a binary file
 class BinaryLogger
 {
 private:
@@ -32,10 +31,6 @@ public:
 	//! \brief class destructor
 	~BinaryLogger(void);
 
-	/*!
-	\brief Creates a log file of the tessellation
-	\param tess The tessellation to log
-	*/
 	void Log(Tessellation3D const& tess)const;
 };
 #endif //BINARYLOGGER_HPP

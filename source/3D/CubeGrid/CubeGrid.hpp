@@ -10,7 +10,6 @@
 #include "../GeometryCommon/OuterBoundary3D.hpp"
 #include "../../misc/utils.hpp"
 
-//! \brief Cartesian 3d grid
 class CubeGrid : public Tessellation3D
 {
 private:

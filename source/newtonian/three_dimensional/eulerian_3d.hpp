@@ -8,7 +8,6 @@
 
 #include "point_motion_3d.hpp"
 
-//! \brief Eulerian point motion
 class Eulerian3D: public PointMotion3D
 {
 public:

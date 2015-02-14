@@ -10,8 +10,8 @@ ifeq ($(MODE),debug)
 	LINT_FLAGS :=
 else ifeq ($(MODE),parallel)
 	CC := mpiCC
-	OPTIMIZATION_FLAGS := -DRICH_MPI -O3
-	LINT_FLAGS = -Werror -Wall -Wextra -pedantic -Wfatal-errors -Weffc++ -Wshadow -Wmissing-declarations -Wno-long-long -Wno-effc++ -Wno-parentheses -Wno-reorder -Wno-shadow -Wconversion
+	OPTIMIZATION_FLAGS := -DRICH_MPI
+	LINT_FLAGS = -Werror -Wall -Wextra -pedantic -Wfatal-errors -Weffc++ -Wshadow -Wmissing-declarations -Wno-long-long -Wno-effc++ -Wno-parentheses -Wno-reorder -Wno-shadow
 else ifeq ($(MODE),debug_parallel)
 	CC := mpiCC
 	OPTIMIZATION_FLAGS := -DRICH_MPI -O0 -g -pg -frecord-gcc-switches
@@ -23,7 +23,7 @@ else ifeq ($(MODE),intel)
 	ARCHIVER_FUNC := xiar
 else
 	MODE = production
-	OPTIMIZATION_FLAGS := -O3 -march=native
+	OPTIMIZATION_FLAGS := -O2
 endif
 LIBRARY_FOLDER := library_$(MODE)
 OBJECTS := $(patsubst $(SOURCE_DIR)/%.cpp,$(LIBRARY_FOLDER)/%.o,$(SOURCES))

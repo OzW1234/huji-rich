@@ -278,11 +278,11 @@ template <class T> vector<T> RemoveList(vector<T> const&v,vector<T> const&list)
 
 template <class T> void RemoveVal(vector<T> &vec,T val)
 {
-  for(size_t i=0;i<vec.size();++i)
+  for(int i=0;i<vec.size();++i)
     {
       if(vec[i]==val)
 	{
-	  vec.erase(vec.begin()+static_cast<long>(i));
+	  vec.erase(vec.begin()+i);
 	  return;
 	}
     }
@@ -605,12 +605,12 @@ template<class T> void ListExchange(vector<T> &vec,vector<int> const& indeces,
   if(indeces.size()!=data.size())
     {
       UniversalError eo("Matching vectors are not the same length");
-      eo.AddEntry("indeces length",static_cast<double>(indeces.size()));
-      eo.AddEntry("data length",static_cast<double>(data.size()));
+      eo.AddEntry("indeces length",indeces.size());
+      eo.AddEntry("data length",data.size());
       throw eo;
     }
   for(size_t i=0;i<indeces.size();++i)
-    vec[static_cast<size_t>(indeces[i])]=data[i];
+    vec[indeces[i]]=data[i];
 }
 
 /*! \brief Performs type casting for an entire vector
@@ -676,9 +676,6 @@ template<class T> class Echo: public Index2Member<T>
 {
 public:
 
-  /*! \brief Class constructor
-    \param v Source vector
-   */
   Echo(const vector<T>& v):
     v_(v) {}
 
@@ -701,11 +698,6 @@ template<class T> class ContiguousChunk: public Index2Member<T>
 {
 public:
 
-  /*! \brief Class constructor
-    \param i2m Source list
-    \param low Lower boundary of chunk
-    \param high Higher boundary of chunk
-   */
   ContiguousChunk(const Index2Member<T>& i2m,
 		  size_t low,
 		  size_t high):

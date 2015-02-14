@@ -3,14 +3,7 @@
 
 int EstimateHilbertIterationNum(vector<Vector3D> const& cor)
 {
-  return static_cast<int>(ceil(log(pow(static_cast<double>(cor.size()), (1.0 / 3.0))) / log(2.0)));
-}
-
-namespace {
-  bool approx_equal(double a, double b, double thres=1e-9)
-  {
-    return thres>std::abs(a-b);
-  }
+	return (int)ceil(log(pow(static_cast<double>(cor.size()), (1.0 / 3.0))) / log(2.0));
 }
 
 
@@ -38,9 +31,9 @@ void AdjustPoints(vector<Vector3D> const & vPointsIn, vector<Vector3D> & vPoints
 	double dbScaleY = dbMaxY - dbMinY;
 	double dbScaleZ = dbMaxZ - dbMinZ;
 	// To prevent division by zero (very unlikely - double precision!)
-	bool bFlagX = approx_equal(dbScaleX,0); // dbScaleX == 0;
-	bool bFlagY = approx_equal(dbScaleY,0); // dbScaleY == 0;
-	bool bFlagZ = approx_equal(dbScaleZ,0); // dbScaleZ == 0;
+	bool bFlagX = dbScaleX == 0;
+	bool bFlagY = dbScaleY == 0;
+	bool bFlagZ = dbScaleZ == 0;
 
 	// X coordinate:
 	if (!bFlagX)
@@ -95,16 +88,16 @@ void AdjustPoints(vector<Vector3D> const & vPointsIn, vector<Vector3D> & vPoints
 	return;
 }
 
-void FindEqualIndices(vector<size_t> const & vD_sorted, vector<vector<size_t> > & vOut)
+void FindEqualIndices(vector<unsigned long long int> const & vD_sorted, vector<vector<size_t> > & vOut)
 {
-	vector<size_t> vD_sorted_cpy = vD_sorted;
-	vector<size_t> vD_sorted_unq = vD_sorted;
-	//vector<size_t>::iterator it = adjacent_find(vD_sorted.begin(), vD_sorted.end());
+	vector<unsigned long long int> vD_sorted_cpy = vD_sorted;
+	vector<unsigned long long int> vD_sorted_unq = vD_sorted;
+	//vector<unsigned long long int>::iterator it = adjacent_find(vD_sorted.begin(), vD_sorted.end());
 
-	vector<size_t>::iterator it1, itPrev, itCur;
+	vector<unsigned long long int>::iterator it1, itPrev, itCur;
 	it1 = unique(vD_sorted_unq.begin(), vD_sorted_unq.end());
 
-	vD_sorted_unq.resize(static_cast<size_t>(distance(vD_sorted_unq.begin(), it1)));
+	vD_sorted_unq.resize(distance(vD_sorted_unq.begin(), it1));
 	
 	if (vD_sorted.size() == vD_sorted_unq.size())
 	{
@@ -131,12 +124,12 @@ void FindEqualIndices(vector<size_t> const & vD_sorted, vector<vector<size_t> > 
 		if (1 < iCurPrevDist)
 		{
 		  int iBase = static_cast<int>(distance(vD_sorted_cpy.begin(), itPrev));
-		  vector<size_t> vInd(static_cast<size_t>(iCurPrevDist));
+			vector<size_t> vInd( iCurPrevDist );
 			// C++11
 			// iota(vInd.begin(), vInd.end(), iBase);
 			for (int ii = 0; ii < iCurPrevDist; ++ii)
 			{
-			  vInd[static_cast<size_t>(ii)] = static_cast<size_t>(iBase + ii);
+				vInd[ii] = iBase + ii;
 			}
 			vOut.push_back(vInd);
 		}
@@ -149,10 +142,10 @@ void FindEqualIndices(vector<size_t> const & vD_sorted, vector<vector<size_t> > 
 	{
 	  int iBase = static_cast<int>(distance(vD_sorted_cpy.begin(), itPrev));
 
-	  vector<size_t> vInd(static_cast<size_t>(iCurPrevDist));
+		vector<size_t> vInd(iCurPrevDist);
 		for (int ii = 0; ii < iCurPrevDist; ++ii)
 		{
-		  vInd[static_cast<size_t>(ii)] = static_cast<size_t>(iBase + ii);
+			vInd[ii] = iBase + ii;
 		}
 		vOut.push_back(vInd);
 	}

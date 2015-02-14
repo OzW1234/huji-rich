@@ -11,6 +11,8 @@
 #include "../../misc/utils.hpp"
 #include "Vector3D.hpp"
 
+using namespace std;
+
 /*!
 \brief Returns the 3D-Hilbert curve ordering
 \param cor The points
@@ -20,4 +22,3 @@ vector<size_t> HilbertOrder3D(vector<Vector3D> const& cor);
 //void HilbertOrder3D();
 
 #endif // HILBERTORDER_HPP
-

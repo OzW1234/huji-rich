@@ -62,15 +62,15 @@ int read_int(string const& fname)
 
 void binary_write_single_int(int n, ofstream& fh)
 {
-  fh.write(reinterpret_cast<const char*>(&n),sizeof(int));
+  fh.write((const char*)&n,sizeof(int));
 }
 
 void binary_write_single_double(double d, ofstream& fh)
 {
-  fh.write(reinterpret_cast<const char*>(&d),sizeof(double));
+  fh.write((const char*)&d,sizeof(double));
 }
 
 void binary_write_single_size_t(size_t n,ofstream& fh)
 {
-  fh.write(reinterpret_cast<const char*>(&n),sizeof(size_t));
+	fh.write((const char*)&n,sizeof(size_t));
 }

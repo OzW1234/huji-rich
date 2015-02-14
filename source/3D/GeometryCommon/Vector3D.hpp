@@ -8,8 +8,7 @@
 
 #include <vector>
 #include <cmath>
-
-using std::vector;
+using namespace std;
 
 //! \brief 3D Mathematical vector
 class Vector3D
@@ -77,7 +76,14 @@ public:
 	\param v Vector to be compared to
 	\return True/False - according to the comparison results.
 	*/
-	bool operator==(Vector3D const& v);
+	bool operator==(const Vector3D &v) const;
+
+	/* \brief Compare 3D-vectors - using the lexicographic order 
+	\parm v Other vector
+	\return True if this is less than the other vector
+	\remark This operator is useful if we want to put Vector3Ds in ordered containers.
+	*/
+	bool operator<(const Vector3D &v) const;
 
 	/*! \brief Rotates the vector around the X axes
 	\param a Angle of rotation (in radians)
@@ -104,6 +110,11 @@ public:
 \return Norm of v
 */
 double abs(Vector3D const& v);
+
+/*! \brief Norm of vector - squared
+\param v Vector
+\return Norm of v - squared */
+double abs2(Vector3D const &v);
 
 /*! \brief Term by term addition
 \param v1 First vector
@@ -184,7 +195,7 @@ Vector3D RotateZ(Vector3D const& v, double a);
 
 /*! \brief Reflect vector
 \param v Vector
-\param normal Normal to the reflection plane
+\param axis Normal to the reflection plane
 \return Reflection of v about axis
 */
 Vector3D Reflect(Vector3D const& v, Vector3D const& normal);
@@ -210,5 +221,11 @@ Vector3D CrossProduct(Vector3D const& v1, Vector3D const& v2);
 \param vZ Vector of z coordinates (out)
 */
 void Split(vector<Vector3D> const & vIn, vector<double> & vX, vector<double> & vY, vector<double> & vZ);
+
+/*! \brief Write Vector3D data to stream
+\param output The Stream
+\param v The Vector
+*/
+std::ostream& operator<< (std::ostream& output, const Vector3D& v);
 
 #endif // Vector3D_HPP

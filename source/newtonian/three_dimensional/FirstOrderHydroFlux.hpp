@@ -11,7 +11,6 @@
 #include "../common/riemann_solver.hpp"
 #include "../../misc/utils.hpp"
 
-//! \brief First order flux calculator
 class FirstOrderHydroFlux : public FluxCalculator
 {
 private:

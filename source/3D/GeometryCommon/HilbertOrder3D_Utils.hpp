@@ -10,6 +10,8 @@
 #include <vector>
 #include <algorithm>
 
+using namespace std;
+
 /*!
 \brief Estimate the number of iterations required in the Hilbert Curve, according to the number of points
 \param cor The points
@@ -26,15 +28,12 @@ void AdjustPoints(vector<Vector3D> const & vPointsIn, vector<Vector3D> & vPoints
 
 /*!
 \brief Scale a vector of 3D points to the unit-cube
-\param vD_sorted The input points
-\param vOut (out) The output points
+\param vPointsIn The input points
+\param vPointsOut (out) The output points
 */
-void FindEqualIndices(vector<size_t> const & vD_sorted, vector<vector<size_t> > & vOut);
+void FindEqualIndices(vector<unsigned long long int> const & vD_sorted, vector<vector<size_t> > & vOut);
 
-/*! \brief Reorder a vector according to an index vector (obtained from the 'ordered' function)
-  \param v Output
-  \param order New order given by a series of indices
- */
+// Reorder a vector according to an index vector (obtained from the 'ordered' function)
 template< class T >
 void reorder(vector<T> & v, vector<size_t> const & order)
 {

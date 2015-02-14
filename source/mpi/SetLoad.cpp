@@ -38,7 +38,7 @@ namespace
 			//			voronoi_loggers::BinLogger log("vtemp.bin");
 			//			log.output(tproc);
 			vector<Vector2D> cp=local.GetMeshPoints();
-			cp.resize(static_cast<size_t>(local.GetPointNo()));
+			cp.resize(local.GetPointNo());
 
 			/*			if(rank==0)
 			{
@@ -68,7 +68,7 @@ namespace
 				BestLoad=load;
 				BestMesh=cp;
 				BestProc=tproc.GetMeshPoints();
-				BestProc.resize(static_cast<size_t>(ws));
+				BestProc.resize(ws);
 			}
 			if(load<tload)
 			{
@@ -88,7 +88,7 @@ namespace
 			MPI_Barrier(MPI_COMM_WORLD);
 			procmove2.Update(tproc,local);
 			vector<Vector2D> cp=local.GetMeshPoints();
-			cp.resize(static_cast<size_t>(local.GetPointNo()));
+			cp.resize(local.GetPointNo());
 			try
 			{
 				local.Update(cp,tproc);
@@ -99,7 +99,8 @@ namespace
 			}
 		}
 		points=local.GetMeshPoints();
-		points.resize(static_cast<size_t>(local.GetPointNo()));
+		points.resize(local.GetPointNo());
+		//write_vector(loads,"loads.txt");
 	}
 }
 
