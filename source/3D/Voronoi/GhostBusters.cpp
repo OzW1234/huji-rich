@@ -8,6 +8,8 @@
 
 using namespace std;
 
+static const double GHOST_BOUNDARY = 1e-5;
+
 static set<Subcube> GetRigidWallSubcubes()
 {
 	const char *offsets[] = { "-  ", "+  ", " - ", " + ", "  -", "  +" };
@@ -24,7 +26,10 @@ set<VectorRef> BruteForceGhostBuster::operator()(const Delaunay &del, const Oute
 	set<VectorRef> ghosts;
 	for (vector<VectorRef>::const_iterator itV = del.InputPoints().begin(); itV != del.InputPoints().end(); itV++)
 		for (set<Subcube>::const_iterator itS = _rigidWallSubcubes.begin(); itS != _rigidWallSubcubes.end(); itS++)
-			ghosts.insert(boundary.ghost(**itV, *itS));
+		{
+			Vector3D ghost = boundary.ghost(**itV, *itS);
+			ghosts.insert(ghost);
+		}
 
 	return ghosts;
 }
@@ -34,7 +39,10 @@ set<VectorRef> FullBruteForceGhostBuster::operator()(const Delaunay &del, const 
 	set<VectorRef> ghosts;
 	for (vector<VectorRef>::const_iterator itV = del.InputPoints().begin(); itV != del.InputPoints().end(); itV++)
 		for (set<Subcube>::const_iterator itS = Subcube::all().begin(); itS != Subcube::all().end(); itS++)
-			ghosts.insert(boundary.ghost(**itV, *itS));
+		{
+			Vector3D ghost = boundary.ghost(**itV, *itS);
+			ghosts.insert(ghost);
+		}
 
 	return ghosts;
 }

@@ -123,7 +123,7 @@ void VoroPlusPlusImpl::ExtractResults(voro::container &container)
 		_voro._cells[cellIndex] = cell;
 
 		// Set the face neighbors
-		auto faceIndices = cell.GetFaces();
+		auto &faceIndices = cell.GetFaces();
 		for (auto it = faceIndices.begin(); it != faceIndices.end(); it++)
 			_voro._faces.GetFace(*it).AddNeighbor(cellIndex); // asserts if fails, no need to add our own assertion
 
@@ -155,9 +155,23 @@ TessellationBase::Cell VoroPlusPlusImpl::CreateCell(Vector3D meshPoint, voro::vo
 	{
 		int numVertices = f_verts[index++];
 		vector<VectorRef> faceVertices;
+
 		for (int i = 0; i < numVertices; i++)
 			faceVertices.push_back(vertices[f_verts[index++]]);
-		size_t faceIndex = _voro._faces.StoreFace(faceVertices);
+
+		// Compact the vertices (some edges are too short). Use a simple method, with no relative scaling
+		VectorRef prev = faceVertices.back();
+		vector<VectorRef> compactedVertices;
+		for (vector<VectorRef>::iterator it = faceVertices.begin(); it != faceVertices.end(); it++)
+		{
+			double dist = abs(**it - *prev);
+			if (dist < 1e-6)
+				continue;
+			compactedVertices.push_back(*it);
+			prev = *it;
+		}
+
+		size_t faceIndex = _voro._faces.StoreFace(compactedVertices);
 		faces.push_back(faceIndex);
 	}
 	BOOST_ASSERT(index == f_verts.size());

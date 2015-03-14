@@ -169,8 +169,8 @@ void TetGenTessellation<GhostBusterType>::OptimizeFace(size_t faceNum)
 	const Face &face = _allFaces[faceNum].value();
 	BOOST_ASSERT(face.NumNeighbors() == 2); // All our faces should have two neighbors, although one of them may be a ghost cell
 
-	int neighbor1 = face.Neighbor1().value().GetCell();
-	int neighbor2 = face.Neighbor2().value().GetCell();
+	size_t neighbor1 = face.Neighbor1().value().GetCell();
+	size_t neighbor2 = face.Neighbor2().value().GetCell();
 	if (neighbor1 > neighbor2)
 		std::swap(neighbor1, neighbor2);
 

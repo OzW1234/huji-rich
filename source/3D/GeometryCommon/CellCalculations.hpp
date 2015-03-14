@@ -10,7 +10,7 @@
 
 #include <vector>
 
-#include "Face.hpp""
+#include "Face.hpp"
 #include "Tetrahedron.hpp"
 
 //\brief Splits a cell into tetrahedra, all touching the center of the cell

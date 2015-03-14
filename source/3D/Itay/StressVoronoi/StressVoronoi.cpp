@@ -275,6 +275,9 @@ static vector<Vector3D> RandomPoints(int num, const OuterBoundary3D &boundary)
 	for (int i = 0; i < num; i++)
 		points[i] = RandomPoint(boundary);
 
+/*	// Put the last point on the boundary it self
+	points[num - 1].y = boundary.FrontUpperRight().y - 1e-10; */
+
 	return points;
 }
 
