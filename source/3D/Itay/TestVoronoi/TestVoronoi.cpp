@@ -8,7 +8,7 @@
 #include "Voronoi/VoroPlusPlus.hpp"
 #include "Utilities/assert.hpp"
 #include "GeometryCommon/OuterBoundary3D.hpp"
-#include "Voronoi/DelaunayVoronoi.hpp"
+#include "Voronoi/TetGenTessellation.hpp"
 #include "Voronoi/GhostBusters.hpp"
 #include "Voronoi/TetGenDelaunay.hpp"
 
@@ -105,7 +105,8 @@ void EnsureCubeVoronoi(const vector<Vector3D> &mesh, const Tessellation3D &tes)
 			EXPECT_NEAR(face.GetArea(), 1.0, 1e-12);
 		}
 		auto CoM = tes.GetCellCM(pt);
-		EXPECT_EQ(CoM, mesh[pt]);
+		double dist = abs(CoM - mesh[pt]);
+		EXPECT_NEAR(dist, 0.0, 1e-12);
 		EXPECT_NEAR(tes.GetVolume(pt), 1.0, 1e-12);
 	}
 }
@@ -121,15 +122,27 @@ TEST(VoroPlusPlus, Cube)
 	EnsureCubeVoronoi(mesh, tes);
 }
 
-TEST(DelaunayVoronoi, Cube)
+TEST(TetGenDelaunay, Cube)
 {
 	vector<Vector3D> mesh = CreateCubeMesh(5);
 
-	DelaunayVoronoi<TetGenDelaunay, BruteForceGhostBuster> tes;
+	TetGenTessellation<CloseToBoundaryGhostBuster> tes;
 	RectangularBoundary3D boundary(Vector3D(4.5, 4.5, 4.5),
 		Vector3D(-0.5, -0.5, -0.5));
 	tes.Initialise(mesh, boundary);
 	EnsureCubeVoronoi(mesh, tes);
+}
+
+TEST(TetGenDelaunay, OnBoundary)
+{
+	vector<Vector3D> mesh = CreateCubeMesh(5);
+
+	TetGenTessellation<CloseToBoundaryGhostBuster> tes;
+	RectangularBoundary3D boundary(Vector3D(4.5, 4.5, 4.5),
+		Vector3D(-0.5, -0.5, -0.5));
+
+	mesh.push_back(Vector3D(-0.49999, -0.2, 2));
+	EXPECT_THROW(tes.Initialise(mesh, boundary), invalid_argument);
 }
 
 void assertion_gtest_bridge(const char *expr, const char *function, const char *file, long line)

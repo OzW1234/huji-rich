@@ -86,6 +86,7 @@ bool TetGenTessellation<GhostBusterType>::IsGhostPoint(size_t index) const
 template<typename GhostBusterType>
 void TetGenTessellation<GhostBusterType>::Update(const vector<Vector3D> &points)
 {
+	CheckBoundaryConformance(points);
 	_meshPoints = points;
 	ClearData();
 

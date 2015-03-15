@@ -86,6 +86,9 @@ protected:
 	//\brief Gets the indices of all tetrahedron vertices (if they are mesh points)
 	void GetTetrahedronIndices(const Tetrahedron &t, boost::optional<size_t> *cells) const;
 
+	//\brief Makes sure all the points are well inside the boundary. Throws an exception if not.
+	void CheckBoundaryConformance(const std::vector<Vector3D> &points) const;
+
 public:
 	// Partial implementation of the Tessellation3D interface
 

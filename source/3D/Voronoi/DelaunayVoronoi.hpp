@@ -95,6 +95,7 @@ private:
 template<typename DelaunayType, typename GhostBusterType>
 void DelaunayVoronoi<DelaunayType, GhostBusterType>::Update(const vector<Vector3D> &points)
 {
+	CheckBoundaryConformance(points);
 	_meshPoints = points;
 	ClearData();
 

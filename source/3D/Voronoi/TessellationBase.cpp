@@ -1,5 +1,8 @@
 #include "TessellationBase.hpp"
 #include <set>
+#include <sstream>
+
+static const double BOUNDARY_REGION = 1e-4;
 
 /*
 * The FaceStore
@@ -55,6 +58,29 @@ void TessellationBase::Initialise(vector<Vector3D> const& points, const OuterBou
 {
 	_boundary = &bc;
 	Update(points);
+}
+
+void TessellationBase::CheckBoundaryConformance(const vector<Vector3D> &points) const
+{
+	const char *offsets[] = { "-  ", "+  ", " - ", " + ", "  -", "  +" };
+	static vector<Subcube> subcubes;
+
+	if (subcubes.size() == 0)
+		for (int i = 0; i < 6; i++)
+			subcubes.push_back(Subcube(offsets[i]));
+
+	for (vector<Vector3D>::const_iterator itPt = points.begin(); itPt != points.end(); itPt++)
+		for (vector<Subcube>::const_iterator itSubcube = subcubes.begin(); itSubcube != subcubes.end(); itSubcube++)
+		{
+			double dist = _boundary->distance(*itPt, *itSubcube);
+			if (dist < BOUNDARY_REGION)
+			{
+				stringstream ss;
+
+				ss << "Point " << *itPt << " is too close to boundary";
+				throw invalid_argument(ss.str());
+			}
+		}
 }
 
 size_t TessellationBase::GetPointNo(void) const
