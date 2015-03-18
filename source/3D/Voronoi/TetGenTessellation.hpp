@@ -24,10 +24,9 @@ public:
 	virtual void Update(vector<Vector3D> const& points);
 
 	virtual Tessellation3D* clone(void) const;
-	virtual vector<vector<size_t> >& GetDuplicatedPoints(void);
-	virtual vector<vector<size_t> >const& GetDuplicatedPoints(void)const;
-	virtual size_t GetTotalPointNumber(void)const;
-	virtual bool IsGhostPoint(size_t index)const;
+	virtual const vector<GhostPointInfo> &GetDuplicatedPoints() const ;
+	virtual size_t GetTotalPointNumber() const;
+	virtual bool IsGhostPoint(size_t index) const;
 
 	std::vector<VectorRef> AllPoints;
 	const static double EDGE_RATIO;
@@ -39,6 +38,7 @@ private:
 	// points, which are the first _meshPoints.size() cells, and the faces that  are part of these cells.
 	std::vector<boost::optional<Face>> _allFaces;  // All relevant faces
 	std::vector<double> _cellVolumes;		    // Volumes of the TetGenDelaunay calculated cells
+	std::vector<GhostPointInfo> _ghostPoints;
 
 	void ExtractTetGenFaces(const TetGenDelaunay &del);
 	void CalculateTetGenVolumes(const TetGenDelaunay &del);
@@ -58,29 +58,21 @@ Tessellation3D *TetGenTessellation<GhostBusterType>::clone() const
 }
 
 template<typename GhostBusterType>
-vector<vector<size_t> >& TetGenTessellation<GhostBusterType>::GetDuplicatedPoints()
+const vector<Tessellation3D::GhostPointInfo>& TetGenTessellation<GhostBusterType>::GetDuplicatedPoints() const
 {
-	static vector<vector<size_t>> v;
-	return v;
-}
-
-template<typename GhostBusterType>
-vector<vector<size_t> >const& TetGenTessellation<GhostBusterType>::GetDuplicatedPoints() const
-{
-	static vector<vector<size_t>> v;
-	return v;
+	return _ghostPoints;
 }
 
 template<typename GhostBusterType>
 size_t TetGenTessellation<GhostBusterType>::GetTotalPointNumber() const
 {
-	return GetPointNo();
+	return GetPointNo() + _ghostPoints.size();
 }
 
 template<typename GhostBusterType>
 bool TetGenTessellation<GhostBusterType>::IsGhostPoint(size_t index) const
 {
-	return false;
+	return index>=0 && index < GetPointNo();
 }
 
 template<typename GhostBusterType>
@@ -99,11 +91,28 @@ void TetGenTessellation<GhostBusterType>::Update(const vector<Vector3D> &points)
 
 	// Find the ghost points
 	GhostBusterType ghostBuster;
-	set<VectorRef> ghosts = ghostBuster(del1, *_boundary);
+	GhostBuster::GhostMap ghosts = ghostBuster(del1, *_boundary);
 
 	// Now the second phase, with the ghost points
 	vector<VectorRef> allPointRefs(pointRefs);
-	allPointRefs.insert(allPointRefs.end(), ghosts.begin(), ghosts.end());
+
+	for (GhostBuster::GhostMap::iterator itMap = ghosts.begin(); itMap != ghosts.end(); itMap++)
+	{
+		VectorRef originalPoint = itMap->first;
+		for (GhostBuster::GhostMap::mapped_type::iterator itSet = itMap->second.begin(); itSet != itMap->second.end(); itSet++)
+		{
+			Subcube subcube = itSet->first;
+			VectorRef ghostRef = itSet->second;
+			allPointRefs.push_back(ghostRef);
+			
+			GhostPointInfo gpi(_ghostPoints.size() + GetPointNo(), \
+				GetPointIndex(originalPoint).value(),
+				subcube,
+				*ghostRef);
+			_ghostPoints.push_back(gpi);
+		}
+	}
+
 	AllPoints = allPointRefs;
 	TetGenDelaunay del2(allPointRefs, big, true);
 	del2.Run();

@@ -44,29 +44,21 @@ void VoroPlusPlus::Update(vector<Vector3D> const& points)
 	RunVoronoi();
 }
 
+size_t VoroPlusPlus::GetTotalPointNumber() const
+{
+	return _meshPoints.size();
+}
 
 Tessellation3D* VoroPlusPlus::clone(void) const
 {
 	return new VoroPlusPlus(*this);
 }
 
-vector<vector<size_t> >& VoroPlusPlus::GetDuplicatedPoints()
+const vector<Tessellation3D::GhostPointInfo> &VoroPlusPlus::GetDuplicatedPoints() const
 {
-	static vector<vector<size_t>> v;
+	static vector<GhostPointInfo> v;
 	return v;
 }
-
-vector<vector<size_t> >const& VoroPlusPlus::GetDuplicatedPoints(void) const
-{
-	static vector<vector<size_t>> v;
-	return v;
-}
-
-size_t VoroPlusPlus::GetTotalPointNumber(void)const
-{
-	return _meshPoints.size();
-}
-
 
 bool VoroPlusPlus::IsGhostPoint(size_t index) const
 {

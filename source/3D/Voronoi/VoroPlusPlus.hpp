@@ -36,20 +36,16 @@ public:
 	virtual Tessellation3D* clone(void) const;
 
 	/*!
-	\brief Returns the indeces of the points that where sent to other processors as ghost points (or to same cpu for single thread) ad boundary points
-	\return The sent points, outer vector is the index of the outer Face and inner vector are the points sent through the face
-	*/
-	virtual vector<vector<size_t> >& GetDuplicatedPoints(void);
-	/*!
-	\brief Returns the indeces of the points that where sent to other processors as ghost points (or to same cpu for single thread) ad boundary points
-	\return The sent points, outer vector is the index of the outer Face and inner vector are the points sent through the face
-	*/
-	virtual vector<vector<size_t> >const& GetDuplicatedPoints(void)const;
-	/*!
 	\brief Returns the total number of points (including ghost)
 	\return The total number of points
 	*/
-	virtual size_t GetTotalPointNumber(void)const;
+	virtual size_t GetTotalPointNumber() const;
+
+	/*!
+	\brief Returns the information of the points that where sent to other processors as ghost points (or to same cpu for single thread) ad boundary points
+	\return The sent points, outer vector is the index of the outer Face and inner vector are the points sent through the face
+	*/
+	virtual const vector<GhostPointInfo> &GetDuplicatedPoints() const ;
 
 	/*!
 	\brief Checks if a point is a ghost point or not

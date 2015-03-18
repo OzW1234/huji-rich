@@ -21,49 +21,73 @@ static set<Subcube> GetRigidWallSubcubes()
 }
 static set<Subcube> _rigidWallSubcubes = GetRigidWallSubcubes();
 
-set<VectorRef> BruteForceGhostBuster::operator()(const Delaunay &del, const OuterBoundary3D &boundary) const
+GhostBuster::GhostMap BruteForceGhostBuster::operator()(const Delaunay &del, const OuterBoundary3D &boundary) const
 {
-	set<VectorRef> ghosts;
+	GhostMap ghosts;
 	for (vector<VectorRef>::const_iterator itV = del.InputPoints().begin(); itV != del.InputPoints().end(); itV++)
+	{
+		GhostMap::mapped_type *ghostSet = NULL;
 		for (set<Subcube>::const_iterator itS = _rigidWallSubcubes.begin(); itS != _rigidWallSubcubes.end(); itS++)
 		{
+			if (!ghostSet)
+			{
+				ghosts[*itV] = GhostMap::mapped_type();
+				ghostSet = &ghosts[*itV];
+			}
 			Vector3D ghost = boundary.ghost(**itV, *itS);
-			ghosts.insert(ghost);
+			ghostSet->insert(GhostPoint(*itS, ghost));
 		}
+	}
 
 	return ghosts;
 }
 
-set<VectorRef> FullBruteForceGhostBuster::operator()(const Delaunay &del, const OuterBoundary3D &boundary) const
+GhostBuster::GhostMap FullBruteForceGhostBuster::operator()(const Delaunay &del, const OuterBoundary3D &boundary) const
 {
-	set<VectorRef> ghosts;
+	GhostMap ghosts;
 	for (vector<VectorRef>::const_iterator itV = del.InputPoints().begin(); itV != del.InputPoints().end(); itV++)
-		for (set<Subcube>::const_iterator itS = Subcube::all().begin(); itS != Subcube::all().end(); itS++)
+	{
+		GhostMap::mapped_type *ghostSet = NULL;
+		for (set<Subcube>::const_iterator itS = _rigidWallSubcubes.begin(); itS != _rigidWallSubcubes.end(); itS++)
 		{
+			if (!ghostSet)
+			{
+				ghosts[*itV] = GhostMap::mapped_type();
+				ghostSet = &ghosts[*itV];
+			}
 			Vector3D ghost = boundary.ghost(**itV, *itS);
-			ghosts.insert(ghost);
+			ghostSet->insert(GhostPoint(*itS, ghost));
 		}
+	}
 
 	return ghosts;
 }
 
-set<VectorRef> CloseToBoundaryGhostBuster::operator()(const Delaunay &del, const OuterBoundary3D &boundary) const
+GhostBuster::GhostMap CloseToBoundaryGhostBuster::operator()(const Delaunay &del, const OuterBoundary3D &boundary) const
 {
 	unordered_set<size_t> outer = FindOuterTetrahedra(del);
 	unordered_set<size_t> edge = FindEdgeTetrahedra(del, outer);
 	breach_map breaches = FindHullBreaches(del, edge, outer, boundary);
 
-	set<VectorRef> ghosts;
+	GhostMap ghosts;
+
 	if (breaches.empty())
 		return ghosts;
 
 	for (breach_map::iterator it = breaches.begin(); it != breaches.end(); it++)
 	{
+		GhostMap::mapped_type *ghostSet = NULL;
+
 		VectorRef pt = it->first;
 		for (unordered_set<Subcube>::iterator itSubcube = it->second.begin(); itSubcube != it->second.end(); itSubcube++)
 		{
+			if (!ghostSet)
+			{
+				ghosts[pt] = GhostMap::mapped_type();
+				ghostSet = &ghosts[pt];
+			}
 			Vector3D ghost = boundary.ghost(*pt, *itSubcube);
-			ghosts.insert(ghost);
+			ghostSet->insert(GhostPoint(*itSubcube, ghost));
 		}
 	}
 

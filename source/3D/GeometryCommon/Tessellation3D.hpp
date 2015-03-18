@@ -9,6 +9,7 @@
 #include <vector>
 #include "HilbertOrder3D.hpp"
 #include "Face.hpp"
+#include "Subcube.hpp"
 
 using std::vector;
 
@@ -120,23 +121,44 @@ public:
 	\brief Returns the indeces of the points that where sent to other processors as ghost points (or to same cpu for single thread) ad boundary points
 	\return The sent points, outer vector is the index of the outer Face and inner vector are the points sent through the face
 	*/
-	virtual vector<vector<size_t> >& GetDuplicatedPoints(void) = 0;
+	// ITAY: Why both a const and non-const version? The non-const version seems redundant.
+	// virtual vector<vector<size_t> >& GetDuplicatedPoints(void) = 0;
+	
+
+	//!\brief A handy structure for describing ghost points
+	struct GhostPointInfo
+	{
+		GhostPointInfo(size_t ghostIndex, size_t meshPointIndex, Subcube subcube, Vector3D point) :
+			GhostIndex(ghostIndex), MeshPointIndex(meshPointIndex), Subcube(subcube), Point(point)
+		{
+		}
+		//!\brief Index of the ghost point
+		size_t GhostIndex;
+		//!\brief Index of the original mesh point
+		size_t MeshPointIndex;
+		//!\brief Subcube through wich the mesh point was reflected
+		Subcube Subcube;
+		//!\brief the point
+		Vector3D Point;
+	};
+
 	/*!
-	\brief Returns the indeces of the points that where sent to other processors as ghost points (or to same cpu for single thread) ad boundary points
+	\brief Returns the information of the points that where sent to other processors as ghost points (or to same cpu for single thread) ad boundary points
 	\return The sent points, outer vector is the index of the outer Face and inner vector are the points sent through the face
 	*/
-	virtual vector<vector<size_t> >const& GetDuplicatedPoints(void)const = 0;
-		/*!
+	virtual const vector<GhostPointInfo> &GetDuplicatedPoints() const = 0;
+
+	/*!
 	\brief Returns the total number of points (including ghost)
 	\return The total number of points
 	*/
-	virtual size_t GetTotalPointNumber(void)const = 0;
+	virtual size_t GetTotalPointNumber() const = 0;
 
 	/*!
 	\brief Returns the center of masses of the cells
 	\return The CM's
 	*/
-	virtual vector<Vector3D>& GetAllCM(void) = 0;
+	virtual vector<Vector3D>& GetAllCM() = 0;
 
 	/*!
 	\brief Returns the neighbors and neighbors of the neighbors of a cell

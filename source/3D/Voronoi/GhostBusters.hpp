@@ -7,6 +7,7 @@
 
 #include <set>
 #include <vector>
+#include <unordered_map>
 #include <unordered_set>
 #include "../GeometryCommon/Vector3D.hpp"
 #include "../GeometryCommon/OuterBoundary3D.hpp"
@@ -17,27 +18,40 @@
 class GhostBuster
 {
 public:
-	virtual std::set<VectorRef> operator()(const Delaunay &del, const OuterBoundary3D &boundary) const = 0;
+	typedef std::pair<Subcube, VectorRef> GhostPoint;
+	struct GhostPointHasher
+	{
+		size_t operator()(const GhostPoint &gp) const
+		{
+			std::hash<Subcube> subcubeHash;
+			std::hash<VectorRef> vectorHash;
+
+			return subcubeHash(gp.first) ^ vectorHash(gp.second);
+		}
+	};
+	typedef std::unordered_map<VectorRef, std::unordered_set<GhostPoint, GhostPointHasher>> GhostMap;
+
+	virtual GhostMap operator()(const Delaunay &del, const OuterBoundary3D &boundary) const = 0;
 };
 
 //\brief A simple implementation that copies each point 26 times
 class BruteForceGhostBuster : public GhostBuster
 {
 public:
-	virtual std::set<VectorRef> operator()(const Delaunay &del, const OuterBoundary3D &boundary) const;
+	virtual GhostMap operator()(const Delaunay &del, const OuterBoundary3D &boundary) const;
 };
 
 class FullBruteForceGhostBuster : public GhostBuster
 {
 public:
-	virtual std::set<VectorRef> operator()(const Delaunay &del, const OuterBoundary3D &boundary) const;
+	virtual GhostMap operator()(const Delaunay &del, const OuterBoundary3D &boundary) const;
 };
 
 //\brief An implementation that checks only points that are on edge-faces.
 class CloseToBoundaryGhostBuster : public GhostBuster
 {
 public:
-	virtual std::set<VectorRef> operator()(const Delaunay &del, const OuterBoundary3D &boundary) const;
+	virtual GhostMap operator()(const Delaunay &del, const OuterBoundary3D &boundary) const;
 
 private:
 	unordered_set<size_t> FindOuterTetrahedra(const Delaunay &del) const ;
