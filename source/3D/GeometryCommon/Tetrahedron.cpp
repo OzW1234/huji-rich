@@ -26,28 +26,28 @@ VectorRef Tetrahedron::center() const
 {
 	if (!_center.is_initialized())
 		_center = CalculateCenter();
-	return _center.value();
+	return *_center;
 }
 
 double Tetrahedron::volume() const
 {
 	if (!_volume.is_initialized())
 		_volume = CalculateVolume();
-	return _volume.value();
+	return *_volume;
 }
 
 double Tetrahedron::radius() const
 {
 	if (!_radius.is_initialized())
 		_radius = CalculateRadius();
-	return _radius.value();
+	return *_radius;
 }
 
 VectorRef Tetrahedron::centerOfMass() const
 {
 	if (!_centerOfMass.is_initialized())
 		_centerOfMass = CalculateCenterOfMass();
-	return _centerOfMass.value();
+	return *_centerOfMass;
 }
 
 // \brief Find the circumcenter of a tetrahedron

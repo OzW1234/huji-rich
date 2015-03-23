@@ -106,7 +106,7 @@ void TetGenTessellation<GhostBusterType>::Update(const vector<Vector3D> &points)
 			allPointRefs.push_back(ghostRef);
 			
 			GhostPointInfo gpi(_ghostPoints.size() + GetPointNo(), \
-				GetPointIndex(originalPoint).value(),
+				*GetPointIndex(originalPoint),
 				subcube,
 				*ghostRef);
 			_ghostPoints.push_back(gpi);
@@ -157,7 +157,10 @@ void TetGenTessellation<GhostBusterType>::CalculateTetGenVolumes(const TetGenDel
 		std::vector<const Face *> facePointers;
 		const std::vector<size_t> &faceIndices = del.GetVoronoiCellFaces(cellNum);
 		for (std::vector<size_t>::const_iterator itFace = faceIndices.begin(); itFace != faceIndices.end(); itFace++)
-			facePointers.push_back(&_allFaces[*itFace].value());
+		{
+			const Face &face = *_allFaces[*itFace];
+			facePointers.push_back(&face);
+		}
 
 		double volume;
 		Vector3D CoM;
@@ -176,11 +179,11 @@ void TetGenTessellation<GhostBusterType>::OptimizeFace(size_t faceNum)
 	if (!_allFaces[faceNum].is_initialized())
 		return;
 
-	const Face &face = _allFaces[faceNum].value();
+	const Face &face = *_allFaces[faceNum];
 	BOOST_ASSERT(face.NumNeighbors() == 2); // All our faces should have two neighbors, although one of them may be a ghost cell
 
-	size_t neighbor1 = face.Neighbor1().value().GetCell();
-	size_t neighbor2 = face.Neighbor2().value().GetCell();
+	size_t neighbor1 = face.Neighbor1()->GetCell();
+	size_t neighbor2 = face.Neighbor2()->GetCell();
 	if (neighbor1 > neighbor2)
 		std::swap(neighbor1, neighbor2);
 
@@ -210,7 +213,7 @@ void TetGenTessellation<GhostBusterType>::OptimizeFace(size_t faceNum)
 	if (vertices.size() < 3)  // Degenerate face
 		_allFaces[faceNum] = boost::none;
 	else
-		_allFaces[faceNum].value().vertices = vertices;
+		_allFaces[faceNum]->vertices = vertices;
 }
 
 template<typename GhostBusterType>
@@ -226,7 +229,7 @@ void TetGenTessellation<GhostBusterType>::ConstructCells(const TetGenDelaunay &d
 			if (!_allFaces[*it].is_initialized())  // Face was removed
 				continue;
 
-			const Face &tetGenFace = _allFaces[*it].value();
+			const Face &tetGenFace = *_allFaces[*it];
 			size_t ourFaceIndex = _faces.StoreFace(tetGenFace.vertices);
 			Face &ourFace = _faces.GetFace(ourFaceIndex);
 

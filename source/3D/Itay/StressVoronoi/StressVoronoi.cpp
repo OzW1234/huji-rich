@@ -303,7 +303,7 @@ void RunVoronoi(Tessellation3D *tes, const std::string name)
 
 			output << "\tFace F" << faces[j];
 			if (face.OtherNeighbor(i).is_initialized())
-				output << " neighbor C" << face.OtherNeighbor(i).value().GetCell() + 1;
+				output << " neighbor C" << face.OtherNeighbor(i)->GetCell() + 1;
 			output << endl;
 			for (auto it = face.vertices.begin(); it != face.vertices.end(); it++)
 			{
