@@ -1,6 +1,11 @@
 #include "CustomEvolution.hpp"
 #include "../../misc/universal_error.hpp"
 
+bool CustomEvolution::DensityFloorRelevant(void) const
+{
+	return false;
+}
+
 bool CustomEvolution::ShouldForceTracerReset(void)const
 {
 	return true;
@@ -26,7 +31,7 @@ bool CustomEvolution::TimeStepRelevant(void)const
 }
 
 CustomEvolutionManager::CustomEvolutionManager(void):
-  vtable_(1,(CustomEvolution*)0) {}
+  vtable_(1,NULL) {}
 
 namespace
 {

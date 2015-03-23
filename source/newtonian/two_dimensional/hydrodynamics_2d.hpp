@@ -22,6 +22,7 @@
 #include "../../mpi/mpi_macro.hpp"
 #include "../../mpi/ProcessorUpdate.hpp"
 #include "physical_geometry.hpp"
+#include "time_step_function.hpp"
 
 //! Calculates the velocities at the vertices of edges
 class FaceVertexVelocityCalculator: public Index2Member<Vector2D>
@@ -124,13 +125,15 @@ vector<Conserved> CalcConservedExtensive
   \param pointmotion Point motion function
   \param pointvelocity List of velocities
   \param time Time
-	\param cevolve The custom evolution of the cells
+  \param cevolve The custom evolution of the cells
+  \param tracers Tracers
 */
 void CalcPointVelocities(Tessellation const& tessellation,
 			 vector<Primitive> const& cells,
 			 PointMotion& pointmotion,
 			 vector<Vector2D>& pointvelocity,double time,
-			vector<CustomEvolution*> & cevolve);
+			 vector<CustomEvolution*> & cevolve,
+			 const vector<vector<double> >& tracers);
 
 /*! \brief Calculates the time step for a cell
   \param cell Computational cell
@@ -226,15 +229,13 @@ void UpdateConservedIntensive(Tessellation const& tessellation,
   \param tess Tessellation
   \param time Time
   \param extensivetracers Extensive tracers
+  \return True if a cell has triggered the minimum density flag false otherwise
   \todo Pass old_cells as const and encapsulate densitymin parameters
 */
-void UpdatePrimitives(vector<Conserved> const& conservedintensive,
-		      EquationOfState const& eos,vector<Primitive>& cells,
-		      vector<CustomEvolution*> const& CellsEvolve,
-		      vector<Primitive> &old_cells,bool densityfloor,
-		      double densitymin,double pressuremin,
-		      Tessellation const& tess,double time,
-		      vector<vector<double> > const& extensivetracers);
+vector<bool> UpdatePrimitives(vector<Conserved> const& conservedintensive,
+	EquationOfState const& eos, vector<Primitive>& cells, vector<CustomEvolution*> const& CellsEvolve,
+	vector<Primitive> &old_cells, bool densityfloor, double densitymin, double pressuremin,
+	Tessellation const& tess, double time, vector<vector<double> > const& extensivetracers);
 
 /*! \brief Calculates the fluxes
   \param tessellation Tessellation
@@ -324,10 +325,8 @@ void ExternalForceContribution(Tessellation const& tess,
   \param eos Equation of state
   \param force External source term
   \param time Time
-  \param cfl Courant Friedrich Lewy number
-  \param endtime Final time for the simulation
+  \param tsf Time step function
   \param tracers Tracers
-  \param dt_external Extrnal time step
   \param custom_evolution_indices The indices of the customevolution
   \param custom_evolution_manager Class that translates indices to class pointers
   \param pg Physical geometry
@@ -360,10 +359,8 @@ double TimeAdvance2mid
  EquationOfState const& eos,
  SourceTerm& force,
  double time,
- double cfl,
- double endtime,
+ TimeStepFunction& tsf,
  vector<vector<double> >& tracers,
- double dt_external,
  vector<size_t>& custom_evolution_indices,
  const CustomEvolutionManager& custom_evolution_manager,
  const PhysicalGeometry& pg,
@@ -383,14 +380,16 @@ double TimeAdvance2mid
   \param cells Fluid elements
   \param point_motion Point motion scheme
   \param time Time
-\param cevolve The custom evolution of the cells
+  \param cevolve The custom evolution of the cells
+  \param tracers Tracers
   \return List of the velocities of the mesh generating points
  */
 vector<Vector2D> calc_point_velocities
 (Tessellation const& tess,
  vector<Primitive>const& cells,
  PointMotion& point_motion,
- double time,vector<CustomEvolution*> & cevolve);
+ double time,vector<CustomEvolution*> & cevolve,
+ const vector<vector<double> >& tracers);
 
 /*! \brief Returns the position of all mesh generating points
   \param tess Tessellation
@@ -512,11 +511,14 @@ void MakeTracerExtensive
   \param tess Tessellation
   \param cells Fluid elements
   \param pg Physical geometry
+  \param min_density_on Did the cell turn on the min density flag
+  \param old_trace The intensive tracer at the beginning of the time step
+  \param cevolve The custom evolution
  */
-void MakeTracerIntensive
-(vector<vector<double> > &tracer,vector<vector<double> >
- const& tracer_extensive,Tessellation const& tess,
- vector<Primitive> const& cells, const PhysicalGeometry& pg);
+void MakeTracerIntensive(vector<vector<double> > &tracer,vector<vector<double> > const& tracer_extensive,
+	Tessellation const& tess,vector<Primitive> const& cells, const PhysicalGeometry& pg,
+	vector<bool> const& min_density_on, vector<vector<double> > const& old_trace,
+	vector<CustomEvolution*> const& cevolve);
 
 /*! \brief A more efficient version of update_extensive_tracers
   \param extensive_tracers Extensive tracers

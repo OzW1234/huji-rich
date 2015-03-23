@@ -26,6 +26,7 @@
 #include "ResetDump.hpp"
 #include "../../mpi/ProcessorUpdate.hpp"
 #include "physical_geometry.hpp"
+#include "simple_cfl.hpp"
 
 /*! \brief Parameters for cold flows correction
   \details See equations 61 and 62 in the Arepo paper
@@ -77,11 +78,7 @@ private:
 
   SourceTerm& external_force_;
 
-  double _cfl;
-
   double _time;
-
-  double _endtime;
 
   int cycle_;
 
@@ -95,10 +92,11 @@ private:
 
   bool EntropyReCalc_;
 
-  double _dt_external;
-
   const SlabSymmetry default_pg_;
   const PhysicalGeometry* pg_;
+
+  SimpleCFL default_time_step_function_;
+  TimeStepFunction* tsf_;
 
   #ifdef RICH_MPI
   ProcessorUpdate *procupdate_;
@@ -236,29 +234,8 @@ public:
   */
   ~hdsim(void);
 
-  /*! \brief Overrides the value of the cfl factor
-    \param cfl_new New value of the cfl factor
-  */
-  void SetCfl(double cfl_new);
-
-  /*! \brief Sets the time for the sim to end exactly
-    \param endtime The ending time
-  */
-  void SetEndTime(double endtime);
-  /*!
-    \brief Dictates a time step from an external source
-    \param dt The time step
-  */
-  void SetTimeStepExternal(double dt);
-
   //! \brief Advances the simulation in time
   void TimeAdvance(void);
-
-  //! \brief Advances the time using Elad's scheme
-  void TimeAdvanceElad(void);
-
-  //! \brief Advances the time using Elad's scheme, second order
-  void TimeAdvanceElad2(void);
 
   /*! \brief Change the physical geometry
     \param pg New physical geometry
@@ -348,12 +325,6 @@ public:
 		   SpatialDistribution const& originalVy,vector<SpatialDistribution const*> const& originalTracers,int tracerindex);
 
   /*!
-    \brief Returns the Courant number
-    \return The courant number
-  */
-  double GetCfl(void)const;
-
-  /*!
     \brief Returns the coldflow flag
   */
   bool GetColdFlowFlag(void)const;
@@ -379,6 +350,11 @@ public:
     \param pressure The minimum pressure that goes along woth the minimum density
   */
   void SetDensityFloor(double density,double pressure);
+
+  /*! \brief Change the time step function
+    \param tsf New time step function
+   */
+  void setTimeStepFunction(TimeStepFunction& tsf);
 
   /*!
     \brief Returns all the cells
@@ -423,6 +399,9 @@ public:
    */
   const OuterBoundary& getOuterBoundary(void) const;
 
+  /*! \brief Returns hydro boundary conditions
+    \return Hydro boundary conditions
+   */
   const HydroBoundaryConditions& getHydroBoundaryCondition(void) const;
 };
 

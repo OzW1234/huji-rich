@@ -11,6 +11,8 @@
 #include <boost/optional.hpp>
 #include <iostream>
 
+using std::size_t;
+
 //! \brief Interface between two cells
 class Face
 {

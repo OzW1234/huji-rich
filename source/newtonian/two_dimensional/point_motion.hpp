@@ -31,12 +31,15 @@ public:
     \param tess The tessellation
     \param cells Hydrodynamics cells
     \param time The simulation time
-	\param cevolve Custom evolution of points
+    \param cevolve Custom evolution of points
+    \param tracers Tracers
     \return Velocities of the points
    */
   virtual vector<Vector2D> calcAllVelocities(Tessellation const& tess,
 					     vector<Primitive> const& cells,
-					     double time,vector<CustomEvolution*> &cevolve);
+					     double time,
+					     vector<CustomEvolution*> &cevolve,
+					     const vector<vector<double> >& tracers);
   //! \brief Virtual destructor
   virtual ~PointMotion(void);
 };

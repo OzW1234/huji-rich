@@ -130,12 +130,14 @@ int main(void)
   NohRemove remove(Vmin);
   
   // Choose the Courant number
+  /*
   double cfl=0.3;
   sim.SetCfl(cfl);
+  */
 
   // How long shall we run the simulation?
   double tend=2;
-  sim.SetEndTime(tend);
+  //  sim.SetEndTime(tend);
 
   // Run main loop of the sim
   while(sim.GetTime()<tend)

@@ -176,10 +176,11 @@ namespace {
 
   void main_loop(hdsim& sim)
   {
-    sim.SetCfl(0.5);
+    SimpleCFL tsf(0.5);
+    sim.setTimeStepFunction(tsf);
     const int max_iter = 5e6;
     const double tf = 1;
-    sim.SetEndTime(tf);
+    //    sim.SetEndTime(tf);
     while(tf>sim.GetTime()){
       try{
 	sim.TimeAdvance2Mid();

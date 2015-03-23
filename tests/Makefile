@@ -7,7 +7,7 @@ ifeq ($(MODE),debug)
 	LFLAGS := -pg
 else ifeq ($(MODE),parallel)
 	CC := mpiCC
-	OPTIMIZATION_FLAGS := -DRICH_MPI
+	OPTIMIZATION_FLAGS := -DRICH_MPI -O3
 	EXECUTION_PREFIX := mpirun -n $(PROCESS_NUM)
 	LINT_FLAGS = -Wall -Wextra -pedantic -Wfatal-errors
 else ifeq ($(MODE),debug_parallel)
@@ -22,7 +22,7 @@ else ifeq ($(MODE),intel)
 	LINT_FLAGS :=
 else
 	MODE = production
-	OPTIMIZATION_FLAGS := -O2
+	OPTIMIZATION_FLAGS := -O3 -march=native
 	LFLAGS :=
 endif
 CFLAGS = $(LINT_FLAGS) $(OPTIMIZATION_FLAGS)
