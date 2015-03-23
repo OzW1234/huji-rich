@@ -139,9 +139,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\source\3D\3rdParty\tetgen-1.5.0\msvc\tetgen.vcxproj">
       <Project>{49fc313b-d9df-4366-a33f-ff8831b8bee1}</Project>
     </ProjectReference>

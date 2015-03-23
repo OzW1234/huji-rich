@@ -19,7 +19,32 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\source\3D\Hydro\PreliminaryTest.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\three_dimensional\cell_updater.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\three_dimensional\computational_cell.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\three_dimensional\conserved_3d.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\three_dimensional\CourantFriedrichsLewy.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\three_dimensional\default_cell_updater.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\three_dimensional\eulerian_3d.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\three_dimensional\extensive_generator.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\three_dimensional\FirstOrderHydroFlux.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\three_dimensional\flux_calculator.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\three_dimensional\hdsim_3d.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\three_dimensional\point_motion_3d.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\three_dimensional\time_step_calculator.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\source\newtonian\three_dimensional\cell_updater.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\three_dimensional\computational_cell.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\three_dimensional\conserved_3d.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\three_dimensional\CourantFriedrichsLewy.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\three_dimensional\default_cell_updater.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\three_dimensional\eulerian_3d.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\three_dimensional\extensive_generator.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\three_dimensional\FirstOrderHydroFlux.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\three_dimensional\flux_calculator.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\three_dimensional\hdsim_3d.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\three_dimensional\point_motion_3d.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\three_dimensional\time_step_calculator.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5B8E3312-2A8F-46C2-B86A-3A4926D132DB}</ProjectGuid>

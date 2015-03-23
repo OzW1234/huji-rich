@@ -76,6 +76,16 @@ public:
 		return boost::none;
 	}
 
+	size_t FirstNeighborCell() const
+	{
+		return _neighbors[0].GetCell();
+	}
+
+	size_t SecondNeighborCell() const
+	{
+		return _neighbors[1].GetCell();
+	}
+
 	boost::optional<const NeighborInfo> OtherNeighbor(int cell)
 	{
 		auto n1 = Neighbor1();

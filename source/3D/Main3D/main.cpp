@@ -3,11 +3,9 @@
 
 using namespace std;
 
-extern void func();
 
 void main()
 {
-	func();
 	cout << "Done" << endl;
 
 #ifdef _DEBUG
