@@ -40,9 +40,16 @@ public:
 	*/
 	virtual size_t GetPointNo(void) const = 0;
 
+	/*! \brief Indicates whether a point is a mesh point or ghost point 
+	\return True if ghost point
+	*/
+	virtual bool IsGhostPoint(size_t index) const = 0;
+
 	/*! \brief Returns Position of mesh generating point
 	\param index Mesh generating point index
 	\return Position of mesh generating point
+
+	TODO: First 0..GetPointNo() returns the mesh points, index>=GetPointNo() returns ghost points, up to index=GetTotalPointNumber()
 	*/
 	virtual Vector3D GetMeshPoint(size_t index) const = 0;
 
@@ -84,6 +91,8 @@ public:
 		/*!
 	\brief Returns a reference to the point vector
 	\returns The reference
+
+	TODO: Return the ghost points, too (as described in GetMeshPoint)
 	*/
 	virtual vector<Vector3D>& GetMeshPoints(void) = 0;
 
@@ -91,6 +100,8 @@ public:
 	\brief Returns a list of the neighbors of a cell
 	\param index The cell to check
 	\return The neighbors
+
+	TODO: Return ghost neighbors as well
 	*/
 
 	virtual vector<size_t> GetNeighbors(size_t index)const = 0;
@@ -164,6 +175,7 @@ public:
 	\brief Returns the neighbors and neighbors of the neighbors of a cell
 	\param point The index of the cell to calculate for
 	\param result The neighbors and their neighbors indeces
+	TODO: Include ghost points, but not ghost neighbors of ghost points
 	*/
 	virtual void GetNeighborNeighbors(vector<size_t> &result,size_t point)const = 0;
 
