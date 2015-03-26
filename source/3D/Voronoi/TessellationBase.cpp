@@ -182,11 +182,10 @@ void TessellationBase::GetNeighborNeighbors(vector<size_t> &result, size_t point
 Vector3D TessellationBase::Normal(size_t faceIndex) const
 {
 	Face face = GetFace(faceIndex);
-	Cell cell1 = _cells[*face.Neighbor1()];
-	Cell cell2 = _cells[*face.Neighbor2()];
-	// TODO: What do we do if one of the cells is a ghost point?
+	Vector3D center1 = GetMeshPoint(*face.Neighbor1());
+	Vector3D center2 = GetMeshPoint(*face.Neighbor2());
 
-	return *cell1.GetCenterOfMass() - *cell2.GetCenterOfMass();
+	return center2 - center1;
 }
 
 /*!
