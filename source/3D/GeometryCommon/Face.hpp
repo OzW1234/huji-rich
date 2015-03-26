@@ -62,10 +62,9 @@ public:
 
 	boost::optional<size_t> OtherNeighbor(int cell)
 	{
-		auto n1 = Neighbor1();
-		if (n1.is_initialized() && *n1 == cell)
+		if (Neighbor1().is_initialized() && *Neighbor1() == cell)
 			return Neighbor2();
-		return n1;
+		return Neighbor1();
 	}
 	
 	/*! \brief Returns the area of the face

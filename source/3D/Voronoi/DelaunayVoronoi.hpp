@@ -247,12 +247,12 @@ void DelaunayVoronoi<DelaunayType, GhostBusterType>::ConstructCells()
 		const Face& face = _faces.GetFace(faceIndex);
 		BOOST_ASSERT(face.NumNeighbors() > 0); // A face with no neighbors shouldn't have been created
 		
-		size_t neighbor1 = face.Neighbor1().value().GetCell();
+		size_t neighbor1 = *face.Neighbor1();
 		cellFaces[neighbor1].push_back(faceIndex);
 
 		if (face.NumNeighbors() == 2)
 		{
-			size_t neighbor2 = face.Neighbor2().value().GetCell();
+			size_t neighbor2 = *face.Neighbor2();
 			cellFaces[neighbor2].push_back(faceIndex);
 		}
 	}

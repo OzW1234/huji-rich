@@ -97,8 +97,6 @@ public:
 	\brief Returns a list of the neighbors of a cell
 	\param index The cell to check
 	\return The neighbors
-
-	TODO: Return ghost neighbors as well
 	*/
 
 	virtual vector<size_t> GetNeighbors(size_t index)const = 0;

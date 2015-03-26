@@ -133,6 +133,8 @@ vector<Vector3D>& TessellationBase::GetMeshPoints(void)
 
 vector<size_t> TessellationBase::GetNeighbors(size_t index) const
 {
+	if (index >= GetPointNo())
+		return vector<size_t>();  // No neighbors for ghost cells
 	const Cell& cell = _cells[index];
 	vector<size_t> neighbors;
 
@@ -160,12 +162,15 @@ vector<Vector3D>& TessellationBase::GetAllCM()
 void TessellationBase::GetNeighborNeighbors(vector<size_t> &result, size_t point) const
 {
 	set<size_t> allNeighbors;
-	auto neighbors = GetNeighbors(point);
+	vector<size_t> neighbors = GetNeighbors(point);
 	for (auto it = neighbors.begin(); it != neighbors.end(); it++)
 	{
 		allNeighbors.insert(*it);
-		auto neighbors2 = GetNeighbors(*it);
-		allNeighbors.insert(neighbors2.begin(), neighbors2.end());
+		if (IsGhostPoint(*it))
+		{
+			vector<size_t> neighbors2 = GetNeighbors(*it);
+			allNeighbors.insert(neighbors2.begin(), neighbors2.end());
+		}
 	}
 
 	// See here: http://stackoverflow.com/a/5034274/871910
@@ -179,6 +184,7 @@ Vector3D TessellationBase::Normal(size_t faceIndex) const
 	Face face = GetFace(faceIndex);
 	Cell cell1 = _cells[*face.Neighbor1()];
 	Cell cell2 = _cells[*face.Neighbor2()];
+	// TODO: What do we do if one of the cells is a ghost point?
 
 	return *cell1.GetCenterOfMass() - *cell2.GetCenterOfMass();
 }

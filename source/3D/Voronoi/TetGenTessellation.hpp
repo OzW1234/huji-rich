@@ -261,11 +261,14 @@ void TetGenTessellation<GhostBusterType>::ConstructCells(const TetGenDelaunay &d
 				continue;
 
 			const Face &tetGenFace = *_allFaces[*it];
+			BOOST_ASSERT(tetGenFace.NumNeighbors() == 2);  // Sanity check, this has been checked previously
 			size_t ourFaceIndex = _faces.StoreFace(tetGenFace.vertices);
 			Face &ourFace = _faces.GetFace(ourFaceIndex);
 
 			ourFaceIndices.push_back(ourFaceIndex);
-			ourFace.AddNeighbor(cellNum);
+			// Add the two neighbors of the original face (because we want to add ghost neighbors as well)
+			ourFace.AddNeighbor(*tetGenFace.Neighbor1());
+			ourFace.AddNeighbor(*tetGenFace.Neighbor2());
 		}
 
 		double volume;
