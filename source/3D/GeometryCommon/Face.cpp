@@ -20,12 +20,58 @@ Face::Face(Face const& other):
 {
 }
 
-double Face::GetArea(void) const
+void Face::CalculateArea() const
 {
-	double res=0;
-	for(size_t i=0;i<vertices.size()-2;++i)
-		res+=0.5*abs(CrossProduct(*vertices[i+1]-*vertices[0],*vertices[i+2]-*vertices[0]));
-	return res;
+	double res = 0;
+	for (size_t i = 0; i<vertices.size() - 2; ++i)
+		res += 0.5*abs(CrossProduct(*vertices[i + 1] - *vertices[0], *vertices[i + 2] - *vertices[0]));
+	_area = res;
+}
+
+double Face::GetArea() const
+{
+	if (!_area.is_initialized())
+		CalculateArea();
+	return *_area;
+}
+
+void Face::CalculateCentroid() const
+{
+	// The face is convex, we find the middle and break it into triangles
+	Vector3D middle;
+	for (vector<VectorRef>::const_iterator itVertex = vertices.begin(); itVertex != vertices.end(); itVertex++)
+		middle = middle + **itVertex;
+	middle = middle / vertices.size();
+
+	// Now split into triangles - (middle, V0, V1), (middle, V1, V2), (middle, V2, V3) ... (middle, Vn, V0)
+	double totalArea = 0.0;
+	Vector3D centroid;
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		// The triangle
+		Vector3D a = middle;
+		Vector3D b = *vertices[i];
+		Vector3D c = *vertices[(i + 1) % vertices.size()];
+
+		// Its centroid and area
+		Vector3D triangleCentroid = (a + b + c) / 3;  // See here: http://mathforum.org/library/drmath/view/54899.html
+		Vector3D ab = a - b;
+		Vector3D bc = b - c;
+		double area = 0.5 * abs(CrossProduct(ab, bc)); // See here: http://geomalgorithms.com/a01-_area.html
+
+		// The weighted average
+		totalArea += area;
+		centroid = centroid + area * triangleCentroid;
+	}
+
+	_centroid = centroid / totalArea;
+}
+
+Vector3D Face::GetCentroid() const
+{
+	if (!_centroid.is_initialized())
+		CalculateCentroid();
+	return *_centroid;
 }
 
 bool Face::IdenticalTo(const vector<VectorRef> &otherVertices) const

@@ -16,8 +16,14 @@ using std::size_t;
 //! \brief Interface between two cells
 class Face
 {
+	// TODO: Make Face immutable - created with the neighbors and that's it.
 private:
 	std::vector<size_t> _neighbors;
+	mutable boost::optional<double> _area; // Mutable because these are cached
+	mutable boost::optional<Vector3D> _centroid;
+
+	void CalculateArea() const;
+	void CalculateCentroid() const;
 
 public:
 	//! \brief Points at the ends of the edge
@@ -70,7 +76,12 @@ public:
 	/*! \brief Returns the area of the face
 	\return Length
 	*/
-	double GetArea(void) const;
+	double GetArea() const;
+
+	/*! \brief Returns the centroid of the face
+	\return The centroid
+	\remarks The centroid is the weighted average of the centroid of all the triangles forming the face - the weight being the triangle's area */
+	Vector3D GetCentroid() const;
 
 	/*! \brief Reorders the vertices based on their angle from the center
 	\remark This is useful when the face order wasn't constructed properly

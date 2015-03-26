@@ -35,6 +35,20 @@ void TessellationBase::FaceStore::Clear()
 	_faces.clear();
 }
 
+boost::optional<size_t> TessellationBase::FaceStore::FindFace(size_t neighbor1, size_t neighbor2) const
+{
+	// TODO: Make this more efficient, this is bound to cause performance problems
+	for (vector<Face>::const_iterator it = _faces.begin(); it != _faces.end(); it++)
+	{
+		if (it->Neighbor1() == neighbor1 && it->Neighbor2() == neighbor2 ||
+			it->Neighbor1() == neighbor2 && it->Neighbor2() == neighbor1)
+		{
+			return it - _faces.begin();
+		}
+	}
+
+	return boost::none;
+}
 
 TessellationBase::Cell::Cell(std::vector<size_t> faces, double volume, VectorRef center, VectorRef centerOfMass) :
 	_faces(faces), _volume(volume),_center(center), _centerOfMass(centerOfMass)
@@ -199,7 +213,21 @@ Vector3D TessellationBase::Normal(size_t faceIndex) const
 Vector3D TessellationBase::CalcFaceVelocity(size_t p0, size_t p1, Vector3D const& v0,
 	Vector3D const& v1) const
 {
-	return Vector3D(); // TODO: Calculate the velocity properly
+	boost::optional<size_t> faceIndex = _faces.FindFace(p0, p1);
+	if (!faceIndex.is_initialized())
+		throw invalid_argument("Can't find face");
+	const Face &face = _faces.GetFace(*faceIndex);
+
+	Vector3D r0 = GetMeshPoint(p0);
+	Vector3D r1 = GetMeshPoint(p1);
+	Vector3D r_diff = r1 - r0;
+	double abs_r_diff = abs(r_diff);
+
+	Vector3D f = face.GetCentroid();
+
+	Vector3D delta_w = ScalarProd((v0 - v1), (f - r_diff / 2)) * r_diff / abs_r_diff;
+	Vector3D w = (v0 + v1) / 2 + delta_w;
+	return w;
 }
 
 //\brief Check if a cell touches the boundary
