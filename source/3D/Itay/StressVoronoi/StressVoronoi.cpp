@@ -249,9 +249,9 @@ static Vector3D RandomPoint(const OuterBoundary3D &boundary)
 {
 	Vector3D v;
 
-	v.x = RandomDouble(boundary.BackLowerLeft().x, boundary.FrontUpperRight().x);
-	v.y = RandomDouble(boundary.BackLowerLeft().y, boundary.FrontUpperRight().y);
-	v.z = RandomDouble(boundary.BackLowerLeft().z, boundary.FrontUpperRight().z);
+	v.x = RandomDouble(boundary.BackLowerLeft().x + 0.01, boundary.FrontUpperRight().x - 0.01);
+	v.y = RandomDouble(boundary.BackLowerLeft().y + 0.01, boundary.FrontUpperRight().y - 0.01);
+	v.z = RandomDouble(boundary.BackLowerLeft().z + 0.01, boundary.FrontUpperRight().z - 0.01);
 
 	return v;
 }
@@ -303,7 +303,7 @@ void RunVoronoi(Tessellation3D *tes, const std::string name)
 
 			output << "\tFace F" << faces[j];
 			if (face.OtherNeighbor(i).is_initialized())
-				output << " neighbor C" << face.OtherNeighbor(i)->GetCell() + 1;
+				output << " neighbor C" << *face.OtherNeighbor(i) + 1;
 			output << endl;
 			for (auto it = face.vertices.begin(); it != face.vertices.end(); it++)
 			{

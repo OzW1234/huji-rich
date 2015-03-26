@@ -31,6 +31,9 @@ public:
 	std::vector<VectorRef> AllPoints;
 	const static double EDGE_RATIO;
 
+	virtual Vector3D GetMeshPoint(size_t index) const;
+	virtual const vector<Vector3D> &GetMeshPoints() const;
+
 private:
 	void ConvertToVoronoi(const TetGenDelaunay &del);
 
@@ -38,7 +41,9 @@ private:
 	// points, which are the first _meshPoints.size() cells, and the faces that  are part of these cells.
 	std::vector<boost::optional<Face>> _allFaces;  // All relevant faces
 	std::vector<double> _cellVolumes;		    // Volumes of the TetGenDelaunay calculated cells
-	std::vector<GhostPointInfo> _ghostPoints;
+
+	std::vector<Vector3D> _allPoints;			// Includes the mesh points followed by the ghost points
+	std::vector<GhostPointInfo> _ghostPointInfo;   // Includes all the mesh points and ghost points
 
 	void ExtractTetGenFaces(const TetGenDelaunay &del);
 	void CalculateTetGenVolumes(const TetGenDelaunay &del);
@@ -52,6 +57,18 @@ template<typename GhostBusterType>
 const double TetGenTessellation<GhostBusterType>::EDGE_RATIO = 1e-5;
 
 template<typename GhostBusterType>
+Vector3D TetGenTessellation<GhostBusterType>::GetMeshPoint(size_t index) const
+{
+	return _allPoints[index];
+}
+
+template<typename GhostBusterType>
+const std::vector<Vector3D> &TetGenTessellation<GhostBusterType>::GetMeshPoints() const
+{
+	return _allPoints;
+}
+
+template<typename GhostBusterType>
 Tessellation3D *TetGenTessellation<GhostBusterType>::clone() const
 {
 	return new TetGenTessellation<GhostBusterType>(*this);
@@ -60,13 +77,13 @@ Tessellation3D *TetGenTessellation<GhostBusterType>::clone() const
 template<typename GhostBusterType>
 const vector<Tessellation3D::GhostPointInfo>& TetGenTessellation<GhostBusterType>::GetDuplicatedPoints() const
 {
-	return _ghostPoints;
+	return _ghostPointInfo;
 }
 
 template<typename GhostBusterType>
 size_t TetGenTessellation<GhostBusterType>::GetTotalPointNumber() const
 {
-	return GetPointNo() + _ghostPoints.size();
+	return _allPoints.size();
 }
 
 template<typename GhostBusterType>
@@ -93,9 +110,23 @@ void TetGenTessellation<GhostBusterType>::Update(const vector<Vector3D> &points)
 	GhostBusterType ghostBuster;
 	GhostBuster::GhostMap ghosts = ghostBuster(del1, *_boundary);
 
-	// Now the second phase, with the ghost points
-	vector<VectorRef> allPointRefs(pointRefs);
+	// Now the second phase, with the ghost points.
+	// We fill the _allPoints and _ghostPointInfo structures
+	_allPoints.clear();
+	_allPoints.reserve(pointRefs.size() + ghosts.size());
+	_ghostPointInfo.clear();
+	_ghostPointInfo.reserve(pointRefs.size() + ghosts.size());
 
+	// Start with the mesh points
+	Subcube meshPointSubcube("   ");
+	for (vector<VectorRef>::const_iterator itPoint = pointRefs.begin(); itPoint != pointRefs.end(); itPoint++)
+	{
+		_allPoints.push_back(**itPoint);
+		GhostPointInfo gpi(_allPoints.size(), _allPoints.size(), meshPointSubcube, **itPoint);
+		_ghostPointInfo.push_back(gpi);
+	}
+
+	// Now the ghost points
 	for (GhostBuster::GhostMap::iterator itMap = ghosts.begin(); itMap != ghosts.end(); itMap++)
 	{
 		VectorRef originalPoint = itMap->first;
@@ -103,18 +134,18 @@ void TetGenTessellation<GhostBusterType>::Update(const vector<Vector3D> &points)
 		{
 			Subcube subcube = itSet->first;
 			VectorRef ghostRef = itSet->second;
-			allPointRefs.push_back(ghostRef);
+			_allPoints.push_back(*ghostRef);
 			
-			GhostPointInfo gpi(_ghostPoints.size() + GetPointNo(), \
+			GhostPointInfo gpi(_allPoints.size(), 
 				*GetPointIndex(originalPoint),
 				subcube,
 				*ghostRef);
-			_ghostPoints.push_back(gpi);
+			_ghostPointInfo.push_back(gpi);
 		}
 	}
 
-	AllPoints = allPointRefs;
-	TetGenDelaunay del2(allPointRefs, big, true);
+	AllPoints = VectorRef::vector(_allPoints);
+	TetGenDelaunay del2(AllPoints, big, true);
 	del2.Run();
 
 	ConvertToVoronoi(del2);
@@ -182,8 +213,8 @@ void TetGenTessellation<GhostBusterType>::OptimizeFace(size_t faceNum)
 	const Face &face = *_allFaces[faceNum];
 	BOOST_ASSERT(face.NumNeighbors() == 2); // All our faces should have two neighbors, although one of them may be a ghost cell
 
-	size_t neighbor1 = face.Neighbor1()->GetCell();
-	size_t neighbor2 = face.Neighbor2()->GetCell();
+	size_t neighbor1 = *face.Neighbor1();
+	size_t neighbor2 = *face.Neighbor2();
 	if (neighbor1 > neighbor2)
 		std::swap(neighbor1, neighbor2);
 

@@ -47,9 +47,8 @@ public:
 
 	/*! \brief Returns Position of mesh generating point
 	\param index Mesh generating point index
+	First 0..GetPointNo() returns the mesh points, index>=GetPointNo() returns ghost points, up to index=GetTotalPointNumber()
 	\return Position of mesh generating point
-
-	TODO: First 0..GetPointNo() returns the mesh points, index>=GetPointNo() returns ghost points, up to index=GetTotalPointNumber()
 	*/
 	virtual Vector3D GetMeshPoint(size_t index) const = 0;
 
@@ -91,10 +90,8 @@ public:
 		/*!
 	\brief Returns a reference to the point vector
 	\returns The reference
-
-	TODO: Return the ghost points, too (as described in GetMeshPoint)
 	*/
-	virtual vector<Vector3D>& GetMeshPoints(void) = 0;
+	virtual const vector<Vector3D>& GetMeshPoints() = 0;
 
 	/*!
 	\brief Returns a list of the neighbors of a cell
@@ -186,12 +183,6 @@ public:
 	\return The vector normal to the face whose magnitude is the seperation between the neighboring points pointing from the first neighbor to the second
 	*/
 	virtual Vector3D Normal(size_t faceindex)const=0;
-
-	/*!
-	\brief Checks if a point is a ghost point or not
-	\return True if is a ghost point, false otherwise
-	*/
-	virtual bool IsGhostPoint(size_t index)const=0;
 
 	/*!
 	\brief Calculates the velocity of a face

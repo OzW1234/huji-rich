@@ -79,22 +79,13 @@ bool Face::IdenticalTo(const vector<VectorRef> &otherVertices) const
 	return sizeFound;
 }
 
-void Face::AddNeighbor(size_t cell, bool overlapping)
+void Face::AddNeighbor(size_t cell)
 {
-	// See if the neighbor already exists and overlapping hasn't changed, return gracefully
+	// Allow a neighbor to be added multiple times by ignoring it silently
 	for (auto it = _neighbors.begin(); it != _neighbors.end(); it++)
 	{
-		if (it->GetCell() == cell)
-		{
-			if (it->IsOverlapping() != overlapping)
-			{
-				stringstream strm;
-				strm << "Can't change overlapping of neighbor " << cell << " to " << overlapping;
-				throw UniversalError(strm.str());
-			}
-			else
-				return;
-		}
+		if (*it == cell)
+			return;
 	}
 
 	// If we get here, we need to add a new neighbor
@@ -105,7 +96,7 @@ void Face::AddNeighbor(size_t cell, bool overlapping)
 		throw UniversalError(strm.str());
 	}
 
-	_neighbors.push_back(NeighborInfo(cell, overlapping));
+	_neighbors.push_back(cell);
 }
 
 Vector3D calc_centroid(const Face& face)
@@ -120,14 +111,6 @@ Vector3D calc_centroid(const Face& face)
 		res.z+=area*(face.vertices[0]->z+face.vertices[i+2]->z+face.vertices[i+1]->z)/3.;
 	}
 	return res;
-}
-
-std::ostream& operator<<(std::ostream& output, const Face::NeighborInfo& neighbor)
-{
-	output << neighbor.GetCell();
-	if (neighbor.IsOverlapping())
-		output << "-O";
-	return output;
 }
 
 static const double PI = acos(-1);  // No PI definition in the C++ standard!!!

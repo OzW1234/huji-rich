@@ -86,13 +86,14 @@ TEST(Geometry3D, Face_Basic)
 	ASSERT_EQ(vertices, face.vertices);
 
 	Face face2(vertices);
-	face2.AddNeighbor(5, false);
-	face2.AddNeighbor(3, true);
+	face2.AddNeighbor(5);
+	ASSERT_FALSE(face2.Neighbor2().is_initialized());
+	ASSERT_TRUE(face2.Neighbor1().is_initialized());
+	face2.AddNeighbor(3);
 	ASSERT_EQ(vertices, face2.vertices);
-	ASSERT_EQ(face2.Neighbor1()->GetCell(), 5);
-	ASSERT_EQ(face2.Neighbor1()->IsOverlapping(), false);
-	ASSERT_EQ(face2.Neighbor2()->GetCell(), 3);
-	ASSERT_EQ(face2.Neighbor2()->IsOverlapping(), true);
+	ASSERT_TRUE(face2.Neighbor2().is_initialized());
+	ASSERT_EQ(*face2.Neighbor1(), 5);
+	ASSERT_EQ(*face2.Neighbor2(), 3);
 }
 
 TEST(Geometry3D, Face_Area)
@@ -114,12 +115,11 @@ TEST(Geometry3D, Face_Neighbors)
 	vector<VectorRef> vertices{ v1, v2, v3, v4 };
 	Face face1(vertices);
 
-	face1.AddNeighbor(1, true);
-	face1.AddNeighbor(2, true);
-	face1.AddNeighbor(2, true);
-	face1.AddNeighbor(1, true);
+	face1.AddNeighbor(1);
+	face1.AddNeighbor(2);
+	face1.AddNeighbor(2);
+	face1.AddNeighbor(1);
 	ASSERT_THROW(face1.AddNeighbor(3), UniversalError);
-	ASSERT_THROW(face1.AddNeighbor(1, false), UniversalError);
 }
 
 TEST(Geometry3D, Face_Identical)

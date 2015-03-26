@@ -140,10 +140,10 @@ vector<size_t> TessellationBase::GetNeighbors(size_t index) const
 	for (size_t i = 0; i < faceIndices.size(); i++)
 	{
 		auto face = GetFace(i);
-		if (face.Neighbor1()->GetCell() == index)
-			neighbors.push_back(face.Neighbor2()->GetCell());
-		else if (face.Neighbor2()->GetCell() == index)
-			neighbors.push_back(face.Neighbor1()->GetCell());
+		if (face.Neighbor1() == index)
+			neighbors.push_back(*face.Neighbor2());
+		else if (face.Neighbor2() == index)
+			neighbors.push_back(*face.Neighbor1());
 		else
 			BOOST_ASSERT(false); // One of the neighbors must be us!
 	}
@@ -177,8 +177,8 @@ void TessellationBase::GetNeighborNeighbors(vector<size_t> &result, size_t point
 Vector3D TessellationBase::Normal(size_t faceIndex) const
 {
 	Face face = GetFace(faceIndex);
-	Cell cell1 = _cells[face.Neighbor1()->GetCell()];
-	Cell cell2 = _cells[face.Neighbor2()->GetCell()];
+	Cell cell1 = _cells[*face.Neighbor1()];
+	Cell cell2 = _cells[*face.Neighbor2()];
 
 	return *cell1.GetCenterOfMass() - *cell2.GetCenterOfMass();
 }
