@@ -243,8 +243,8 @@ bool TessellationBase::NearBoundary(size_t index) const
 //\remarks a Face is a Boundary face iff it only has one neighbor
 bool TessellationBase::BoundaryFace(size_t index) const
 {
-	Face face = GetFace(index);
-	return face.NumNeighbors() == 1;
+	const Face &face = GetFace(index);
+	return IsGhostPoint(*face.Neighbor1()) || IsGhostPoint(*face.Neighbor2());
 }
 
 //\brief Fills the pointIndices map
