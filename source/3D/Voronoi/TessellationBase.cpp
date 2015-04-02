@@ -2,7 +2,7 @@
 #include <set>
 #include <sstream>
 
-static const double BOUNDARY_REGION = 1e-4;
+static const double BOUNDARY_REGION = 1e-8;
 
 /*
 * The FaceStore
@@ -35,13 +35,13 @@ void TessellationBase::FaceStore::Clear()
 	_faces.clear();
 }
 
-boost::optional<size_t> TessellationBase::FaceStore::FindFace(size_t neighbor1, size_t neighbor2) const
+boost::optional<size_t> TessellationBase::FaceStore::FindFace(size_t Neighbor1, size_t Neighbor2) const
 {
 	// TODO: Make this more efficient, this is bound to cause performance problems
 	for (vector<Face>::const_iterator it = _faces.begin(); it != _faces.end(); it++)
 	{
-		if (it->Neighbor1() == neighbor1 && it->Neighbor2() == neighbor2 ||
-			it->Neighbor1() == neighbor2 && it->Neighbor2() == neighbor1)
+		if (it->Neighbor1() == Neighbor1 && it->Neighbor2() == Neighbor2 ||
+			it->Neighbor1() == Neighbor2 && it->Neighbor2() == Neighbor1)
 		{
 			return it - _faces.begin();
 		}
