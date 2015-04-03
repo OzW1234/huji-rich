@@ -40,8 +40,8 @@ namespace
 		size_t index,RiemannSolver const& rs)
 	{
 		Face const& f = tess.GetFace(index);
-		const size_t real_index = tess.IsGhostPoint(f.FirstNeighborCell()) ? 1 : 0;
-		const size_t real_cell = (real_index==1) ? f.SecondNeighborCell() : f.FirstNeighborCell();
+		const size_t real_index = tess.IsGhostPoint(*f.Neighbor1()) ? 1 : 0;
+		const size_t real_cell = (real_index==1) ? *f.Neighbor2() : *f.Neighbor1();
 		const Vector3D normal=normalize(tess.Normal(index));
 		Primitive preal=calc_primitive(cells[real_cell],eos, normal);
 		const Vector3D parallel = GetParallel(cells[real_cell].velocity,normal);
@@ -68,11 +68,11 @@ namespace
 		Face const& face = tess.GetFace(index);
 		const Vector3D normal=normalize(tess.Normal(index));
 		const double fv=ScalarProd(face_vel,normal);
-		const Conserved sol = rs.Solve(calc_primitive(cells[face.FirstNeighborCell()],
-			eos,normal),calc_primitive(cells[face.SecondNeighborCell()],
+		const Conserved sol = rs.Solve(calc_primitive(cells[*face.Neighbor1()],
+			eos,normal),calc_primitive(cells[*face.Neighbor2()],
 			eos,normal),fv);
-		const ComputationalCell& donor = cells[sol.Mass>0 ? face.FirstNeighborCell() :
-			face.SecondNeighborCell()];
+		const ComputationalCell& donor = cells[sol.Mass>0 ? *face.Neighbor1() :
+			*face.Neighbor2()];
 		const Vector3D parallel = GetParallel(donor.velocity,normal);
 		Conserved3D res(sol.Mass,sol.Momentum.x*normal+sol.Momentum.y*parallel,
 			sol.Energy);
@@ -106,8 +106,8 @@ vector<Conserved3D> FirstOrderHydroFlux::operator()(const Tessellation3D& tess,
 		if(!tess.BoundaryFace(i))
 		{
 			Face const& f=tess.GetFace(i);
-			fv=tess.CalcFaceVelocity(f.FirstNeighborCell(),f.SecondNeighborCell(),
-				point_velocities[f.FirstNeighborCell()],point_velocities[f.SecondNeighborCell()]);
+			fv=tess.CalcFaceVelocity(*f.Neighbor1(),*f.Neighbor2(),
+				point_velocities[*f.Neighbor1()],point_velocities[*f.Neighbor2()]);
 		}
 		res[i]=CalcSingleFlux(tess,cells,eos,i,rs_,fv);
 	}
