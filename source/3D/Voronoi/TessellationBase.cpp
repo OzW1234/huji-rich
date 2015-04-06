@@ -35,13 +35,13 @@ void TessellationBase::FaceStore::Clear()
 	_faces.clear();
 }
 
-boost::optional<size_t> TessellationBase::FaceStore::FindFace(size_t Neighbor1, size_t Neighbor2) const
+boost::optional<size_t> TessellationBase::FaceStore::FindFace(size_t neighbor1, size_t neighbor2) const
 {
 	// TODO: Make this more efficient, this is bound to cause performance problems
 	for (vector<Face>::const_iterator it = _faces.begin(); it != _faces.end(); it++)
 	{
-		if (it->Neighbor1() == Neighbor1 && it->Neighbor2() == Neighbor2 ||
-			it->Neighbor1() == Neighbor2 && it->Neighbor2() == Neighbor1)
+		if (it->Neighbor1() == neighbor1 && it->Neighbor2() == neighbor2 ||
+			it->Neighbor1() == neighbor2 && it->Neighbor2() == neighbor1)
 		{
 			return it - _faces.begin();
 		}
@@ -55,7 +55,7 @@ TessellationBase::Cell::Cell(std::vector<size_t> faces, double volume, VectorRef
 {
 	// width is the radius of the sphere with the same volume as the cell
 	// volume = (4/3) * radius ^ 3
-	_width = pow(3 / 4 * volume, 1 / 3);
+	_width = pow(3.0 / 4.0 * volume, 1.0 / 3.0);
 }
 
 void TessellationBase::ClearData()
@@ -76,26 +76,24 @@ void TessellationBase::Initialise(vector<Vector3D> const& points, const OuterBou
 
 void TessellationBase::CheckBoundaryConformance(const vector<Vector3D> &points) const
 {
-	const char *offsets[] = { "-  ", "+  ", " - ", " + ", "  -", "  +" };
-	static vector<Subcube> subcubes;
+	Vector3D thresholds = (_boundary->FrontUpperRight() - _boundary->BackLowerLeft()) * 1e-9;
 
-	if (subcubes.size() == 0)
-		for (int i = 0; i < 6; i++)
-			subcubes.push_back(Subcube(offsets[i]));
+	Subcube left("-  "), right("+   "), over(" + "), below(" - "), infront("  +"), behind("  -");
 
 	for (vector<Vector3D>::const_iterator itPt = points.begin(); itPt != points.end(); itPt++)
-		for (vector<Subcube>::const_iterator itSubcube = subcubes.begin(); itSubcube != subcubes.end(); itSubcube++)
+	{
+		if (_boundary->distance(*itPt, left) < thresholds.x || _boundary->distance(*itPt, right) < thresholds.x ||
+			_boundary->distance(*itPt, over) < thresholds.y || _boundary->distance(*itPt, below) < thresholds.y ||
+			_boundary->distance(*itPt, infront) < thresholds.z || _boundary->distance(*itPt, behind) < thresholds.z)
 		{
-			double dist = _boundary->distance(*itPt, *itSubcube);
-			if (dist < BOUNDARY_REGION)
-			{
-				stringstream ss;
+			stringstream ss;
 
-				ss << "Point " << *itPt << " is too close to boundary";
-				throw invalid_argument(ss.str());
-			}
+			ss << "Point " << *itPt << " is too close to boundary";
+			throw invalid_argument(ss.str());
 		}
+	}
 }
+
 
 size_t TessellationBase::GetPointNo(void) const
 {
@@ -245,8 +243,8 @@ bool TessellationBase::NearBoundary(size_t index) const
 //\remarks a Face is a Boundary face iff it only has one neighbor
 bool TessellationBase::BoundaryFace(size_t index) const
 {
-	Face face = GetFace(index);
-	return face.NumNeighbors() == 1;
+	const Face &face = GetFace(index);
+	return IsGhostPoint(*face.Neighbor1()) || IsGhostPoint(*face.Neighbor2());
 }
 
 //\brief Fills the pointIndices map
