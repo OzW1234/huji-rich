@@ -19,6 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\source\misc\hdf5_utils.cpp" />
+    <ClCompile Include="..\..\..\source\misc\utils.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\common\equation_of_state.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\common\hllc.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\common\hydrodynamic_variables.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\common\ideal_gas.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\common\riemann_solver.cpp" />
+    <ClCompile Include="..\..\..\source\newtonian\three_dimensional\3D_hdf5.cpp" />
     <ClCompile Include="..\..\..\source\newtonian\three_dimensional\cell_updater.cpp" />
     <ClCompile Include="..\..\..\source\newtonian\three_dimensional\computational_cell.cpp" />
     <ClCompile Include="..\..\..\source\newtonian\three_dimensional\conserved_3d.cpp" />
@@ -31,8 +39,17 @@
     <ClCompile Include="..\..\..\source\newtonian\three_dimensional\hdsim_3d.cpp" />
     <ClCompile Include="..\..\..\source\newtonian\three_dimensional\point_motion_3d.cpp" />
     <ClCompile Include="..\..\..\source\newtonian\three_dimensional\time_step_calculator.cpp" />
+    <ClCompile Include="..\..\..\source\tessellation\geometry.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\source\misc\hdf5_utils.hpp" />
+    <ClInclude Include="..\..\..\source\misc\utils.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\common\equation_of_state.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\common\hllc.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\common\hydrodynamic_variables.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\common\ideal_gas.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\common\riemann_solver.hpp" />
+    <ClInclude Include="..\..\..\source\newtonian\three_dimensional\3D_hdf5.hpp" />
     <ClInclude Include="..\..\..\source\newtonian\three_dimensional\cell_updater.hpp" />
     <ClInclude Include="..\..\..\source\newtonian\three_dimensional\computational_cell.hpp" />
     <ClInclude Include="..\..\..\source\newtonian\three_dimensional\conserved_3d.hpp" />
@@ -45,6 +62,7 @@
     <ClInclude Include="..\..\..\source\newtonian\three_dimensional\hdsim_3d.hpp" />
     <ClInclude Include="..\..\..\source\newtonian\three_dimensional\point_motion_3d.hpp" />
     <ClInclude Include="..\..\..\source\newtonian\three_dimensional\time_step_calculator.hpp" />
+    <ClInclude Include="..\..\..\source\tessellation\geometry.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5B8E3312-2A8F-46C2-B86A-3A4926D132DB}</ProjectGuid>
@@ -105,10 +123,12 @@
     <IncludePath>..\..\source\3D\3rdParty\tetgen-1.5.0;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\..\source\3D\3rdParty\tetgen-1.5.0;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Program Files\HDF_Group\HDF5\1.8.12\include;..\..\source\3D\3rdParty\tetgen-1.5.0;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\HDF_Group\HDF5\1.8.12\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\..\source\3D\3rdParty\tetgen-1.5.0;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Program Files\HDF_Group\HDF5\1.8.12\include;..\..\source\3D\3rdParty\tetgen-1.5.0;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\HDF_Group\HDF5\1.8.12\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -135,6 +155,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>szip.lib;zlib.lib;hdf5.lib;hdf5_cpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -169,6 +192,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib>
+      <AdditionalDependencies>szip.lib;zlib.lib;hdf5.lib;hdf5_cpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
