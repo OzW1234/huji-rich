@@ -89,7 +89,7 @@ size_t TetGenTessellation<GhostBusterType>::GetTotalPointNumber() const
 template<typename GhostBusterType>
 bool TetGenTessellation<GhostBusterType>::IsGhostPoint(size_t index) const
 {
-	return index>=0 && index < GetPointNo();
+	return index < 0 || index >= GetPointNo();
 }
 
 template<typename GhostBusterType>
