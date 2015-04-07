@@ -34,7 +34,7 @@ GhostBuster::GhostMap BruteForceGhostBuster::operator()(const Delaunay &del, con
 				ghosts[*itV] = GhostMap::mapped_type();
 				ghostSet = &ghosts[*itV];
 			}
-			Vector3D ghost = boundary.ghost(**itV, *itS);
+			Vector3D ghost = boundary.reflect(**itV, *itS);
 			ghostSet->insert(GhostPoint(*itS, ghost));
 		}
 	}
@@ -55,7 +55,7 @@ GhostBuster::GhostMap FullBruteForceGhostBuster::operator()(const Delaunay &del,
 				ghosts[*itV] = GhostMap::mapped_type();
 				ghostSet = &ghosts[*itV];
 			}
-			Vector3D ghost = boundary.ghost(**itV, *itS);
+			Vector3D ghost = boundary.reflect(**itV, *itS);
 			ghostSet->insert(GhostPoint(*itS, ghost));
 		}
 	}
@@ -63,7 +63,7 @@ GhostBuster::GhostMap FullBruteForceGhostBuster::operator()(const Delaunay &del,
 	return ghosts;
 }
 
-GhostBuster::GhostMap CloseToBoundaryGhostBuster::operator()(const Delaunay &del, const OuterBoundary3D &boundary) const
+GhostBuster::GhostMap RigidWallGhostBuster::operator()(const Delaunay &del, const OuterBoundary3D &boundary) const
 {
 	unordered_set<size_t> outer = FindOuterTetrahedra(del);
 	unordered_set<size_t> edge = FindEdgeTetrahedra(del, outer);
@@ -86,7 +86,7 @@ GhostBuster::GhostMap CloseToBoundaryGhostBuster::operator()(const Delaunay &del
 				ghosts[pt] = GhostMap::mapped_type();
 				ghostSet = &ghosts[pt];
 			}
-			Vector3D ghost = boundary.ghost(*pt, *itSubcube);
+			Vector3D ghost = GetGhostPoint(boundary, *pt, *itSubcube);
 			ghostSet->insert(GhostPoint(*itSubcube, ghost));
 		}
 	}
@@ -94,7 +94,7 @@ GhostBuster::GhostMap CloseToBoundaryGhostBuster::operator()(const Delaunay &del
 	return ghosts;
 }
 
-CloseToBoundaryGhostBuster::breach_map CloseToBoundaryGhostBuster::FindHullBreaches(const Delaunay &del, const unordered_set<size_t>& edgeTetrahedra,
+RigidWallGhostBuster::breach_map RigidWallGhostBuster::FindHullBreaches(const Delaunay &del, const unordered_set<size_t>& edgeTetrahedra,
 	const unordered_set<size_t> &outerTetrahedra, const OuterBoundary3D &boundary) const
 {
 	breach_map result;
@@ -124,7 +124,8 @@ CloseToBoundaryGhostBuster::breach_map CloseToBoundaryGhostBuster::FindHullBreac
 
 					Tetrahedron tetrahedron = del[*itTetrahedron];
 					bool breaching = false;
-					for (set<Subcube>::iterator itSubcube = _rigidWallSubcubes.begin(); itSubcube != _rigidWallSubcubes.end(); itSubcube++)
+					const set<Subcube> &subcubes = GetAllSubcubes();
+					for (set<Subcube>::const_iterator itSubcube = subcubes.begin(); itSubcube != subcubes.end(); itSubcube++)
 					{
 						if (boundary.distance(*tetrahedron.center(), *itSubcube) < tetrahedron.radius())
 						{
@@ -157,7 +158,7 @@ CloseToBoundaryGhostBuster::breach_map CloseToBoundaryGhostBuster::FindHullBreac
 
 //\brief Find all the Outer Tetrahedra
 //\remark An Outer Tetrahedron is a tetrahedron that has a vertex in the big tetrahedron
-unordered_set<size_t> CloseToBoundaryGhostBuster::FindOuterTetrahedra(const Delaunay &del) const
+unordered_set<size_t> RigidWallGhostBuster::FindOuterTetrahedra(const Delaunay &del) const
 {
 	unordered_set<size_t> result;
 
@@ -173,7 +174,7 @@ unordered_set<size_t> CloseToBoundaryGhostBuster::FindOuterTetrahedra(const Dela
 
 //\brief Find all the Edge Tetrahedra
 //\remark An Edge Tetrahedron has a vertex that belongs to an Outer Tetrahedron. Edge Tetrahedra are not Outer Tetrahedra
-unordered_set<size_t> CloseToBoundaryGhostBuster::FindEdgeTetrahedra(const Delaunay &del, const unordered_set<size_t>& outerTetrahedra) const
+unordered_set<size_t> RigidWallGhostBuster::FindEdgeTetrahedra(const Delaunay &del, const unordered_set<size_t>& outerTetrahedra) const
 {
 	unordered_set<size_t> edgeTetrahedra;
 
@@ -197,4 +198,25 @@ unordered_set<size_t> CloseToBoundaryGhostBuster::FindEdgeTetrahedra(const Delau
 	}
 
 	return edgeTetrahedra;
+}
+
+Vector3D RigidWallGhostBuster::GetGhostPoint(const OuterBoundary3D &boundary, const Vector3D pt, const Subcube subcube) const
+{
+	return boundary.reflect(pt, subcube);
+}
+
+const set<Subcube> &RigidWallGhostBuster::GetAllSubcubes() const
+{
+	return _rigidWallSubcubes;
+}
+
+
+Vector3D PeriodicGhostBuster::GetGhostPoint(const OuterBoundary3D &boundary, const Vector3D pt, const Subcube subcube) const
+{
+	return boundary.copy(pt, subcube);
+}
+
+const set<Subcube> &PeriodicGhostBuster::GetAllSubcubes() const
+{
+	return Subcube::all();
 }

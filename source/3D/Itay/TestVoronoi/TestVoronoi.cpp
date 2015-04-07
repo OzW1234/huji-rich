@@ -116,7 +116,7 @@ TEST(VoroPlusPlus, Cube)
 	vector<Vector3D> mesh = CreateCubeMesh(5);
 
 	VoroPlusPlus tes;
-	RectangularBoundary3D boundary(Vector3D(4.5, 4.5, 4.5),
+	OuterBoundary3D boundary(Vector3D(4.5, 4.5, 4.5),
 		Vector3D(-0.5, -0.5, -0.5));
 	tes.Initialise(mesh, boundary);
 	EnsureCubeVoronoi(mesh, tes);
@@ -126,8 +126,8 @@ TEST(TetGenDelaunay, Cube)
 {
 	vector<Vector3D> mesh = CreateCubeMesh(5);
 
-	TetGenTessellation<CloseToBoundaryGhostBuster> tes;
-	RectangularBoundary3D boundary(Vector3D(4.5, 4.5, 4.5),
+	TetGenTessellation<RigidWallGhostBuster> tes;
+	OuterBoundary3D boundary(Vector3D(4.5, 4.5, 4.5),
 		Vector3D(-0.5, -0.5, -0.5));
 	tes.Initialise(mesh, boundary);
 	EnsureCubeVoronoi(mesh, tes);
@@ -137,11 +137,11 @@ TEST(TetGenDelaunay, OnBoundary)
 {
 	vector<Vector3D> mesh = CreateCubeMesh(5);
 
-	TetGenTessellation<CloseToBoundaryGhostBuster> tes;
-	RectangularBoundary3D boundary(Vector3D(4.5, 4.5, 4.5),
+	TetGenTessellation<RigidWallGhostBuster> tes;
+	OuterBoundary3D boundary(Vector3D(4.5, 4.5, 4.5),
 		Vector3D(-0.5, -0.5, -0.5));
 
-	mesh.push_back(Vector3D(-0.49999, -0.2, 2));
+	mesh.push_back(Vector3D(-0.49999999999, -0.2, 2));
 	EXPECT_THROW(tes.Initialise(mesh, boundary), invalid_argument);
 }
 

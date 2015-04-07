@@ -39,14 +39,14 @@ TEST(Subcube, Sets)
 	ASSERT_EQ(Subcube::all().size(), 26);
 }
 
-RectangularBoundary3D InitBoundary()
+OuterBoundary3D InitBoundary()
 {
-	return RectangularBoundary3D(Vector3D(1, 1, 1), Vector3D(0, 0, 0));
+	return OuterBoundary3D(Vector3D(1, 1, 1), Vector3D(0, 0, 0));
 }
 
 TEST(SubCube, DistanceToFace)
 {
-	RectangularBoundary3D boundary = InitBoundary();
+	OuterBoundary3D boundary = InitBoundary();
 	Vector3D pt(0.2, 0.5, 0.9);
 
 	ASSERT_NEAR(boundary.distance(pt, "-  "), 0.2, 1e-8);
@@ -59,7 +59,7 @@ TEST(SubCube, DistanceToFace)
 
 TEST(SubCube, DistanceToPoint)
 {
-	RectangularBoundary3D boundary = InitBoundary();
+	OuterBoundary3D boundary = InitBoundary();
 	Vector3D pt(0.2, 0.5, 0.9);
 
 	ASSERT_NEAR(boundary.distance(pt, "---"), 1.0488, 1e-4);
@@ -71,7 +71,7 @@ TEST(SubCube, DistanceToPoint)
 
 TEST(SubCube, DistanceEdge)
 {
-	RectangularBoundary3D boundary = InitBoundary();
+	OuterBoundary3D boundary = InitBoundary();
 	Vector3D pt(0.2, 0.5, 0.9);
 
 	ASSERT_NEAR(boundary.distance(pt, "-- "), 0.53851, 1e-5);
@@ -79,12 +79,26 @@ TEST(SubCube, DistanceEdge)
 	ASSERT_NEAR(boundary.distance(pt, " -+"), 0.50990, 1e-5);
 }
 
-TEST(SubCube, RectangularGhost)
+#define ASSERT_VECTOR_NEAR(vec1, vec2, epsilon) \
+	ASSERT_NEAR(abs(vec2-vec1), 0, epsilon);
+
+TEST(SubCube, PointReflection)
 {
-	RectangularBoundary3D boundary = InitBoundary();
+	OuterBoundary3D boundary = InitBoundary();
 	Vector3D pt(0.2, 0.5, 0.9);
 
-	ASSERT_EQ(boundary.ghost(pt, "-  "), Vector3D(-0.2, 0.5, 0.9));
-	ASSERT_EQ(boundary.ghost(pt, "+ +"), Vector3D(1.8, 0.5, 1.1));
-	ASSERT_EQ(boundary.ghost(pt, "-+-"), Vector3D(-0.2, 1.5, -0.9));
+	ASSERT_VECTOR_NEAR(boundary.reflect(pt, "-  "), Vector3D(-0.2, 0.5, 0.9), 1e-5);
+	ASSERT_VECTOR_NEAR(boundary.reflect(pt, "+ +"), Vector3D(1.8, 0.5, 1.1), 1e-5);
+	ASSERT_VECTOR_NEAR(boundary.reflect(pt, "-+-"), Vector3D(-0.2, 1.5, -0.9), 1e-5);
+}
+
+TEST(Subcube, PointCopy)
+{
+	OuterBoundary3D boundary = InitBoundary();
+	Vector3D pt(0.2, 0.5, 0.9);
+	ASSERT_VECTOR_NEAR(boundary.copy(pt, "   "), pt, 1e-5);
+	ASSERT_VECTOR_NEAR(boundary.copy(pt, "+++"), Vector3D(1.2, 1.5, 1.9), 1e-5);
+	ASSERT_VECTOR_NEAR(boundary.copy(pt, "---"), Vector3D(-0.8, -0.5, -0.1), 1e-5);
+	ASSERT_VECTOR_NEAR(boundary.copy(pt, "+ -"), Vector3D(1.2, 0.5, -0.1), 1e-5);
+	ASSERT_VECTOR_NEAR(boundary.copy(pt, "-+ "), Vector3D(-0.8, 1.5, 0.9), 1e-5);
 }

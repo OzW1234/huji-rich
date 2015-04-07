@@ -48,10 +48,14 @@ public:
 };
 
 //\brief An implementation that checks only points that are on edge-faces.
-class CloseToBoundaryGhostBuster : public GhostBuster
+class RigidWallGhostBuster : public GhostBuster
 {
 public:
 	virtual GhostMap operator()(const Delaunay &del, const OuterBoundary3D &boundary) const;
+
+protected:
+	virtual Vector3D GetGhostPoint(const OuterBoundary3D &boundary, const Vector3D pt, const Subcube subcube) const;
+	virtual const std::set<Subcube> &GetAllSubcubes() const;
 
 private:
 	unordered_set<size_t> FindOuterTetrahedra(const Delaunay &del) const ;
@@ -69,4 +73,13 @@ private:
 		return set.find(val) != set.end();
 	}
 };
+
+//\brief An implementation that creates a period boundary
+class PeriodicGhostBuster : public RigidWallGhostBuster
+{
+protected:
+	virtual Vector3D GetGhostPoint(const OuterBoundary3D &boundary, const Vector3D pt, const Subcube subcube) const;
+	virtual const std::set<Subcube> &GetAllSubcubes() const;
+};
+
 #endif

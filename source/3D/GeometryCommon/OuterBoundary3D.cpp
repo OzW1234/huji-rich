@@ -10,17 +10,10 @@ OuterBoundary3D::OuterBoundary3D(Vector3D frontUpperRight, Vector3D backLowerLef
 	_frontUpperRight(frontUpperRight), _backLowerLeft(backLowerLeft)
 {
 	// Make sure frontUpperRight is indeed ahead, above and to the right of _backLowerLeft
-	Vector3D diff = _frontUpperRight - _backLowerLeft; // All coordinates must be positive
-	if (diff.x <= 0 || diff.y <= 0 || diff.z <= 0)
+	_dimensions = _frontUpperRight - _backLowerLeft; // All coordinates must be positive
+	if (_dimensions.x <= 0 || _dimensions.y <= 0 || _dimensions.z <= 0)
 		throw invalid_argument("In OuterBoundary3D FrontUpperRight must be ahead, above and to the right of BackLowerLeft");
 }
-
-/*
-OuterBoundary3D::OuterBoundary3D() :
-	_frontUpperRight(Vector3D(1, 1, 1)), _backLowerLeft(Vector3D(0, 0, 0))
-{
-
-} */
 
 double OuterBoundary3D::distance(const Vector3D &pt, Subcube subcube) const
 {
@@ -110,15 +103,32 @@ Vector3D OuterBoundary3D::vector_edge(const Vector3D &pt, Subcube subcube) const
 }
 
 
-RectangularBoundary3D::RectangularBoundary3D(Vector3D frontUpperRight, Vector3D backLowerLeft)
-	: OuterBoundary3D(frontUpperRight, backLowerLeft)
-{
-}
-
-Vector3D RectangularBoundary3D::ghost(const Vector3D &pt, const Subcube subcube) const
+Vector3D OuterBoundary3D::reflect(const Vector3D &pt, const Subcube subcube) const
 {
 	Vector3D toBoundary = vector(pt, subcube);
 	return pt + 2 * toBoundary; // Reflect through the boundary
+}
+
+Vector3D OuterBoundary3D::copy(const Vector3D &pt, const Subcube subcube) const
+{
+	Vector3D result = pt;
+
+	if (subcube[0] == '-')
+		result.x -=  _dimensions.x;
+	else if (subcube[0] == '+')
+		result.x += _dimensions.x;
+
+	if (subcube[1] == '-')
+		result.y -= _dimensions.y;
+	else if (subcube[1] == '+')
+		result.y += _dimensions.y;
+
+	if (subcube[2] == '-')
+		result.z -=  _dimensions.z;
+	else if (subcube[2] == '+')
+		result.z += _dimensions.z;
+
+	return result;
 }
 
 bool OuterBoundary3D::inside(const Vector3D &pt) const

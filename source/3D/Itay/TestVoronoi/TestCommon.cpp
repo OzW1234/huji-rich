@@ -153,12 +153,12 @@ TEST(Geometry3D, Face_Order)
 
 void CreateFaultyBoundary1()
 {
-	RectangularBoundary3D(Vector3D(1, 1, 1), Vector3D(0, 2, 1));
+	OuterBoundary3D(Vector3D(1, 1, 1), Vector3D(0, 2, 1));
 }
 
 TEST(Geometry3D, OuterBoundry3D)
 {
-	RectangularBoundary3D b1(Vector3D(0, 0, 0), Vector3D(-1, -1, -1));
+	OuterBoundary3D b1(Vector3D(0, 0, 0), Vector3D(-1, -1, -1));
 	ASSERT_THROW(CreateFaultyBoundary1(), invalid_argument);
 }
 

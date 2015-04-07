@@ -14,6 +14,7 @@ class OuterBoundary3D
 {
 private:
 	Vector3D _frontUpperRight, _backLowerLeft;
+	Vector3D _dimensions;
 
 public:
 	//! \brief Constructs a Boundray instance
@@ -40,12 +41,17 @@ public:
 	//\returns The vector. The vector's size is distance(pt, subcube)
 	Vector3D vector(const Vector3D &pt, const Subcube subcube) const;
 
-	//\brief Creates a ghost point from pt, with the subcube
-	//\param pt The point
-	//\param subcube The subcube
-	//\returns The ghost point.
-	//\remarks How the ghost point is calculated depends on the boundary type
-	virtual Vector3D ghost(const Vector3D &pt, const Subcube subcube) const = 0;
+	//\brief Reflects a point into a subcube
+	//\param pt The Point
+	//\param subcube The Subcube
+	//\returns Pt reflected through the boundary into the subcube
+	virtual Vector3D reflect(const Vector3D &pt, const Subcube subcube) const;
+
+	//\brief Copies a point to a subcube
+	//\param pt The Point
+	//\param subcube The Subcube
+	//\returns A copy of Pt inside subcube. It will be exactly the same distance from the subcube's origin
+	virtual Vector3D copy(const Vector3D &pt, const Subcube subcube) const;
 
 	//\brief Checks if a point is inside the boundary
 	//\param pt Point
@@ -54,24 +60,8 @@ public:
 	bool inside(const Vector3D &pt) const;
 
 private:
-	/*double distance_face(const Vector3D &pt, const Subcube subcube) const;
-	double distance_edge(const Vector3D &pt, const Subcube subcube) const;
-	double distance_point(const Vector3D &pt, const Subcube subcube) const; */
-
 	Vector3D vector_face(const Vector3D &pt, const Subcube subcube) const;
 	Vector3D vector_edge(const Vector3D &pt, const Subcube subcube) const;
 	Vector3D vector_point(const Vector3D &pt, const Subcube subcube) const;
-};
-
-class RectangularBoundary3D : public OuterBoundary3D
-{
-public:
-	RectangularBoundary3D(Vector3D frontUpperRight, Vector3D backLowerLeft);
-
-	//\brief Creates a ghost point from pt, reflecting it into subcube
-	//\param pt The Point
-	//\param subcube The Subcube
-	//\returns Pt reflected through the boundary into the subcube
-	virtual Vector3D ghost(const Vector3D &pt, const Subcube subcube) const;
 };
 #endif // OUTERBOUNDARY3D_HPP

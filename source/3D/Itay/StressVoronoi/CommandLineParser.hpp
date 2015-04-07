@@ -14,7 +14,8 @@ struct Arguments
 	bool RunVoroPlusPlus;
 	bool RunBruteForce;
 	bool RunFullBruteForce;
-	bool RunCloseToBoundary;
+	bool RunRigidWall;
+	bool RunPeriodic;
 };
 
 

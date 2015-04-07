@@ -76,12 +76,20 @@ int main(int argc, char*argv[])
 		WriteMatlabPoints(del->AllPoints, "full-brute-force.m");
 	}
 
-	if (args.RunCloseToBoundary)
+	if (args.RunRigidWall)
 	{
-		TetGenTessellation<CloseToBoundaryGhostBuster> *del = new TetGenTessellation<CloseToBoundaryGhostBuster>();
-		RunVoronoi(del, "close-to-boundary");
-		WritePoints(del->AllPoints, "close-to-boundary.node");
-		WriteMatlabPoints(del->AllPoints, "close-to-boundary.m");
+		TetGenTessellation<RigidWallGhostBuster> *del = new TetGenTessellation<RigidWallGhostBuster>();
+		RunVoronoi(del, "rigid-wall");
+		WritePoints(del->AllPoints, "rigid-wall.node");
+		WriteMatlabPoints(del->AllPoints, "rigid-wall.m");
+	}
+
+	if (args.RunPeriodic)
+	{
+		TetGenTessellation<PeriodicGhostBuster> *del = new TetGenTessellation<PeriodicGhostBuster>();
+		RunVoronoi(del, "periodic");
+		WritePoints(del->AllPoints, "periodic.node");
+		WritePoints(del->AllPoints, "periodic.m");
 	}
 
 	if (args.RunVoroPlusPlus)
@@ -112,7 +120,7 @@ static bool Initialize()
 	namer.SaveZero();
 	Vector3D ftr, bll;
 	RandomBoundary(ftr, bll);
-	boundary = new RectangularBoundary3D(ftr, bll);
+	boundary = new OuterBoundary3D(ftr, bll);
 
 	if (!args.InputFile.empty())
 	{

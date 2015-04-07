@@ -31,7 +31,7 @@ bool ParseArguments(int argc, char *argv[], Arguments &args)
 	if (!CheckArguments(vm))
 		return false;
 	po::notify(vm);
-	if (!args.RunVoroPlusPlus && !args.RunBruteForce && !args.RunCloseToBoundary && !args.RunFullBruteForce)
+	if (!args.RunVoroPlusPlus && !args.RunBruteForce && !args.RunRigidWall && !args.RunFullBruteForce)
 	{
 		cerr << "Please specify at least one of the Voronoi run modes" << endl;
 		return false;
@@ -63,7 +63,8 @@ static po::options_description InitOptions(Arguments &args)
 		("voro-plus-plus", po::value<bool>(&args.RunVoroPlusPlus)->default_value(true), "Run Voro++")
 		("brute-force", po::value<bool>(&args.RunBruteForce)->default_value(true), "Run Tetgen with Brute Force ghosts")
 		("full-brute-force", po::value<bool>(&args.RunFullBruteForce)->default_value(true), "Run Tetgen with Full Brute Force ghosts (all 26 subcubes)")
-		("close-to-boundary", po::value<bool>(&args.RunCloseToBoundary)->default_value(false), "Run Tetgen with Close To Boundary ghosts")
+		("rigid-wall", po::value<bool>(&args.RunRigidWall)->default_value(false), "Run Tetgen with optimized Rigid Wall ghosts")
+		("periodic", po::value<bool>(&args.RunPeriodic)->default_value(false), "Run Tetgen with the Periodic ghosts")
 	;
 
 	return options;
