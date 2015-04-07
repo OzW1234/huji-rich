@@ -8,14 +8,13 @@ using namespace std;
 Face::Face(const vector<VectorRef> &vert, boost::optional<size_t> neighbor1, boost::optional<size_t> neighbor2) :
 	vertices(vert), _neighbor1(neighbor1), _neighbor2(neighbor2)
 {
-
 }
 
 const Face Face::Empty = Face(vector<VectorRef>());  // An empty face with no vertices
 
 Face::Face(const Face &other):
   vertices(other.vertices),
-  _neighbor1(other._neighbor1) ,
+  _neighbor1(other._neighbor1),
   _neighbor2(other._neighbor2)
 {
 }
@@ -196,19 +195,9 @@ Face Face::ReorderVertices()
 
 bool operator==(const Face &face1, const Face &face2)
 {
-	size_t sizeFace1 = face1.vertices.size();
-	size_t sizeFace2 = face2.vertices.size();
-	if (sizeFace1!=sizeFace2)
+	if (face1.vertices.size()!=face2.vertices.size())
 		return false;
-
-	//	if (face1.vertices.size() != face2.vertices.size())
-	std::hash<Face> hasher;
-	size_t hash1 = hasher(face1);
-	size_t hash2 = hasher(face2);
-	//if (hasher(face1) != hasher(face2))
-	if (hash1!=hash2)
-		return false;
-
+	
 	// This is a naive O(N^2) implementation, which beats a clever O(N) with hash tables hands down,
 	// because N is very small, and building set<>s or unordered_set<>s is expensive
 	for (vector<VectorRef>::const_iterator it1 = face1.vertices.begin(); it1 != face1.vertices.end(); it1++)

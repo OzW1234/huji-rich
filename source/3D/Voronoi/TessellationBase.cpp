@@ -10,11 +10,11 @@ static const double BOUNDARY_REGION = 1e-8;
 
 bool TessellationBase::FaceStore::FindFace(const Face &face, size_t &index) const
 {
-	for (index = 0; index < _faces.size(); index++)
-		if (_faces[index]==face)
-			return true;
-
-	return false;
+	hash_type::const_iterator it = _hash.find(face);
+	if (it == _hash.end())
+		return false;
+	index = it->second;
+	return true;
 }
 
 size_t TessellationBase::FaceStore::StoreFace(const vector<VectorRef> &vertices, size_t neighbor1, size_t neighbor2)
@@ -27,6 +27,7 @@ size_t TessellationBase::FaceStore::StoreFace(const vector<VectorRef> &vertices,
 
 	index = _faces.size();
 	_faces.push_back(face);
+	_hash[face] = index;
 	return index;
 }
 

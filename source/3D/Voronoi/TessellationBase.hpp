@@ -27,6 +27,8 @@ protected:
 	{
 	private:
 		std::vector<Face> _faces;
+		typedef std::unordered_map<Face, size_t> hash_type;
+		hash_type _hash;
 		bool FindFace(const Face &face, size_t &index) const;
 
 	public:
