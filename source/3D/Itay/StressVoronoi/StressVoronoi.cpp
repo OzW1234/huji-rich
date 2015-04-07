@@ -3,10 +3,11 @@
 
 #include "GeometryCommon/Vector3D.hpp"
 #include "GeometryCommon/OuterBoundary3D.hpp"
-#include "Voronoi/VoroPlusPlus.hpp"
 #include "Voronoi/GhostBusters.hpp"
 #include "Voronoi/TetGenDelaunay.hpp"
 #include "Voronoi/TetGenTessellation.hpp"
+
+#include <boost/chrono.hpp>
 
 #include <vector>
 #include <cstdlib>
@@ -90,12 +91,6 @@ int main(int argc, char*argv[])
 		RunVoronoi(del, "periodic");
 		WritePoints(del->AllPoints, "periodic.node");
 		WritePoints(del->AllPoints, "periodic.m");
-	}
-
-	if (args.RunVoroPlusPlus)
-	{
-		VoroPlusPlus *voro = new VoroPlusPlus();
-		RunVoronoi(voro, "voro++");
 	}
 
 	CompareTessellations();
@@ -292,7 +287,10 @@ static vector<Vector3D> RandomPoints(int num, const OuterBoundary3D &boundary)
 void RunVoronoi(Tessellation3D *tes, const std::string name)
 {
 	cout << "Running " << name << "..." << endl;
+	boost::chrono::process_cpu_clock::time_point start = boost::chrono::process_cpu_clock::now();
 	tes->Initialise(points, *boundary);
+	boost::chrono::process_cpu_clock::time_point end = boost::chrono::process_cpu_clock::now();
+	cout << name << " execution time: " << end - start << endl;
 	tessellations[name] = tes;
 
 	cout << "Writing results..." << endl;

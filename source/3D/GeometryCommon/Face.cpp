@@ -5,18 +5,18 @@
 
 using namespace std;
 
-Face::Face(vector<VectorRef> const& vert):
-  vertices(vert),_neighbors() 
+Face::Face(const vector<VectorRef> &vert, boost::optional<size_t> neighbor1, boost::optional<size_t> neighbor2) :
+	vertices(vert), _neighbor1(neighbor1), _neighbor2(neighbor2)
 {
+
 }
 
-Face::Face(): vertices(), _neighbors() 
-{
-}
+const Face Face::Empty = Face(vector<VectorRef>());  // An empty face with no vertices
 
-Face::Face(Face const& other):
+Face::Face(const Face &other):
   vertices(other.vertices),
-  _neighbors(other._neighbors) 
+  _neighbor1(other._neighbor1) ,
+  _neighbor2(other._neighbor2)
 {
 }
 
@@ -41,7 +41,7 @@ void Face::CalculateCentroid() const
 	Vector3D middle;
 	for (vector<VectorRef>::const_iterator itVertex = vertices.begin(); itVertex != vertices.end(); itVertex++)
 		middle = middle + **itVertex;
-	middle = middle / vertices.size();
+	middle = middle / (double)vertices.size();
 
 	// Now split into triangles - (middle, V0, V1), (middle, V1, V2), (middle, V2, V3) ... (middle, Vn, V0)
 	double totalArea = 0.0;
@@ -125,26 +125,6 @@ bool Face::IdenticalTo(const vector<VectorRef> &otherVertices) const
 	return sizeFound;
 }
 
-void Face::AddNeighbor(size_t cell)
-{
-	// Allow a neighbor to be added multiple times by ignoring it silently
-	for (auto it = _neighbors.begin(); it != _neighbors.end(); it++)
-	{
-		if (*it == cell)
-			return;
-	}
-
-	// If we get here, we need to add a new neighbor
-	if (_neighbors.size() == 2)
-	{
-		stringstream strm;
-		strm << "Can't add third neighrbor to cell " << cell;
-		throw UniversalError(strm.str());
-	}
-
-	_neighbors.push_back(cell);
-}
-
 Vector3D calc_centroid(const Face& face)
 {
 	Vector3D res;
@@ -186,9 +166,11 @@ static bool CompareAngledVertices(const AngledVertex &a1, const AngledVertex &a2
 	return diff < -EPSILON;
 }
 
-void Face::ReorderVertices()
+Face Face::ReorderVertices()
 {
 	Vector3D center;
+	std::vector<VectorRef> reordered;
+
 	// We need to sort the vectors and angles together (no standard C++ sort returns the sorting permutation)
 	std::vector<std::pair<double, VectorRef>> angledVertices(vertices.size());
 
@@ -207,16 +189,24 @@ void Face::ReorderVertices()
 	std::sort(angledVertices.begin(), angledVertices.end(), CompareAngledVertices);
 	
 	for (size_t i = 0; i < vertices.size(); i++)  // Copy the results
-		vertices[i] = angledVertices[i].second;
+		reordered.push_back(angledVertices[i].second);
+
+	return Face(reordered, _neighbor1, _neighbor2);
 }
 
 bool operator==(const Face &face1, const Face &face2)
 {
-	if (face1.vertices.size() != face2.vertices.size())
+	size_t sizeFace1 = face1.vertices.size();
+	size_t sizeFace2 = face2.vertices.size();
+	if (sizeFace1!=sizeFace2)
 		return false;
-	std::hash<Face> hasher;
 
-	if (hasher(face1) != hasher(face2))
+	//	if (face1.vertices.size() != face2.vertices.size())
+	std::hash<Face> hasher;
+	size_t hash1 = hasher(face1);
+	size_t hash2 = hasher(face2);
+	//if (hasher(face1) != hasher(face2))
+	if (hash1!=hash2)
 		return false;
 
 	// This is a naive O(N^2) implementation, which beats a clever O(N) with hash tables hands down,

@@ -18,7 +18,7 @@ class Face
 {
 	// TODO: Make Face immutable - created with the neighbors and that's it.
 private:
-	std::vector<size_t> _neighbors;
+	boost::optional<size_t> _neighbor1, _neighbor2;
 	mutable boost::optional<double> _area; // Mutable because these are cached
 	mutable boost::optional<Vector3D> _centroid;
 
@@ -26,44 +26,22 @@ private:
 	void CalculateCentroid() const;
 
 public:
+	static const Face Empty;   // An empty face
+
 	//! \brief Points at the ends of the edge
-	std::vector<VectorRef> vertices;
+	const std::vector<VectorRef> vertices;
 
-	/*! \brief Class constructor
-	\param vert Position of the vertices
-	*/
-	Face(vector<VectorRef> const& vert);
-	//Face(const vector<Vector3D> &vert);
-	//! \brief Default constructor
-	Face();
+	Face(const std::vector<VectorRef> &verts, boost::optional<size_t> neighbor1=boost::none, boost::optional<size_t> neighbor2=boost::none);
+	Face(const Face &other);
 
-
-	/*! \brief Copy constructor
-	\param other Source Face
-	*/
-	Face(Face const& other);
-
-	/*! \brief Add a neighbor cell
-		\param cell - the neighbor cell's index
-		\param overlapping - True if the neighbor is an 'overlapping neighbor', due to overlapping boundaries.
-		\remark For now this method asserts if two neighbors already exist. An exception may be added later.
-		\remark Adding an already existing neighbor is legal
-		\throws UniversalError { if the cell already has two neighbors }
-	*/
-	void AddNeighbor(size_t cell);
-
-	size_t NumNeighbors() const { return _neighbors.size(); }
+	size_t NumNeighbors() const { return (_neighbor1.is_initialized() ? 1 : 0) + (_neighbor2.is_initialized() ? 1 : 0); }
 	boost::optional<size_t> Neighbor1() const 
 	{
-		if (_neighbors.size() > 0)
-			return _neighbors[0];
-		return boost::none;
+		return _neighbor1;
 	}
 	boost::optional<size_t> Neighbor2() const
 	{
-		if (_neighbors.size() > 1)
-			return _neighbors[1];
-		return boost::none;
+		return _neighbor2;
 	}
 
 	boost::optional<size_t> OtherNeighbor(int cell)
@@ -84,11 +62,12 @@ public:
 	Vector3D GetCentroid() const;
 
 	/*! \brief Reorders the vertices based on their angle from the center
+	\returns A new face - reordered
 	\remark This is useful when the face order wasn't constructed properly
 	\remark It is assumed the vertices are all coplanar
 	\remark It is assumed the vertices form a convex polygon
 	*/
-	void ReorderVertices();
+	Face ReorderVertices();
 
 	/*! \brief Sees if the face is identical to a list of vertices
 	\param List of vertices

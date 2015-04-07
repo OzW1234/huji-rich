@@ -11,7 +11,6 @@ struct Arguments
 	int NumPoints;
 	std::string OutputDirectory;
 	std::string InputFile;
-	bool RunVoroPlusPlus;
 	bool RunBruteForce;
 	bool RunFullBruteForce;
 	bool RunRigidWall;

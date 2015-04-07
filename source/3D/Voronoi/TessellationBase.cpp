@@ -17,9 +17,9 @@ bool TessellationBase::FaceStore::FindFace(const Face &face, size_t &index) cons
 	return false;
 }
 
-size_t TessellationBase::FaceStore::StoreFace(const vector<VectorRef> &vertices)
+size_t TessellationBase::FaceStore::StoreFace(const vector<VectorRef> &vertices, size_t neighbor1, size_t neighbor2)
 {
-	Face face(vertices);
+	Face face(vertices, neighbor1, neighbor2);
 	size_t index;
 	bool exists = FindFace(face, index);
 	if (exists)

@@ -9,7 +9,7 @@
 #include "GhostBusters.hpp"
 #include "TetGenDelaunay.hpp"
 #include "../GeometryCommon/CellCalculations.hpp"
-
+#include <boost/shared_ptr.hpp>
 #include <unordered_set>
 
 template <typename GhostBusterType>
@@ -39,7 +39,7 @@ private:
 
 	// TetGenDelaunay creates Voronoi cells for all the ghost points, too. We just need the cells of the original
 	// points, which are the first _meshPoints.size() cells, and the faces that  are part of these cells.
-	std::vector<boost::optional<Face>> _allFaces;  // All relevant faces
+	std::vector<boost::shared_ptr<Face>> _allFaces;  // All relevant faces
 	std::vector<double> _cellVolumes;		    // Volumes of the TetGenDelaunay calculated cells
 
 	std::vector<Vector3D> _allPoints;			// Includes the mesh points followed by the ghost points
@@ -168,13 +168,13 @@ void TetGenTessellation<GhostBusterType>::ExtractTetGenFaces(const TetGenDelauna
 {
 	const std::vector<Face> _tetgenFaces = del.GetVoronoiFaces();
 
-	_allFaces.assign(_tetgenFaces.size(), boost::none);
+	_allFaces.resize(_tetgenFaces.size());
 	for (size_t cellNum = 0; cellNum < _meshPoints.size(); cellNum++)
 	{
 		const std::vector<size_t> &faceIndices = del.GetVoronoiCellFaces(cellNum);
 		for (std::vector<size_t>::const_iterator it = faceIndices.begin(); it != faceIndices.end(); it++)
-			if (!_allFaces[*it].is_initialized())
-				_allFaces[*it] = _tetgenFaces[*it];
+			if (!_allFaces[*it])
+				_allFaces[*it].reset(new Face(_tetgenFaces[*it]));
 	}
 }
 
@@ -207,7 +207,7 @@ void TetGenTessellation<GhostBusterType>::CalculateTetGenVolumes(const TetGenDel
 template<typename GhostBusterType>
 void TetGenTessellation<GhostBusterType>::OptimizeFace(size_t faceNum)
 {
-	if (!_allFaces[faceNum].is_initialized())
+	if (!_allFaces[faceNum])
 		return;
 
 	const Face &face = *_allFaces[faceNum];
@@ -240,11 +240,13 @@ void TetGenTessellation<GhostBusterType>::OptimizeFace(size_t faceNum)
 
 	if (vertices.size() == face.vertices.size())  // No change in the face
 		return;
-
+	
 	if (vertices.size() < 3)  // Degenerate face
-		_allFaces[faceNum] = boost::none;
+		_allFaces[faceNum].reset();
 	else
-		_allFaces[faceNum]->vertices = vertices;
+	{
+		_allFaces[faceNum].reset(new Face(vertices, face.Neighbor1(), face.Neighbor2()));
+	}
 }
 
 template<typename GhostBusterType>
@@ -257,18 +259,15 @@ void TetGenTessellation<GhostBusterType>::ConstructCells(const TetGenDelaunay &d
 		const std::vector<size_t> &tetGenFaceNums = del.GetVoronoiCellFaces(cellNum);
 		for (std::vector<size_t>::const_iterator it = tetGenFaceNums.begin(); it != tetGenFaceNums.end(); it++)
 		{
-			if (!_allFaces[*it].is_initialized())  // Face was removed
+			if (!_allFaces[*it])  // Face was removed
 				continue;
 
 			const Face &tetGenFace = *_allFaces[*it];
 			BOOST_ASSERT(tetGenFace.NumNeighbors() == 2);  // Sanity check, this has been checked previously
-			size_t ourFaceIndex = _faces.StoreFace(tetGenFace.vertices);
+			size_t ourFaceIndex = _faces.StoreFace(tetGenFace.vertices, *tetGenFace.Neighbor1(), *tetGenFace.Neighbor2());
 			Face &ourFace = _faces.GetFace(ourFaceIndex);
 
 			ourFaceIndices.push_back(ourFaceIndex);
-			// Add the two neighbors of the original face (because we want to add ghost neighbors as well)
-			ourFace.AddNeighbor(*tetGenFace.Neighbor1());
-			ourFace.AddNeighbor(*tetGenFace.Neighbor2());
 		}
 
 		double volume;

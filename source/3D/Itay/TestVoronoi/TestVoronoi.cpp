@@ -5,7 +5,6 @@
 #include "GeometryCommon/Face.hpp"
 #include "GeometryCommon/Vector3D.hpp"
 #include "Voronoi/TessellationBase.hpp"
-#include "Voronoi/VoroPlusPlus.hpp"
 #include "Utilities/assert.hpp"
 #include "GeometryCommon/OuterBoundary3D.hpp"
 #include "Voronoi/TetGenTessellation.hpp"
@@ -34,16 +33,16 @@ TEST(VoroPlusPlus, FaceStore)
 		int numVertices = rand() % 6 + 3;
 		for (int j = 0; j < numVertices; j++)
 			vertices.push_back(Vector3D(rand(), rand(), rand()));
-		size_t index = store.StoreFace(vertices);
+		size_t index = store.StoreFace(vertices, 1, 2);
 		ASSERT_EQ(index, i);
-		size_t index2 = store.StoreFace(vertices);
+		size_t index2 = store.StoreFace(vertices, 2, 3);
 		ASSERT_EQ(index2, index);
 		faces.push_back(store.GetFace(index));
 	}
 
 	for (int i = 99; i >= 0; i--)
 	{
-		size_t index = store.StoreFace(faces[i].vertices);
+		size_t index = store.StoreFace(faces[i].vertices, 4, 5);
 		ASSERT_EQ(index, i);
 	}
 }
@@ -109,17 +108,6 @@ void EnsureCubeVoronoi(const vector<Vector3D> &mesh, const Tessellation3D &tes)
 		EXPECT_NEAR(dist, 0.0, 1e-12);
 		EXPECT_NEAR(tes.GetVolume(pt), 1.0, 1e-12);
 	}
-}
-
-TEST(VoroPlusPlus, Cube)
-{
-	vector<Vector3D> mesh = CreateCubeMesh(5);
-
-	VoroPlusPlus tes;
-	OuterBoundary3D boundary(Vector3D(4.5, 4.5, 4.5),
-		Vector3D(-0.5, -0.5, -0.5));
-	tes.Initialise(mesh, boundary);
-	EnsureCubeVoronoi(mesh, tes);
 }
 
 TEST(TetGenDelaunay, Cube)

@@ -4,8 +4,18 @@
 //\remarks This is a template class (the template argument being the specific Delaunay implementation),
 // so everything is in this file - no cpp file for us.
 
+// The implementation of this code was stopped in the middle, because Elad came up with an idea
+// to use TetGen's Voronoi implementation.
+
+// So this entire file is commented out
+
+
 #ifndef DELAUNAY_VORONOI_HPP
 #define DELAUNAY_VORONOI_HPP 1
+
+#error This file is no longer supported, please do not include it.
+
+#if false
 
 #include <boost/shared_ptr.hpp>
 #include <boost/type_traits.hpp>
@@ -312,4 +322,7 @@ std::vector<Tetrahedron> DelaunayVoronoi<DelaunayType, GhostBusterType>::SplitCe
 	return tetrahedra;
 }
 
+#endif
+
 #endif // DELAUNAY_VORONOI_HPP
+

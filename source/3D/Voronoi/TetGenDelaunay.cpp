@@ -274,7 +274,7 @@ Face TetGenDelaunay::GetVoronoiFace(size_t faceNum) const
 	const vector<int> &edgeList = _voronoiFaceEdges[faceNum];
 
 	if (edgeList.back() == -1)
-		return Face();   // Return an empty face
+		return Face::Empty;   // Return an empty face
 
 	vector<int> indices;
 	pair<int, int> previous = _voronoiEdges[edgeList.back()];
@@ -298,18 +298,25 @@ Face TetGenDelaunay::GetVoronoiFace(size_t faceNum) const
 	{
 		BOOST_ASSERT(*it >= 0); // We shouldn't be asking for any rays!
 		if (*it == -1)
-			return Face();
+			return Face::Empty;
 		face.push_back(_voronoiVertices[*it]);
 	}
 
-	Face newFace(VectorRef::vector(face));
 
-	// Add the two neighbors now
+	// Set the two neighbors 
 	pair<int, int> neighbors = _voronoiFaceNeighbors[faceNum];
+	boost::optional<size_t> neighbor1, neighbor2;
 	if (neighbors.first >= 0)
-		newFace.AddNeighbor(neighbors.first);
-	if (neighbors.second >= 0)
-		newFace.AddNeighbor(neighbors.second);
+	{
+		neighbor1 = neighbors.first;
+		if (neighbors.second >= 0)
+			neighbor2 = neighbors.second;
+	}
+	else if (neighbors.second >= 0)
+		neighbor1 = neighbors.second;
+
+	// And create the face
+	Face newFace(VectorRef::vector(face), neighbor1, neighbor2);
 
 	return newFace;
 }

@@ -1,10 +1,17 @@
 /*! \file VoroPlusPlus.hpp
 \brief A Tessalation3D implementation that is a simple wrapper around the Voro++ library
 \author Itay Zandbank
+
+VoroPlusPlus is no longer supported, since it doesn't handle ghost points, so faces are not guaranteed to have
+two neighbors, which is required by the FaceStore class.
 */
 
 #ifndef VOROPLUSPLUS_HPP
 #define VOROPLUSPLUS_HPP
+
+#error This file is no longer supported, please do not include it.
+
+#ifdef false
 
 #include "../GeometryCommon/OuterBoundary3D.hpp"
 #include "../GeometryCommon/Tessellation3D.hpp"
@@ -60,4 +67,5 @@ private:
 	void RunVoronoi();
 };
 
+#endif
 #endif // VOROPLUSPLUS_HPP

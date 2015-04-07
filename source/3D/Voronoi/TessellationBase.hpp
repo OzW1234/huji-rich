@@ -30,7 +30,7 @@ protected:
 		bool FindFace(const Face &face, size_t &index) const;
 
 	public:
-		size_t StoreFace(const std::vector<VectorRef>& vertices);
+		size_t StoreFace(const std::vector<VectorRef>& vertices, size_t neighbor1, size_t neighbor2);
 
 		const Face& GetFace(size_t index) const { return _faces[index]; }
 		Face& GetFace(size_t index) { return _faces[index]; }

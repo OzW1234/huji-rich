@@ -1,3 +1,9 @@
+// The VoroPlusPlus wrapper is no longer necessary, and in fact - incompatible with the FaceStore interface (which
+// requires two neighbors for each face). Since VoroPlusPlus doesn't handle Ghost Points, adding this support is
+// problematic. So this file is no longer used
+
+#ifdef false
+
 #include "VoroPlusPlus.hpp"
 #include <vector>
 #include <set>
@@ -197,3 +203,5 @@ vector<Vector3D> VoroPlusPlusImpl::ExtractAllVertices(Vector3D meshPoint, voro::
 
 	return our_vertices;
 }
+
+#endif

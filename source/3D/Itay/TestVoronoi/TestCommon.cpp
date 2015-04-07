@@ -84,16 +84,6 @@ TEST(Geometry3D, Face_Basic)
 	Face face(vertices);
 
 	ASSERT_EQ(vertices, face.vertices);
-
-	Face face2(vertices);
-	face2.AddNeighbor(5);
-	ASSERT_FALSE(face2.Neighbor2().is_initialized());
-	ASSERT_TRUE(face2.Neighbor1().is_initialized());
-	face2.AddNeighbor(3);
-	ASSERT_EQ(vertices, face2.vertices);
-	ASSERT_TRUE(face2.Neighbor2().is_initialized());
-	ASSERT_EQ(*face2.Neighbor1(), 5);
-	ASSERT_EQ(*face2.Neighbor2(), 3);
 }
 
 TEST(Geometry3D, Face_Area)
@@ -109,18 +99,6 @@ TEST(Geometry3D, Face_Area)
 	ASSERT_EQ(triangle.GetArea(), 2);
 }
 
-TEST(Geometry3D, Face_Neighbors)
-{
-	Vector3D v1(0, 0, 0), v2(1, 0, 0), v3(1, 1, 0), v4(0, 1, 0);
-	vector<VectorRef> vertices{ v1, v2, v3, v4 };
-	Face face1(vertices);
-
-	face1.AddNeighbor(1);
-	face1.AddNeighbor(2);
-	face1.AddNeighbor(2);
-	face1.AddNeighbor(1);
-	ASSERT_THROW(face1.AddNeighbor(3), UniversalError);
-}
 
 TEST(Geometry3D, Face_Identical)
 {
@@ -146,7 +124,7 @@ TEST(Geometry3D, Face_Order)
 	random_shuffle(reshuffled.begin(), reshuffled.end());
 
 	Face face(reshuffled);
-	face.ReorderVertices();
+	Face reordered = face.ReorderVertices();
 
 	ASSERT_TRUE(face.IdenticalTo(orig));
 }
