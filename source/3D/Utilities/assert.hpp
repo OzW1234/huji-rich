@@ -7,6 +7,10 @@
 #ifndef ASSERT_HPP
 #define ASSERT_HPP 1
 
+#ifdef NDEBUG
+#define BOOST_DISABLED_ASSERTS
+#endif
+
 #define BOOST_ENABLE_ASSERT_HANDLER
 #include <boost/assert.hpp>
 

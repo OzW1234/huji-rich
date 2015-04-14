@@ -52,6 +52,17 @@ VectorRef::VectorRef()
 	_id = (size_t)-1;
 }
 
+VectorRef::VectorRef(const VectorRef &other)
+{
+	_id = other._id;
+}
+
+VectorRef VectorRef::operator=(const VectorRef &other)
+{
+	_id = other._id;
+	return *this;
+}
+
 const Vector3D &VectorRef::operator*() const
 {
 	return theRepository.GetVector(_id);

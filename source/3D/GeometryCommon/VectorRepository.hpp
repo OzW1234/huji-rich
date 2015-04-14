@@ -15,6 +15,7 @@ private:
 
 public:
 	VectorRef(const Vector3D &vector);
+	VectorRef(const VectorRef &other);
 	VectorRef();
 
 	const Vector3D *operator->() const;
@@ -23,6 +24,7 @@ public:
 	friend std::hash<VectorRef> ;
 	friend bool operator==(const VectorRef &v1, const VectorRef &v2);
 	friend bool operator<(const VectorRef &v1, const VectorRef &v2);
+	VectorRef operator=(const VectorRef &other);
 
 	static std::vector<VectorRef> vector(const std::vector<Vector3D> &points)
 	{

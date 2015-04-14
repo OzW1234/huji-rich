@@ -105,7 +105,7 @@ RigidWallGhostBuster::breach_map RigidWallGhostBuster::FindHullBreaches(const De
 
 		for (unordered_set<size_t>::iterator itTetra = candidateTetrahedra.begin(); itTetra != candidateTetrahedra.end(); itTetra++)
 		{
-			Tetrahedron t = del[*itTetra];
+			const Tetrahedron &t = del[*itTetra];
 			for (int iv = 0; iv < 4; iv++)
 			{
 				VectorRef pt = t[iv];
@@ -122,7 +122,7 @@ RigidWallGhostBuster::breach_map RigidWallGhostBuster::FindHullBreaches(const De
 					/*if (contains(outerTetrahedra, *itTetrahedron))
 						continue; */
 
-					Tetrahedron tetrahedron = del[*itTetrahedron];
+					const Tetrahedron &tetrahedron = del[*itTetrahedron];
 					bool breaching = false;
 					const set<Subcube> &subcubes = GetAllSubcubes();
 					for (set<Subcube>::const_iterator itSubcube = subcubes.begin(); itSubcube != subcubes.end(); itSubcube++)
