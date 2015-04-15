@@ -31,13 +31,15 @@ bool ParseArguments(int argc, char *argv[], Arguments &args)
 	if (!CheckArguments(vm))
 		return false;
 	po::notify(vm);
+	args.SaveOutput = args.OutputDirectory != "NONE";
+
 	if (!args.RunBruteForce && !args.RunRigidWall && !args.RunFullBruteForce)
 	{
 		cerr << "Please specify at least one of the Voronoi run modes" << endl;
 		return false;
 	}
 
-	if (!boost::filesystem::is_directory(args.OutputDirectory))
+	if (args.SaveOutput && !boost::filesystem::is_directory(args.OutputDirectory))
 	{
 		cerr << args.OutputDirectory << " is not a valid directory" << endl;
 		return false;
@@ -59,7 +61,7 @@ static po::options_description InitOptions(Arguments &args)
 		("help", "Show help message")
 		("points,N", po::value<int>(&args.NumPoints), "Number of points")
 		("input,I", po::value<string>(&args.InputFile), "Input file")
-		("output,O", po::value<string>(&args.OutputDirectory)->default_value("."), "Output directory")
+		("output,O", po::value<string>(&args.OutputDirectory)->default_value("NONE"), "Output directory")
 		("brute-force", po::value<bool>(&args.RunBruteForce)->default_value(true), "Run Tetgen with Brute Force ghosts")
 		("full-brute-force", po::value<bool>(&args.RunFullBruteForce)->default_value(true), "Run Tetgen with Full Brute Force ghosts (all 26 subcubes)")
 		("rigid-wall", po::value<bool>(&args.RunRigidWall)->default_value(false), "Run Tetgen with optimized Rigid Wall ghosts")

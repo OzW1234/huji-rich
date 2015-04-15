@@ -132,8 +132,12 @@ static bool Initialize()
 		points = RandomPoints(args.NumPoints, *boundary);
 		cout << "Generated " << points.size() << " points" << endl;
 	}
-	WritePoints(points, "orig.node");
-	WriteMatlabPoints(points, "orig.m");
+
+	if (args.SaveOutput)
+	{
+		WritePoints(points, "orig.node");
+		WriteMatlabPoints(points, "orig.m");
+	}
 
 	for (vector<Vector3D>::iterator it = points.begin(); it != points.end(); it++)
 		namer.GetName(*it, "C");
@@ -293,29 +297,32 @@ void RunVoronoi(Tessellation3D *tes, const std::string name)
 	cout << name << " execution time: " << end - start << endl;
 	tessellations[name] = tes;
 
-	cout << "Writing results..." << endl;
-	fs::path full_path = fs::path(args.OutputDirectory) / (name + ".out");
-	ofstream output;
-	output.open(full_path.string());
-
-	for (unsigned i = 0; i < tes->GetPointNo(); i++)
+	if (args.SaveOutput)
 	{
-		auto faces = tes->GetCellFaces(i);
-		output << "Cell " << namer.GetName(points[i]) << " at " << points[i] << " with " << faces.size() << " faces" << endl;
-		// cout << "\tVolume: " << tes.GetVolume(i) << ", Center of Mass: " << namer.GetName(tes.GetCellCM(i)) << tes.GetCellCM(i) << endl;
-		for (unsigned j = 0; j < faces.size(); j++)
-		{
-			auto face = tes->GetFace(faces[j]);
+		cout << "Writing results..." << endl;
+		fs::path full_path = fs::path(args.OutputDirectory) / (name + ".out");
+		ofstream output;
+		output.open(full_path.string());
 
-			output << "\tFace F" << faces[j];
-			if (face.OtherNeighbor(i).is_initialized())
-				output << " neighbor C" << *face.OtherNeighbor(i) + 1;
-			output << endl;
-			for (auto it = face.vertices.begin(); it != face.vertices.end(); it++)
+		for (unsigned i = 0; i < tes->GetPointNo(); i++)
+		{
+			auto faces = tes->GetCellFaces(i);
+			output << "Cell " << namer.GetName(points[i]) << " at " << points[i] << " with " << faces.size() << " faces" << endl;
+			// cout << "\tVolume: " << tes.GetVolume(i) << ", Center of Mass: " << namer.GetName(tes.GetCellCM(i)) << tes.GetCellCM(i) << endl;
+			for (unsigned j = 0; j < faces.size(); j++)
 			{
-				output << "\t\t" << namer.GetName(*it) << " " << *it << endl;
+				auto face = tes->GetFace(faces[j]);
+
+				output << "\tFace F" << faces[j];
+				if (face.OtherNeighbor(i).is_initialized())
+					output << " neighbor C" << *face.OtherNeighbor(i) + 1;
+				output << endl;
+				for (auto it = face.vertices.begin(); it != face.vertices.end(); it++)
+				{
+					output << "\t\t" << namer.GetName(*it) << " " << *it << endl;
+				}
+				output << endl;
 			}
-			output << endl;
 		}
 	}
 }

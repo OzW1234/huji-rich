@@ -18,11 +18,13 @@ private:
 	mutable boost::optional<Vector3D> _center;   // Caches the center, which doesn't really change the object
 	mutable boost::optional<double> _volume;     // Another cache
 	mutable boost::optional<double> _radius;
+	mutable boost::optional<double> _radius2;
 	mutable boost::optional<Vector3D> _centerOfMass;
 
 	Vector3D CalculateCenter() const;
 	double CalculateVolume() const;
 	double CalculateRadius() const;
+	double CalculateRadius2() const;
 	Vector3D CalculateCenterOfMass() const;
 
 public:
@@ -33,6 +35,7 @@ public:
 	Vector3D center() const;
 	double volume() const;
 	double radius() const;
+	double radius2() const; // Radius**2
 	Vector3D centerOfMass() const;
 
 	const vector<VectorRef>& vertices() const { return _vertices; }

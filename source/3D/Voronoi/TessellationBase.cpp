@@ -201,6 +201,26 @@ Vector3D TessellationBase::Normal(size_t faceIndex) const
 	return center2 - center1;
 }
 
+boost::optional<size_t> TessellationBase::FindFaceWithNeighbors(size_t n0, size_t n1) const
+{
+	BOOST_ASSERT(n0 != n1);
+	BOOST_ASSERT(!IsGhostPoint(n0) || !IsGhostPoint(n1));
+
+	if (n0 > n1)
+		swap(n0, n1);
+	BOOST_ASSERT(!IsGhostPoint(n0));
+
+	const std::vector<size_t>& cellFaces = _cells[n0].GetFaces();  // Guaranteed not to be a ghost point
+	for (std::vector<size_t>::const_iterator itFace = cellFaces.begin(); itFace != cellFaces.end(); itFace++)
+	{
+		const Face &face = _faces.GetFace(*itFace);
+		if (face.OtherNeighbor(n0) == n1)
+			return *itFace;
+	}
+
+	return boost::none;
+}
+
 /*!
 \brief Calculates the velocity of a face
 \param p0 The index of the first neighbor
@@ -212,9 +232,11 @@ Vector3D TessellationBase::Normal(size_t faceIndex) const
 Vector3D TessellationBase::CalcFaceVelocity(size_t p0, size_t p1, Vector3D const& v0,
 	Vector3D const& v1) const
 {
-	boost::optional<size_t> faceIndex = _faces.FindFace(p0, p1);
+
+	boost::optional<size_t> faceIndex = FindFaceWithNeighbors(p0, p1); //  _faces.FindFace(p0, p1);
 	if (!faceIndex.is_initialized())
 		throw invalid_argument("Can't find face");
+
 	const Face &face = _faces.GetFace(*faceIndex);
 
 	Vector3D r0 = GetMeshPoint(p0);

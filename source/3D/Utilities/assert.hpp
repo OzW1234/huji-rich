@@ -9,9 +9,10 @@
 
 #ifdef NDEBUG
 #define BOOST_DISABLED_ASSERTS
+#else
+#define BOOST_ENABLE_ASSERT_HANDLER
 #endif
 
-#define BOOST_ENABLE_ASSERT_HANDLER
 #include <boost/assert.hpp>
 
 /*! \brief Function pointer to the assertion handler.

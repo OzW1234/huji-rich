@@ -127,7 +127,7 @@ RigidWallGhostBuster::breach_map RigidWallGhostBuster::FindHullBreaches(const De
 					const set<Subcube> &subcubes = GetAllSubcubes();
 					for (set<Subcube>::const_iterator itSubcube = subcubes.begin(); itSubcube != subcubes.end(); itSubcube++)
 					{
-						if (boundary.distance(tetrahedron.center(), *itSubcube) < tetrahedron.radius())
+						if (boundary.distance2(tetrahedron.center(), *itSubcube) < tetrahedron.radius2())
 						{
 							if (breaches.find(*itSubcube) == breaches.end())
 							{

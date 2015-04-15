@@ -92,6 +92,12 @@ protected:
 	//\brief Makes sure all the points are well inside the boundary. Throws an exception if not.
 	void CheckBoundaryConformance(const std::vector<Vector3D> &points) const;
 
+	//\brief Finds a face with two neighbors
+	//\param n0 The first neighbor
+	//\param n1 The second neighbor
+	//\returns The index of the face with the two neighbors, or boost::none if none.
+	boost::optional<size_t> FindFaceWithNeighbors(size_t n0, size_t n1) const;
+
 public:
 	// Partial implementation of the Tessellation3D interface
 
