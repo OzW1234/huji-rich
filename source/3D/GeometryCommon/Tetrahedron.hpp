@@ -15,10 +15,10 @@ class Tetrahedron
 {
 private:
 	std::vector<VectorRef> _vertices;
-	mutable boost::optional<VectorRef> _center;   // Caches the center, which doesn't really change the object
+	mutable boost::optional<Vector3D> _center;   // Caches the center, which doesn't really change the object
 	mutable boost::optional<double> _volume;     // Another cache
 	mutable boost::optional<double> _radius;
-	mutable boost::optional<VectorRef> _centerOfMass;
+	mutable boost::optional<Vector3D> _centerOfMass;
 
 	Vector3D CalculateCenter() const;
 	double CalculateVolume() const;
@@ -30,10 +30,10 @@ public:
 	Tetrahedron(const std::vector<VectorRef> &vertices);
 	Tetrahedron(const VectorRef v1, const VectorRef v2, const VectorRef v3, const VectorRef v4);
 
-	VectorRef center() const;
+	Vector3D center() const;
 	double volume() const;
 	double radius() const;
-	VectorRef centerOfMass() const;
+	Vector3D centerOfMass() const;
 
 	const vector<VectorRef>& vertices() const { return _vertices; }
 	const VectorRef& operator[](size_t index) const { return _vertices[index]; }

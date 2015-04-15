@@ -22,7 +22,7 @@ Tetrahedron::Tetrahedron(const VectorRef v1, const VectorRef v2, const VectorRef
 	_vertices[3] = v4;
 }
 
-VectorRef Tetrahedron::center() const
+Vector3D Tetrahedron::center() const
 {
 	if (!_center.is_initialized())
 		_center = CalculateCenter();
@@ -43,7 +43,7 @@ double Tetrahedron::radius() const
 	return *_radius;
 }
 
-VectorRef Tetrahedron::centerOfMass() const
+Vector3D Tetrahedron::centerOfMass() const
 {
 	if (!_centerOfMass.is_initialized())
 		_centerOfMass = CalculateCenterOfMass();
@@ -108,7 +108,7 @@ double Tetrahedron::CalculateVolume() const
 double Tetrahedron::CalculateRadius() const
 {
 	// The radius is the distance between the center and any of the vertices.
-	return abs(*center() - *_vertices[0]);
+	return abs(center() - *_vertices[0]);
 }
 
 Vector3D Tetrahedron::CalculateCenterOfMass() const
