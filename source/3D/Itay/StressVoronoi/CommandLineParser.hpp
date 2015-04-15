@@ -15,6 +15,7 @@ struct Arguments
 	bool RunFullBruteForce;
 	bool RunRigidWall;
 	bool RunPeriodic;
+	bool SaveOutput;
 };
 
 

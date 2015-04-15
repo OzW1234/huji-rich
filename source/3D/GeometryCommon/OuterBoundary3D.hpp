@@ -34,6 +34,13 @@ public:
 	//\param subcube The subcube - from '---' to '+++'.
 	double distance(const Vector3D &pt, const Subcube subcube) const;
 
+	//\brief Returns the square of the distance from the point, taking the subcube into account
+	//\param pt The point
+	//\param subcube The subcube - from '---' to '+++'.
+	//\remarks distance2(pt, subcube) = distance(pt, subcube) ** 2
+	double distance2(const Vector3D &pt, const Subcube subcube) const;
+
+
 	//\brief returns the vector to the subcube. The vector is the shortest
 	// to that subcube.
 	//\param pt The Point

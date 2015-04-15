@@ -1,10 +1,16 @@
+#define NO_HDF5
+
 #include <iostream>
 #include <string>
 #include "../../newtonian/three_dimensional/eulerian_3d.hpp"
 #include "../../newtonian/three_dimensional/CourantFriedrichsLewy.hpp"
 #include "../../newtonian/three_dimensional/hdsim_3d.hpp"
 #include "../../newtonian/three_dimensional/FirstOrderHydroFlux.hpp"
+
+#ifndef NO_HDF5
 #include "../../newtonian/three_dimensional/3D_hdf5.hpp"
+#endif
+
 #include "../GeometryCommon/OuterBoundary3D.hpp"
 #include "../../newtonian/three_dimensional/default_cell_updater.hpp"
 #include "../Voronoi/TetGenTessellation.hpp"
@@ -41,9 +47,9 @@ void main()
 {
 	int nx=20, ny = 20, nz = 20;
 	Vector3D bll(-1, -1, -1), fur(1, 1, 1);
-	RectangularBoundary3D outer(fur, bll);
+	OuterBoundary3D outer(fur, bll);
 	vector<Vector3D> points = RandSquare(nx*ny*nz, bll, fur);
-	TetGenTessellation<CloseToBoundaryGhostBuster> tess;
+	TetGenTessellation<RigidWallGhostBuster> tess;
 	tess.Initialise(points, outer);
 
 	IdealGas eos(5. / 3.);
@@ -69,7 +75,7 @@ void main()
 	HDSim3D sim(tess,cells, eos, pm, timestep, flux_calc, cell_update);
 
 	//Run the simulation
-	for (int i = 0; i < 40; ++i)
+	for (int i = 0; i < 2; ++i)
 	{
 
 		cout << i << endl;
@@ -77,7 +83,10 @@ void main()
 	}
 
 	// Output the data
+#ifndef NO_HDF5
 	write_snapshot_to_hdf5(sim, "c:/sim_data/final.h5");
+#endif
+
 #ifdef _DEBUG
 	cout << "Done, press ENTER to finish" << endl;
 	string s;

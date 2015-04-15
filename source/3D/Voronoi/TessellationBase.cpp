@@ -10,11 +10,11 @@ static const double BOUNDARY_REGION = 1e-8;
 
 bool TessellationBase::FaceStore::FindFace(const Face &face, size_t &index) const
 {
-	for (index = 0; index < _faces.size(); index++)
-		if (_faces[index]==face)
-			return true;
-
-	return false;
+	hash_type::const_iterator it = _hash.find(face);
+	if (it == _hash.end())
+		return false;
+	index = it->second;
+	return true;
 }
 
 size_t TessellationBase::FaceStore::StoreFace(const vector<VectorRef> &vertices, size_t neighbor1, size_t neighbor2)
@@ -27,6 +27,7 @@ size_t TessellationBase::FaceStore::StoreFace(const vector<VectorRef> &vertices,
 
 	index = _faces.size();
 	_faces.push_back(face);
+	_hash[face] = index;
 	return index;
 }
 
@@ -200,6 +201,26 @@ Vector3D TessellationBase::Normal(size_t faceIndex) const
 	return center2 - center1;
 }
 
+boost::optional<size_t> TessellationBase::FindFaceWithNeighbors(size_t n0, size_t n1) const
+{
+	BOOST_ASSERT(n0 != n1);
+	BOOST_ASSERT(!IsGhostPoint(n0) || !IsGhostPoint(n1));
+
+	if (n0 > n1)
+		swap(n0, n1);
+	BOOST_ASSERT(!IsGhostPoint(n0));
+
+	const std::vector<size_t>& cellFaces = _cells[n0].GetFaces();  // Guaranteed not to be a ghost point
+	for (std::vector<size_t>::const_iterator itFace = cellFaces.begin(); itFace != cellFaces.end(); itFace++)
+	{
+		const Face &face = _faces.GetFace(*itFace);
+		if (face.OtherNeighbor(n0) == n1)
+			return *itFace;
+	}
+
+	return boost::none;
+}
+
 /*!
 \brief Calculates the velocity of a face
 \param p0 The index of the first neighbor
@@ -211,9 +232,11 @@ Vector3D TessellationBase::Normal(size_t faceIndex) const
 Vector3D TessellationBase::CalcFaceVelocity(size_t p0, size_t p1, Vector3D const& v0,
 	Vector3D const& v1) const
 {
-	boost::optional<size_t> faceIndex = _faces.FindFace(p0, p1);
+
+	boost::optional<size_t> faceIndex = FindFaceWithNeighbors(p0, p1); //  _faces.FindFace(p0, p1);
 	if (!faceIndex.is_initialized())
 		throw invalid_argument("Can't find face");
+
 	const Face &face = _faces.GetFace(*faceIndex);
 
 	Vector3D r0 = GetMeshPoint(p0);

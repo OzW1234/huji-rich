@@ -44,7 +44,7 @@ public:
 		return _neighbor2;
 	}
 
-	boost::optional<size_t> OtherNeighbor(int cell)
+	boost::optional<size_t> OtherNeighbor(size_t cell) const
 	{
 		if (Neighbor1().is_initialized() && *Neighbor1() == cell)
 			return Neighbor2();

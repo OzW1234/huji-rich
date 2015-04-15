@@ -21,6 +21,12 @@ double OuterBoundary3D::distance(const Vector3D &pt, Subcube subcube) const
 	return abs(vec);
 }
 
+double OuterBoundary3D::distance2(const Vector3D &pt, Subcube subcube) const
+{
+	Vector3D vec = vector(pt, subcube);
+	return abs2(vec);
+}
+
 Vector3D OuterBoundary3D::vector(const Vector3D &pt, Subcube subcube) const
 {
 	switch (subcube.NonCenters())

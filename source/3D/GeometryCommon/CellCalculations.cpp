@@ -55,7 +55,7 @@ void CalculateCellDimensions(const std::vector<const Face *> &cell, double &volu
 
 	for (size_t j = 0; j < tetrahedra.size(); j++)
 	{
-		Vector3D weightedCenter = *tetrahedra[j].center() * tetrahedra[j].volume() / volume;
+		Vector3D weightedCenter = tetrahedra[j].center() * tetrahedra[j].volume() / volume;
 		centerOfMass += weightedCenter;
 	}
 }

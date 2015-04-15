@@ -7,7 +7,12 @@
 #ifndef ASSERT_HPP
 #define ASSERT_HPP 1
 
+#ifdef NDEBUG
+#define BOOST_DISABLED_ASSERTS
+#else
 #define BOOST_ENABLE_ASSERT_HANDLER
+#endif
+
 #include <boost/assert.hpp>
 
 /*! \brief Function pointer to the assertion handler.
