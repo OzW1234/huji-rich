@@ -8,47 +8,18 @@ static const double BOUNDARY_REGION = 1e-8;
 * The FaceStore
 */
 
-bool TessellationBase::FaceStore::FindFace(const Face &face, size_t &index) const
-{
-	hash_type::const_iterator it = _hash.find(face);
-	if (it == _hash.end())
-		return false;
-	index = it->second;
-	return true;
-}
-
 size_t TessellationBase::FaceStore::StoreFace(const vector<VectorRef> &vertices, size_t neighbor1, size_t neighbor2)
 {
 	Face face(vertices, neighbor1, neighbor2);
-	size_t index;
-	bool exists = FindFace(face, index);
-	if (exists)
-		return index;
 
-	index = _faces.size();
+	size_t index = _faces.size();
 	_faces.push_back(face);
-	_hash[face] = index;
 	return index;
 }
 
 void TessellationBase::FaceStore::Clear()
 {
 	_faces.clear();
-}
-
-boost::optional<size_t> TessellationBase::FaceStore::FindFace(size_t neighbor1, size_t neighbor2) const
-{
-	// TODO: Make this more efficient, this is bound to cause performance problems
-	for (vector<Face>::const_iterator it = _faces.begin(); it != _faces.end(); it++)
-	{
-		if (it->Neighbor1() == neighbor1 && it->Neighbor2() == neighbor2 ||
-			it->Neighbor1() == neighbor2 && it->Neighbor2() == neighbor1)
-		{
-			return it - _faces.begin();
-		}
-	}
-
-	return boost::none;
 }
 
 TessellationBase::Cell::Cell(std::vector<size_t> faces, double volume, VectorRef center, VectorRef centerOfMass) :

@@ -115,7 +115,8 @@ RigidWallGhostBuster::breach_map RigidWallGhostBuster::FindHullBreaches(const De
 				vector<size_t> tetrahedraIndices = del.VertexNeighbors(pt);
 				unordered_set<Subcube> breaches;
 				if (result.find(pt) != result.end())
-					breaches = result[pt];
+					continue;
+					// breaches = result[pt];
 
 				for (vector<size_t>::iterator itTetrahedron = tetrahedraIndices.begin(); itTetrahedron != tetrahedraIndices.end(); itTetrahedron++)
 				{

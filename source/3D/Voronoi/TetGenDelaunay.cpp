@@ -176,9 +176,13 @@ void TetGenDelaunay::FillEdges()
 				Edge edge(t[iv], t[jv]);
 				EdgeMap::iterator existing = _edges.find(edge);
 				if (existing == _edges.end())
-					_edges[edge] = vector<size_t>();
-
-				_edges[edge].push_back(i);
+				{
+					vector<size_t> newvec(10, 0);
+					newvec.push_back(i);
+					_edges[edge] = newvec;
+				}
+				else
+					existing->second.push_back(i);
 			}
 	}
 

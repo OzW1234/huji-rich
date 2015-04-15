@@ -45,7 +45,7 @@ vector<Vector3D> RandSquare(int PointNum, Vector3D const& bll, Vector3D const& f
 
 void main()
 {
-	int nx=20, ny = 20, nz = 20;
+	int nx=30, ny = 30, nz = 30;
 	Vector3D bll(-1, -1, -1), fur(1, 1, 1);
 	OuterBoundary3D outer(fur, bll);
 	vector<Vector3D> points = RandSquare(nx*ny*nz, bll, fur);
@@ -75,7 +75,7 @@ void main()
 	HDSim3D sim(tess,cells, eos, pm, timestep, flux_calc, cell_update);
 
 	//Run the simulation
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
 
 		cout << i << endl;

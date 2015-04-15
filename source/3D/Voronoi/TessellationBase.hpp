@@ -27,9 +27,6 @@ protected:
 	{
 	private:
 		std::vector<Face> _faces;
-		typedef std::unordered_map<Face, size_t> hash_type;
-		hash_type _hash;
-		bool FindFace(const Face &face, size_t &index) const;
 
 	public:
 		size_t StoreFace(const std::vector<VectorRef>& vertices, size_t neighbor1, size_t neighbor2);
@@ -37,7 +34,6 @@ protected:
 		const Face& GetFace(size_t index) const { return _faces[index]; }
 		Face& GetFace(size_t index) { return _faces[index]; }
 		size_t NumFaces() const { return _faces.size(); }
-		boost::optional<size_t> FindFace(size_t neighbor1, size_t neighbor2) const;
 
 		void Clear();
 	};
