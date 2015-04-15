@@ -252,6 +252,8 @@ void TetGenTessellation<GhostBusterType>::OptimizeFace(size_t faceNum)
 template<typename GhostBusterType>
 void TetGenTessellation<GhostBusterType>::ConstructCells(const TetGenDelaunay &del)
 {
+	_faces.Reserve(_meshPoints.size() * 15);  // An average of 15 faces per cell
+
 	for (size_t cellNum = 0; cellNum < _meshPoints.size(); cellNum++)
 	{
 		std::vector<size_t> ourFaceIndices;
@@ -265,8 +267,6 @@ void TetGenTessellation<GhostBusterType>::ConstructCells(const TetGenDelaunay &d
 			const Face &tetGenFace = *_allFaces[*it];
 			BOOST_ASSERT(tetGenFace.NumNeighbors() == 2);  // Sanity check, this has been checked previously
 			size_t ourFaceIndex = _faces.StoreFace(tetGenFace.vertices, *tetGenFace.Neighbor1(), *tetGenFace.Neighbor2());
-			Face &ourFace = _faces.GetFace(ourFaceIndex);
-
 			ourFaceIndices.push_back(ourFaceIndex);
 		}
 

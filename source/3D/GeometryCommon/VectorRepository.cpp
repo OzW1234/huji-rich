@@ -57,6 +57,17 @@ VectorRef::VectorRef(const VectorRef &other)
 	_id = other._id;
 }
 
+std::vector<VectorRef> VectorRef::vector(const std::vector<Vector3D> &points)
+{
+	std::vector<VectorRef> output;
+	output.reserve(points.size());
+	for (std::vector<Vector3D>::const_iterator it = points.begin(); it != points.end(); it++)
+		output.push_back(*it);
+
+	return output;
+}
+
+
 VectorRef VectorRef::operator=(const VectorRef &other)
 {
 	_id = other._id;

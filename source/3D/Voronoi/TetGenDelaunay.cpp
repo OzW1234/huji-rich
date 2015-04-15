@@ -99,12 +99,17 @@ void TetGenImpl::CallTetGen()
 void TetGenImpl::CopyResults()
 {
 	_delaunay._tetrahedraNeighbors.clear();
+	_delaunay._tetrahedraNeighbors.reserve(out.numberoftetrahedra);
+	_delaunay._tetrahedra.clear();
+	_delaunay._tetrahedra.reserve(out.numberoftetrahedra);
 
 	int offset = 0;
 	for (int i = 0; i < out.numberoftetrahedra; i++)
 	{
 		vector<VectorRef> vertices;
+		vertices.reserve(4);
 		vector<size_t> neighbors;
+		neighbors.reserve(4);
 		for (int j = 0; j < 4; j++)
 		{
 			int ptIndex = out.tetrahedronlist[offset];
@@ -123,9 +128,7 @@ void TetGenImpl::CopyResults()
 	if (_delaunay._runVoronoi) // Copy the Voronoi output
 	{
 		_delaunay._voronoiCellFaces.clear();
-		_delaunay._voronoiFaceEdges.clear();
-		_delaunay._voronoiVertices.clear();
-
+		_delaunay._voronoiCellFaces.reserve(out.numberofvcells);
 		for (size_t cellNum = 0; cellNum < out.numberofvcells; cellNum++)
 		{
 			int faceCount = out.vcelllist[cellNum][0];
@@ -134,6 +137,8 @@ void TetGenImpl::CopyResults()
 			_delaunay._voronoiCellFaces.push_back(faces);
 		}
 
+		_delaunay._voronoiFaceEdges.clear();
+		_delaunay._voronoiFaceEdges.reserve(out.numberofvfacets);
 		for (size_t faceNum = 0; faceNum < out.numberofvfacets; faceNum++)
 		{
 			const tetgenio::vorofacet &face = out.vfacetlist[faceNum];
@@ -145,12 +150,16 @@ void TetGenImpl::CopyResults()
 			_delaunay._voronoiFaceNeighbors.push_back(pair<int, int>(face.c1, face.c2));
 		}
 
+		_delaunay._voronoiEdges.clear();
+		_delaunay._voronoiEdges.reserve(out.numberofvedges);
 		for (size_t edgeNum = 0; edgeNum < out.numberofvedges; edgeNum++)
 		{
 			pair<int, int> edge(out.vedgelist[edgeNum].v1, out.vedgelist[edgeNum].v2);
 			_delaunay._voronoiEdges.push_back(edge);
 		}
 
+		_delaunay._voronoiVertices.clear();
+		_delaunay._voronoiVertices.reserve(out.numberofvpoints / 3);
 		double *ptr = out.vpointlist;
 		for (size_t vertexNum = 0; vertexNum < out.numberofvpoints; vertexNum++)
 		{
@@ -177,22 +186,26 @@ void TetGenDelaunay::FillEdges()
 				EdgeMap::iterator existing = _edges.find(edge);
 				if (existing == _edges.end())
 				{
-					vector<size_t> newvec(10, 0);
+					vector<size_t> &newvec = _edges[edge] = vector<size_t>();
+					newvec.reserve(12);
 					newvec.push_back(i);
-					_edges[edge] = newvec;
+					// Note - we don't initialize the vector, reserve space and then put it in the hash
+					// because putting it in the hash calls the vector copy constructor which doesn't keep
+					// the reserved space
 				}
 				else
 					existing->second.push_back(i);
 			}
 	}
 
+	/*
 	// Second step, order the edge map properly
 	for (EdgeMap::iterator it = _edges.begin(); it != _edges.end(); it++)
 	{
 		vector<size_t> tetrahedra = it->second;
 		vector<size_t> ordered = OrderNeighbors(tetrahedra);
-		it->second = ordered;
-	}
+		it->second = tetrahedra;
+	} */
 }
 
 /* Fills the neighbors. This actually does nothing, because CopyResults already does this */
@@ -281,23 +294,27 @@ Face TetGenDelaunay::GetVoronoiFace(size_t faceNum) const
 		return Face::Empty;   // Return an empty face
 
 	vector<int> indices;
-	pair<int, int> previous = _voronoiEdges[edgeList.back()];
+	indices.reserve(edgeList.size());
+
+	const pair<int, int> *previous = &_voronoiEdges[edgeList.back()]; 
 	for (vector<int>::const_iterator it = edgeList.begin(); it != edgeList.end(); it++)
 	{
-		pair<int, int> current = _voronoiEdges[*it];
+		const pair<int, int> *current = &_voronoiEdges[*it];
 
-		if (current.first == previous.first || current.first == previous.second)  // current.first appears in the previous edge
-			indices.push_back(current.second);
-		else if (current.second == previous.first || current.second == previous.second) // current.second appears in the previous edge
-			indices.push_back(current.first);
+		if (current->first == previous->first || current->first == previous->second)  // current.first appears in the previous edge
+			indices.push_back(current->second);
+		else if (current->second == previous->first || current->second == previous->second) // current.second appears in the previous edge
+			indices.push_back(current->first);
 		else
 			BOOST_ASSERT(false); // Non-consecutive edges!
 
-		previous = current;
+		previous = current;  // That's why we use pointers and not references - this assignment would fail with references
 	}
 
 	// Now, convert the list of indices to a list of vectors
-	vector<Vector3D> face;
+	vector<VectorRef> face;
+	face.reserve(indices.size());
+
 	for (vector<int>::const_iterator it = indices.begin(); it != indices.end(); it++)
 	{
 		BOOST_ASSERT(*it >= 0); // We shouldn't be asking for any rays!
@@ -320,7 +337,7 @@ Face TetGenDelaunay::GetVoronoiFace(size_t faceNum) const
 		neighbor1 = neighbors.second;
 
 	// And create the face
-	Face newFace(VectorRef::vector(face), neighbor1, neighbor2);
+	Face newFace(face, neighbor1, neighbor2);
 
 	return newFace;
 }
@@ -328,6 +345,7 @@ Face TetGenDelaunay::GetVoronoiFace(size_t faceNum) const
 vector<Face> TetGenDelaunay::GetVoronoiFaces() const
 {
 	vector<Face> faces;
+	faces.reserve(_voronoiFaceEdges.size());
 
 	for (size_t i = 0; i < _voronoiFaceEdges.size(); i++)
 		faces.push_back(GetVoronoiFace(i));

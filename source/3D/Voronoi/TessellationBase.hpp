@@ -35,6 +35,7 @@ protected:
 		Face& GetFace(size_t index) { return _faces[index]; }
 		size_t NumFaces() const { return _faces.size(); }
 
+		void Reserve(size_t numFaces) { _faces.reserve(numFaces); }
 		void Clear();
 	};
 

@@ -22,9 +22,16 @@ void Delaunay::FillVertices()
 			VectorRef v = _tetrahedra[i][j];
 			VertexMap::iterator existing = _vertices.find(v);
 			if (existing == _vertices.end())
-				_vertices[v] = vector<size_t>();
-
-			_vertices[v].push_back(i);
+			{
+				vector<size_t> &newvec = _vertices[v] = vector<size_t>();
+				newvec.reserve(10);  // Update the vector that's already in the hash
+				newvec.push_back(i);
+				// Note - we don't initialize the vector, reserve space and then put it in the hash
+				// because putting it in the hash calls the vector copy constructor which doesn't keep
+				// the reserved space
+			}
+			else
+				existing->second.push_back(i);
 		}
 }
 

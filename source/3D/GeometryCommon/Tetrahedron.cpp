@@ -14,12 +14,18 @@ Tetrahedron::Tetrahedron(const std::vector<VectorRef> &vertices) : _vertices(ver
 	BOOST_ASSERT(vertices.size() == 4);
 }
 
-Tetrahedron::Tetrahedron(const VectorRef v1, const VectorRef v2, const VectorRef v3, const VectorRef v4) : _vertices(4)
+Tetrahedron::Tetrahedron(const VectorRef v1, const VectorRef v2, const VectorRef v3, const VectorRef v4)
 {
-	_vertices[0] = v1;
-	_vertices[1] = v2;
-	_vertices[2] = v3;
-	_vertices[3] = v4;
+	_vertices.reserve(4);
+	_vertices.push_back(v1);
+	_vertices.push_back(v2);
+	_vertices.push_back(v3);
+	_vertices.push_back(v4);
+}
+
+Tetrahedron::Tetrahedron(const Tetrahedron &other) : _vertices(other._vertices)
+{
+	// Don't copy the cached values, tetrahedra are copied before the caches are used
 }
 
 Vector3D Tetrahedron::center() const
@@ -36,12 +42,6 @@ double Tetrahedron::volume() const
 	return *_volume;
 }
 
-double Tetrahedron::radius() const
-{
-	if (!_radius.is_initialized())
-		_radius = CalculateRadius();
-	return *_radius;
-}
 
 double Tetrahedron::radius2() const
 {
@@ -110,12 +110,6 @@ double Tetrahedron::CalculateVolume() const
 		_vertices[3]->x, _vertices[3]->y, _vertices[3]->z, 1);
 	double det = mat.determinant();
 	return abs(det) / 6.0;
-}
-
-double Tetrahedron::CalculateRadius() const
-{
-	// The radius is the distance between the center and any of the vertices.
-	return abs(center() - *_vertices[0]);
 }
 
 double Tetrahedron::CalculateRadius2() const

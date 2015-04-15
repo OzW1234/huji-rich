@@ -26,10 +26,7 @@ public:
 	friend bool operator<(const VectorRef &v1, const VectorRef &v2);
 	VectorRef operator=(const VectorRef &other);
 
-	static std::vector<VectorRef> vector(const std::vector<Vector3D> &points)
-	{
-		return std::vector<VectorRef>(points.begin(), points.end());
-	}
+	static std::vector<VectorRef> vector(const std::vector<Vector3D> &points);
 };
 
 namespace std

@@ -81,7 +81,7 @@ public:
 	const std::vector<Tetrahedron> &Tetrahedra() const { return _tetrahedra; }
 
 	//\brief Returns the neighbors of the tetrahedron
-	const std::vector<size_t> TetrahedraNeighbors(size_t tetrahedron) const { return _tetrahedraNeighbors[tetrahedron]; }
+	const std::vector<size_t> &TetrahedraNeighbors(size_t tetrahedron) const { return _tetrahedraNeighbors[tetrahedron]; }
 
 	//\brief Returns the list of tetrahedra that touch the edge 
 	//\param vec1 First vector of the edge
