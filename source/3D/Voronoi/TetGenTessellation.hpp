@@ -182,6 +182,7 @@ template<typename GhostBusterType>
 void TetGenTessellation<GhostBusterType>::CalculateTetGenVolumes(const TetGenDelaunay &del)
 {
 	_cellVolumes.clear();
+	_allCMs.clear();
 
 	for (size_t cellNum = 0; cellNum < _meshPoints.size(); cellNum++)
 	{
@@ -197,6 +198,7 @@ void TetGenTessellation<GhostBusterType>::CalculateTetGenVolumes(const TetGenDel
 		Vector3D CoM;
 		CalculateCellDimensions(facePointers, volume, CoM);
 		_cellVolumes.push_back(volume);
+		_allCMs.push_back(CoM);
 	}
 }
 
@@ -226,6 +228,7 @@ void TetGenTessellation<GhostBusterType>::OptimizeFace(size_t faceNum)
 	double threshold = combined * EDGE_RATIO;
 	double threshold2 = threshold * threshold; // We combine the threshold to the distance, this saves the sqrt operations
 	std::vector<VectorRef> vertices; // Vertices we keep in our face
+	vertices.reserve(face.vertices.size());
 
 	VectorRef prevVertex = face.vertices.back();
 	for (std::vector<VectorRef>::const_iterator it = face.vertices.begin(); it != face.vertices.end(); it++)
@@ -270,18 +273,8 @@ void TetGenTessellation<GhostBusterType>::ConstructCells(const TetGenDelaunay &d
 			ourFaceIndices.push_back(ourFaceIndex);
 		}
 
-		double volume;
-		Vector3D centerOfMass;
-
-		// Convert to face pointers now, because during the previous loop the array may have been reallocated
-		// and faces may have been moved in memory
-		std::vector<const Face *> ourFacePointers;
-		for (std::vector<size_t>::const_iterator it = ourFaceIndices.begin(); it != ourFaceIndices.end(); it++)
-			ourFacePointers.push_back(&_faces.GetFace(*it));
-		CalculateCellDimensions(ourFacePointers, volume, centerOfMass);
-
-		_cells[cellNum] = Cell(ourFaceIndices, volume, _meshPoints[cellNum], centerOfMass);
-		_allCMs[cellNum] = centerOfMass;
+		// Build the cells using the old pre-optimized face calculations - the changes are very very small
+		_cells[cellNum] = Cell(ourFaceIndices, _cellVolumes[cellNum], _meshPoints[cellNum], _allCMs[cellNum]);
 	}
 }
 
