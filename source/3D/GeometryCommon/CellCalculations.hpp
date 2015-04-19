@@ -14,7 +14,7 @@
 #include "Tetrahedron.hpp"
 
 //\brief Splits a cell into tetrahedra, all touching the center of the cell
-std::vector<Tetrahedron> SplitCell(const std::vector<const Face *> &cell);
+void SplitCell(const std::vector<const Face *> &cell, std::vector<Tetrahedron> &tetrahedra);
 
 //\brief Calculates the volume and center-of-mass of a cell
 void CalculateCellDimensions(const std::vector<const Face *> &cell, double &volume, Vector3D &centerOfMass);

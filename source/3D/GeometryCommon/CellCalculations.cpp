@@ -9,9 +9,8 @@
 using namespace std;
 
 //\brief Splits a cell into tetrahedra, all touching the center of the cell
-std::vector<Tetrahedron> SplitCell(const std::vector<const Face *> &cell)
+void SplitCell(const std::vector<const Face *> &cell, std::vector<Tetrahedron> &tetrahedra)
 {
-	std::vector<Tetrahedron> tetrahedra;
 	Vector3D center;
 	std::unordered_set<VectorRef> considered;
 	size_t expectedNumTetrahedra = 0;  // Total number of expected tetrahedra, to save on reallocations
@@ -33,6 +32,7 @@ std::vector<Tetrahedron> SplitCell(const std::vector<const Face *> &cell)
 	center = center / (double)considered.size();   // Average
 	VectorRef centerRef(center);
 
+	tetrahedra.clear();
 	tetrahedra.reserve(expectedNumTetrahedra);
 
 	// Now create the tetrahedra, from the center to each of the faces
@@ -47,14 +47,14 @@ std::vector<Tetrahedron> SplitCell(const std::vector<const Face *> &cell)
 			tetrahedra.push_back(t);
 		}
 	}
-
-	return tetrahedra;
 }
 
 //\brief Calculates the volume and center-of-mass of a cell
 void CalculateCellDimensions(const std::vector<const Face *> &cell, double &volume, Vector3D &centerOfMass)
 {
-	std::vector<Tetrahedron> tetrahedra = SplitCell(cell);
+	std::vector<Tetrahedron> tetrahedra;
+	SplitCell(cell, tetrahedra);
+
 	volume = 0;
 	centerOfMass = Vector3D();
 

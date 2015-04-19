@@ -35,15 +35,7 @@ TEST(VoroPlusPlus, FaceStore)
 			vertices.push_back(Vector3D(rand(), rand(), rand()));
 		size_t index = store.StoreFace(vertices, 1, 2);
 		ASSERT_EQ(index, i);
-		size_t index2 = store.StoreFace(vertices, 2, 3);
-		ASSERT_EQ(index2, index);
 		faces.push_back(store.GetFace(index));
-	}
-
-	for (int i = 99; i >= 0; i--)
-	{
-		size_t index = store.StoreFace(faces[i].vertices, 4, 5);
-		ASSERT_EQ(index, i);
 	}
 }
 
@@ -131,6 +123,51 @@ TEST(TetGenDelaunay, OnBoundary)
 
 	mesh.push_back(Vector3D(-0.49999999999, -0.2, 2));
 	EXPECT_THROW(tes.Initialise(mesh, boundary), invalid_argument);
+}
+
+TEST(CellCalculations, PyramidDimensions)
+{
+	// Pyramid with a square 1x1 base and a height of 1 right in the middle
+	Vector3D b00(0, 0, 0), b01(0, 1, 0), b10(1, 0, 0), b11(1, 1, 0), h(.5, .5, 1);
+	VectorRef rb00(b00), rb01(b01), rb10(b10), rb11(b11), rh(h);
+
+	std::vector<VectorRef> base{ rb00, rb10, rb11, rb01 };
+	std::vector<VectorRef> side1{ rb00, rb10, rh };
+	std::vector<VectorRef> side2{ rb00, rb01, rh };
+	std::vector<VectorRef> side3{ rb01, rb11, rh };
+	std::vector<VectorRef> side4{ rb10, rb11, rh };
+	Face fbase(base), f1(side1), f2(side2), f3(side3), f4(side4);
+	std::vector<const Face *> faces{ &fbase, &f1, &f2, &f3, &f4 };
+
+	double volume;
+	Vector3D CoM;
+	CalculateCellDimensions(faces, volume, CoM);
+
+	// Volume is base * height / 3 
+	EXPECT_NEAR(volume, 1.0/3.0, 1e-5);
+}
+
+TEST(CellCalculations, SquareDimensions)
+{
+	// A 2x2x2 cube
+	VectorRef r000(Vector3D(0, 0, 0)), r200(Vector3D(2, 0, 0)), r220(Vector3D(2, 2, 0)), r020(Vector3D(0, 2, 0));
+	VectorRef r002(Vector3D(0, 0, 2)), r202(Vector3D(2, 0, 2)), r222(Vector3D(2, 2, 2)), r022(Vector3D(0, 2, 2));
+
+	std::vector<VectorRef> vfront{ r000, r200, r220, r020 };
+	std::vector<VectorRef> vback{ r002, r202, r222, r022 };
+	std::vector<VectorRef> vbottom{ r000, r200, r202, r002 };
+	std::vector<VectorRef> vtop{ r020, r220, r222, r022 };
+	std::vector<VectorRef> vright{ r200, r220, r222, r202 };
+	std::vector<VectorRef> vleft{ r000, r020, r022, r002 };
+	Face ffront(vfront), fback(vback), fbottom(vbottom), ftop(vtop), fright(vright), fleft(vleft);
+	std::vector<const Face *> faces{ &ffront, &fback, &fbottom, &ftop, &fright, &fleft };
+
+	double volume;
+	Vector3D CoM;
+	CalculateCellDimensions(faces, volume, CoM);
+
+	EXPECT_NEAR(volume, 8, 1e-5);
+	EXPECT_NEAR(abs(CoM - Vector3D(1, 1, 1)), 0, 1e-5);
 }
 
 void assertion_gtest_bridge(const char *expr, const char *function, const char *file, long line)
