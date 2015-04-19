@@ -274,7 +274,7 @@ void TetGenTessellation<GhostBusterType>::ConstructCells(const TetGenDelaunay &d
 		}
 
 		// Build the cells using the old pre-optimized face calculations - the changes are very very small
-		_cells[cellNum] = Cell(ourFaceIndices, _cellVolumes[cellNum], _meshPoints[cellNum], _allCMs[cellNum]);
+		_cells[cellNum] = new Cell(ourFaceIndices, _cellVolumes[cellNum], _meshPoints[cellNum], _allCMs[cellNum]);
 	}
 }
 

@@ -1,5 +1,6 @@
 #include "TessellationBase.hpp"
 #include <set>
+#include <unordered_set>
 #include <sstream>
 
 static const double BOUNDARY_REGION = 1e-8;
@@ -10,19 +11,26 @@ static const double BOUNDARY_REGION = 1e-8;
 
 size_t TessellationBase::FaceStore::StoreFace(const vector<VectorRef> &vertices, size_t neighbor1, size_t neighbor2)
 {
-	Face face(vertices, neighbor1, neighbor2);
+	Face *p = new Face(vertices, neighbor1, neighbor2);
 
 	size_t index = _faces.size();
-	_faces.push_back(face);
+	_faces.push_back(p);
 	return index;
+}
+
+TessellationBase::FaceStore::~FaceStore()
+{
+	Clear();
 }
 
 void TessellationBase::FaceStore::Clear()
 {
+	for (vector<Face *>::iterator it = _faces.begin(); it != _faces.end(); it++)
+		delete *it;
 	_faces.clear();
 }
 
-TessellationBase::Cell::Cell(std::vector<size_t> faces, double volume, VectorRef center, VectorRef centerOfMass) :
+TessellationBase::Cell::Cell(const std::vector<size_t> &faces, double volume, VectorRef center, VectorRef centerOfMass) :
 	_faces(faces), _volume(volume),_center(center), _centerOfMass(centerOfMass)
 {
 	// width is the radius of the sphere with the same volume as the cell
@@ -30,14 +38,29 @@ TessellationBase::Cell::Cell(std::vector<size_t> faces, double volume, VectorRef
 	_width = pow(3.0 / 4.0 * volume, 1.0 / 3.0);
 }
 
+void TessellationBase::ClearCells()
+{
+	for (vector<Cell *>::iterator it = _cells.begin(); it != _cells.end(); it++)
+	{
+		if (*it)
+			delete *it;
+	}
+	_cells.clear();
+}
+
 void TessellationBase::ClearData()
 {
 	_faces.Clear();
-	_cells.clear();
+	ClearCells();
 	_cells.resize(_meshPoints.size());
 	_allCMs.clear();
 	_allCMs.resize(_meshPoints.size());
 	FillPointIndices();
+}
+
+TessellationBase::~TessellationBase()
+{
+	ClearCells();
 }
 
 void TessellationBase::Initialise(vector<Vector3D> const& points, const OuterBoundary3D &bc)
@@ -79,7 +102,7 @@ Vector3D TessellationBase::GetMeshPoint(size_t index) const
 
 Vector3D const& TessellationBase::GetCellCM(size_t index) const
 {
-	return *_cells[index].GetCenterOfMass();
+	return *_cells[index]->GetCenterOfMass();
 }
 
 /*! \brief Returns the total number of faces
@@ -97,17 +120,17 @@ const Face& TessellationBase::GetFace(size_t index) const
 
 double TessellationBase::GetWidth(size_t index) const
 {
-	return _cells[index].GetWidth();
+	return _cells[index]->GetWidth();
 }
 
 double TessellationBase::GetVolume(size_t index) const
 {
-	return _cells[index].GetVolume();
+	return _cells[index]->GetVolume();
 }
 
 vector<size_t>const& TessellationBase::GetCellFaces(size_t index) const
 {
-	return _cells[index].GetFaces();
+	return _cells[index]->GetFaces();
 }
 
 vector<Vector3D>& TessellationBase::GetMeshPoints(void)
@@ -119,13 +142,13 @@ vector<size_t> TessellationBase::GetNeighbors(size_t index) const
 {
 	if (index >= GetPointNo())
 		return vector<size_t>();  // No neighbors for ghost cells
-	const Cell& cell = _cells[index];
+	const Cell& cell = *_cells[index];
 	vector<size_t> neighbors;
 
-	auto faceIndices = _cells[index].GetFaces();
+	const vector<size_t> &faceIndices = _cells[index]->GetFaces();
 	for (size_t i = 0; i < faceIndices.size(); i++)
 	{
-		auto face = GetFace(i);
+		const Face &face = GetFace(i);
 		if (face.Neighbor1() == index)
 			neighbors.push_back(*face.Neighbor2());
 		else if (face.Neighbor2() == index)
@@ -145,9 +168,9 @@ vector<Vector3D>& TessellationBase::GetAllCM()
 
 void TessellationBase::GetNeighborNeighbors(vector<size_t> &result, size_t point) const
 {
-	set<size_t> allNeighbors;
-	vector<size_t> neighbors = GetNeighbors(point);
-	for (auto it = neighbors.begin(); it != neighbors.end(); it++)
+	unordered_set<size_t> allNeighbors;
+	const vector<size_t> &neighbors = GetNeighbors(point);
+	for (vector<size_t>::const_iterator it = neighbors.begin(); it != neighbors.end(); it++)
 	{
 		allNeighbors.insert(*it);
 		if (IsGhostPoint(*it))
@@ -165,7 +188,7 @@ void TessellationBase::GetNeighborNeighbors(vector<size_t> &result, size_t point
 
 Vector3D TessellationBase::Normal(size_t faceIndex) const
 {
-	Face face = GetFace(faceIndex);
+	const Face &face = GetFace(faceIndex);
 	Vector3D center1 = GetMeshPoint(*face.Neighbor1());
 	Vector3D center2 = GetMeshPoint(*face.Neighbor2());
 
@@ -181,7 +204,7 @@ boost::optional<size_t> TessellationBase::FindFaceWithNeighbors(size_t n0, size_
 		swap(n0, n1);
 	BOOST_ASSERT(!IsGhostPoint(n0));
 
-	const std::vector<size_t>& cellFaces = _cells[n0].GetFaces();  // Guaranteed not to be a ghost point
+	const std::vector<size_t>& cellFaces = _cells[n0]->GetFaces();  // Guaranteed not to be a ghost point
 	for (std::vector<size_t>::const_iterator itFace = cellFaces.begin(); itFace != cellFaces.end(); itFace++)
 	{
 		const Face &face = _faces.GetFace(*itFace);

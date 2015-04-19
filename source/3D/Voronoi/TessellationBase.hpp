@@ -26,13 +26,13 @@ protected:
 	class FaceStore
 	{
 	private:
-		std::vector<Face> _faces;
+		std::vector<Face *> _faces;
 
 	public:
 		size_t StoreFace(const std::vector<VectorRef>& vertices, size_t neighbor1, size_t neighbor2);
+		~FaceStore();
 
-		const Face& GetFace(size_t index) const { return _faces[index]; }
-		Face& GetFace(size_t index) { return _faces[index]; }
+		const Face& GetFace(size_t index) const { return *_faces[index]; }
 		size_t NumFaces() const { return _faces.size(); }
 
 		void Reserve(size_t numFaces) { _faces.reserve(numFaces); }
@@ -64,19 +64,20 @@ protected:
 			return _faces;
 		}
 
-		Cell(std::vector<size_t> faces, double volume, VectorRef center, VectorRef centerOfMass);
+		Cell(const std::vector<size_t> &faces, double volume, VectorRef center, VectorRef centerOfMass);
 		Cell() { _volume = -1; }
 
 		bool empty() const { return _volume < 0; }
 	};
 
 	const OuterBoundary3D *_boundary;
-	std::vector<Cell> _cells;
+	std::vector<Cell *> _cells;
 	FaceStore _faces;
 	std::vector<Vector3D> _meshPoints;
 	std::vector<Vector3D> _allCMs;
 	std::unordered_map<VectorRef, size_t> _pointIndices;
 
+	void ClearCells();
 	void ClearData();
 	void FillPointIndices();
 
@@ -97,6 +98,8 @@ protected:
 
 public:
 	// Partial implementation of the Tessellation3D interface
+
+	~TessellationBase();
 
 	/*! \brief Initialises the tessellation
 	\param points Initial position of mesh generating points
