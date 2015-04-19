@@ -24,10 +24,7 @@ protected:
 	friend class TetGenImpl;   // This is the PIMPL pattern, although the PIMPL is generated once per call to Run,
 							   // so we don't need to hold a pointer to it.
 
-	virtual void FillEdges(); 
 	virtual void FillNeighbors();
-
-	std::vector<size_t> OrderNeighbors(const std::vector<size_t> &tetrahedra);
 
 	// Voronoi output
 	std::vector<std::vector<int>> _voronoiCellFaces;  // Use ints for all the vectors, because that's what tetgen uses internally.

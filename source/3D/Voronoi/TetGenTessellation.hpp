@@ -166,7 +166,7 @@ void TetGenTessellation<GhostBusterType>::ConvertToVoronoi(const TetGenDelaunay 
 template<typename GhostBusterType>
 void TetGenTessellation<GhostBusterType>::ExtractTetGenFaces(const TetGenDelaunay &del)
 {
-	const std::vector<Face> _tetgenFaces = del.GetVoronoiFaces();
+	const std::vector<Face> &_tetgenFaces = del.GetVoronoiFaces();
 
 	_allFaces.resize(_tetgenFaces.size());
 	for (size_t cellNum = 0; cellNum < _meshPoints.size(); cellNum++)

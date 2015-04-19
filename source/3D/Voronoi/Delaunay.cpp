@@ -35,15 +35,6 @@ void Delaunay::FillVertices()
 		}
 }
 
-const std::vector<size_t> &Delaunay::EdgeNeighbors(const VectorRef vec1, const VectorRef vec2) const
-{
-	Edge edge(vec1, vec2);
-	EdgeMap::const_iterator it = _edges.find(edge);
-	BOOST_ASSERT(it != _edges.end());
-
-	return it->second;
-}
-
 const std::vector<size_t> &Delaunay::VertexNeighbors(const VectorRef v) const
 {
 	VertexMap::const_iterator it = _vertices.find(v);
@@ -55,12 +46,10 @@ const std::vector<size_t> &Delaunay::VertexNeighbors(const VectorRef v) const
 void Delaunay::Run()
 {
 	_tetrahedra.clear();
-	_edges.clear();
 	_vertices.clear();
 	RunDelaunay();
-	BOOST_ASSERT(_edges.size() == 0 && _vertices.size() == 0); // You're not supposed to fill those
+	BOOST_ASSERT(_vertices.size() == 0); // You're not supposed to fill those
 	FillVertices();
-	FillEdges();
 	FillNeighbors();
 }
 
