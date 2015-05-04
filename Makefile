@@ -52,14 +52,15 @@ $(TREECODE_OBJECTS): $(LIBRARY_FOLDER)/%.o: $(SOURCE_DIR)/%.cpp
 clean:
 	rm -rf ./$(LIBRARY_FOLDER)
 
-set_environ_vars.sh: | external_libraries/include/H5Cpp.h external_libraries/boost_dump/boost_1_55_0/boost/container/static_vector.hpp external_libraries/ann_tree_dump/ann_1.1.2/lib/libANN.a
+set_environ_vars.sh: | external_libraries/include/H5Cpp.h external_libraries/boost_dump/boost_1_55_0/boost/container/static_vector.hpp external_libraries/ann_tree_dump/ann_1.1.2/lib/libANN.a external_libraries/tetgen1.5.0/libtet.a
 	$(eval MY_BOOST_PATH=`pwd`/external_libraries/boost_dump/boost_1_55_0)
 	$(eval MY_HDF5_PATH=`pwd`/external_libraries/include)
 	$(eval MY_ANN_PATH=`pwd`/external_libraries/ann_tree_dump/ann_1.1.2/include)
-	echo export\ CPLUS_INCLUDE_PATH=$(CPLUS_INCLUDE_PATH):$(MY_BOOST_PATH):$(MY_HDF5_PATH):$(MY_ANN_PATH) > set_environ_vars.sh
+	$(eval MY_TETGEN_PATH=`pwd`/external_libraries/tetgen1.5.0)
+	echo export\ CPLUS_INCLUDE_PATH=$(CPLUS_INCLUDE_PATH):$(MY_BOOST_PATH):$(MY_HDF5_PATH):$(MY_ANN_PATH):${MY_TETGEN_PATH) > set_environ_vars.sh
 	echo export\ HDF5_LIB_PATH=`pwd`/external_libraries/lib >> set_environ_vars.sh
 	echo export\ LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):`pwd`/external_libraries/lib:`pwd`/external_libraries/ann_tree_dump/ann_1.1.2/lib >> set_environ_vars.sh
-	echo export\ LD_PATH=$(LD_PATH):`pwd`/external_libraries/lib:`pwd`/external_libraries/ann_tree_dump/ann_1.1.2/lib >> set_environ_vars.sh
+	echo export\ LD_PATH=$(LD_PATH):`pwd`/external_libraries/lib:`pwd`/external_libraries/ann_tree_dump/ann_1.1.2/lib:$(MY_TETGEN_PATH) >> set_environ_vars.sh
 	echo export\ RICH_ROOT=`pwd` >> set_environ_vars.sh
 
 external_libraries/include/H5Cpp.h: external_libraries/hdf5_dump/hdf5-1.8.14/c++/src/H5Cpp.h
@@ -80,6 +81,10 @@ external_libraries/ann_tree_dump/ann_1.1.2/lib/libANN.a: | external_libraries/an
 external_libraries/ann_tree_dump/ann_1.1.2/include/ANN/ANN.h: | external_libraries/ann_tree_dump/ann_1.1.2.tar.gz
 	cd external_libraries/ann_tree_dump/ && tar xvf ./ann_1.1.2.tar.gz
 
+external_libraries/tetgen1.5.0/libtet.a: 
+	cd external_libraries/tetgen1.5.0 && \
+	make libtet
+	
 external_libraries/hdf5_dump/hdf5-1.8.14.tar.gz:
 	mkdir -p external_libraries/hdf5_dump
 	cd external_libraries/hdf5_dump && \
