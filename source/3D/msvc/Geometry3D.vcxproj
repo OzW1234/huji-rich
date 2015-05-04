@@ -193,9 +193,6 @@
     <ProjectReference Include="..\..\..\external_libraries\tetgen1.5.0\msvc\tetgen.vcxproj">
       <Project>{49fc313b-d9df-4366-a33f-ff8831b8bee1}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\3rdParty\voro++-0.4.6\msvc\voro++.vcxproj">
-      <Project>{ec858e24-556f-4f50-9030-a836dae266ae}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
