@@ -6,6 +6,8 @@
 #include <set>
 #include <iostream>
 #include <string>
+#include <stdexcept>
+
 using namespace std;
 
 Subcube::Subcube(const char offsets[3])
