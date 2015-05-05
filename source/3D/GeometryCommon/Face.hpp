@@ -29,7 +29,17 @@ public:
 	static const Face Empty;   // An empty face
 
 	//! \brief Points at the ends of the edge
+#ifdef STRICT_CPP03
+	// C++03's std::vector requires types to be CopyAssignable if they are to be added to a vector.
+	// Face is immutable, and thus not CopyAssignable.
+	// If this macro is defined, the type is no lone immutable and hence CopyAssignable.
+	// Do not define this flag with C++11 - making Face mutable can lead to bugs if someone
+	// modifies vertices from the outside
+	std::vector<VectorRef> vertices;
+	Face() : _neighbor1(), _neighbor2(), _area(), _centroid(), vertices() { }
+#else
 	const std::vector<VectorRef> vertices;
+#endif
 
 	Face(const std::vector<VectorRef> &verts, boost::optional<size_t> neighbor1=boost::none, boost::optional<size_t> neighbor2=boost::none);
 	Face(const Face &other);
