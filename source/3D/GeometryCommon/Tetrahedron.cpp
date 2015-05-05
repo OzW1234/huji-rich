@@ -9,12 +9,14 @@
 
 using namespace std;
 
-Tetrahedron::Tetrahedron(const std::vector<VectorRef> &verts) : _vertices(verts), _center(), _volume(), _centerOfMass()
+Tetrahedron::Tetrahedron(const std::vector<VectorRef> &verts) : 
+	_vertices(verts), _center(), _volume(), _radius2(), _centerOfMass()
 {
 	BOOST_ASSERT(verts.size() == 4);
 }
 
-Tetrahedron::Tetrahedron(const VectorRef v1, const VectorRef v2, const VectorRef v3, const VectorRef v4) : _vertices(), _center(), _volume(), _centerOfMass()
+Tetrahedron::Tetrahedron(const VectorRef v1, const VectorRef v2, const VectorRef v3, const VectorRef v4) : 
+	_vertices(), _center(), _volume(), _radius2(), _centerOfMass()
 {
 	_vertices.reserve(4);
 	_vertices.push_back(v1);
@@ -23,7 +25,8 @@ Tetrahedron::Tetrahedron(const VectorRef v1, const VectorRef v2, const VectorRef
 	_vertices.push_back(v4);
 }
 
-Tetrahedron::Tetrahedron(const Tetrahedron &other) : _vertices(other._vertices), _center(), _volume(), _centerOfMass()
+Tetrahedron::Tetrahedron(const Tetrahedron &other) : 
+	_vertices(other._vertices), _center(), _volume(), _radius2(), _centerOfMass()
 {
 	// Don't copy the cached values, tetrahedra are copied before the caches are used
 }
