@@ -57,7 +57,7 @@ set_environ_vars.sh: | external_libraries/include/H5Cpp.h external_libraries/boo
 	$(eval MY_HDF5_PATH=`pwd`/external_libraries/include)
 	$(eval MY_ANN_PATH=`pwd`/external_libraries/ann_tree_dump/ann_1.1.2/include)
 	$(eval MY_TETGEN_PATH=`pwd`/external_libraries/tetgen1.5.0)
-	echo export\ CPLUS_INCLUDE_PATH=$(CPLUS_INCLUDE_PATH):$(MY_BOOST_PATH):$(MY_HDF5_PATH):$(MY_ANN_PATH):${MY_TETGEN_PATH) > set_environ_vars.sh
+	echo export\ CPLUS_INCLUDE_PATH=$(CPLUS_INCLUDE_PATH):$(MY_BOOST_PATH):$(MY_HDF5_PATH):$(MY_ANN_PATH):$(MY_TETGEN_PATH) > set_environ_vars.sh
 	echo export\ HDF5_LIB_PATH=`pwd`/external_libraries/lib >> set_environ_vars.sh
 	echo export\ LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):`pwd`/external_libraries/lib:`pwd`/external_libraries/ann_tree_dump/ann_1.1.2/lib >> set_environ_vars.sh
 	echo export\ LD_PATH=$(LD_PATH):`pwd`/external_libraries/lib:`pwd`/external_libraries/ann_tree_dump/ann_1.1.2/lib:$(MY_TETGEN_PATH) >> set_environ_vars.sh
@@ -83,7 +83,7 @@ external_libraries/ann_tree_dump/ann_1.1.2/include/ANN/ANN.h: | external_librari
 
 external_libraries/tetgen1.5.0/libtet.a: 
 	cd external_libraries/tetgen1.5.0 && \
-	make libtet
+	make tetlib
 	
 external_libraries/hdf5_dump/hdf5-1.8.14.tar.gz:
 	mkdir -p external_libraries/hdf5_dump
