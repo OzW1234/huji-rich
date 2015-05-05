@@ -65,7 +65,7 @@ protected:
 		}
 
 		Cell(const std::vector<size_t> &faces, double volume, VectorRef center, VectorRef centerOfMass);
-		Cell() { _volume = -1; }
+		Cell();
 
 		bool empty() const { return _volume < 0; }
 	};
@@ -213,4 +213,4 @@ public:
 	virtual bool BoundaryFace(size_t index) const;
 };
 
-#endif \\ TESSELLATION_BASE_HPP
+#endif // TESSELLATION_BASE_HPP

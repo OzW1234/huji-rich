@@ -30,8 +30,14 @@ void TessellationBase::FaceStore::Clear()
 	_faces.clear();
 }
 
-TessellationBase::Cell::Cell(const std::vector<size_t> &faces, double volume, VectorRef center, VectorRef centerOfMass) :
-	_faces(faces), _volume(volume),_center(center), _centerOfMass(centerOfMass)
+TessellationBase::Cell::Cell() 
+	: _center(), _centerOfMass(), _volume(0), _width(0), _faces()
+{
+
+}
+
+TessellationBase::Cell::Cell(const std::vector<size_t> &faces, double volume, VectorRef center, VectorRef centerOfMass) 
+	: _center(center), _centerOfMass(centerOfMass), _volume(volume), _faces(faces)
 {
 	// width is the radius of the sphere with the same volume as the cell
 	// volume = (4/3) * radius ^ 3
