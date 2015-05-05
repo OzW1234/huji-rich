@@ -44,7 +44,6 @@ void TetGenDelaunay::RunDelaunay()
 
 const VectorRef TetGenImpl::GetPoint(size_t offset)
 {
-	BOOST_ASSERT(offset >= 0);
 	BOOST_ASSERT(offset < _delaunay._points.size() + 4);
 
 	if (offset < _delaunay._points.size())
@@ -128,7 +127,7 @@ void TetGenImpl::CopyResults()
 	{
 		_delaunay._voronoiCellFaces.clear();
 		_delaunay._voronoiCellFaces.reserve(out.numberofvcells);
-		for (size_t cellNum = 0; cellNum < out.numberofvcells; cellNum++)
+		for (size_t cellNum = 0; cellNum < (size_t)out.numberofvcells; cellNum++)
 		{
 			int faceCount = out.vcelllist[cellNum][0];
 			vector<int> faces;
@@ -138,7 +137,7 @@ void TetGenImpl::CopyResults()
 
 		_delaunay._voronoiFaceEdges.clear();
 		_delaunay._voronoiFaceEdges.reserve(out.numberofvfacets);
-		for (size_t faceNum = 0; faceNum < out.numberofvfacets; faceNum++)
+		for (size_t faceNum = 0; faceNum < (size_t)out.numberofvfacets; faceNum++)
 		{
 			const tetgenio::vorofacet &face = out.vfacetlist[faceNum];
 			int edgeCount = face.elist[0];
@@ -151,7 +150,7 @@ void TetGenImpl::CopyResults()
 
 		_delaunay._voronoiEdges.clear();
 		_delaunay._voronoiEdges.reserve(out.numberofvedges);
-		for (size_t edgeNum = 0; edgeNum < out.numberofvedges; edgeNum++)
+		for (size_t edgeNum = 0; edgeNum < (size_t)out.numberofvedges; edgeNum++)
 		{
 			pair<int, int> edge(out.vedgelist[edgeNum].v1, out.vedgelist[edgeNum].v2);
 			_delaunay._voronoiEdges.push_back(edge);
@@ -160,7 +159,7 @@ void TetGenImpl::CopyResults()
 		_delaunay._voronoiVertices.clear();
 		_delaunay._voronoiVertices.reserve(out.numberofvpoints / 3);
 		double *ptr = out.vpointlist;
-		for (size_t vertexNum = 0; vertexNum < out.numberofvpoints; vertexNum++)
+		for (size_t vertexNum = 0; vertexNum < (size_t)out.numberofvpoints; vertexNum++)
 		{
 			Vector3D vertex(ptr[0], ptr[1], ptr[2]);
 			_delaunay._voronoiVertices.push_back(vertex);
