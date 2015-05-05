@@ -22,7 +22,7 @@ private:
 public:
 	virtual void Update(vector<Vector3D> const& points);
 
-	virtual Tessellation3D* clone(void) const;
+	virtual Tessellation3D* clone() const;
 	virtual const vector<GhostPointInfo> &GetDuplicatedPoints() const ;
 	virtual size_t GetTotalPointNumber() const;
 	virtual bool IsGhostPoint(size_t index) const;

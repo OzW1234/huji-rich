@@ -19,7 +19,7 @@ public:
 	/*! \brief Null constructor
 	\details Sets all components to 0
 	*/
-	Vector3D(void);
+	Vector3D();
 
 	/*! \brief Class constructor
 	\param ix x Component

@@ -90,7 +90,7 @@ void TessellationBase::CheckBoundaryConformance(const vector<Vector3D> &points) 
 }
 
 
-size_t TessellationBase::GetPointNo(void) const
+size_t TessellationBase::GetPointNo() const
 {
 	return _meshPoints.size();
 }
@@ -108,7 +108,7 @@ Vector3D const& TessellationBase::GetCellCM(size_t index) const
 /*! \brief Returns the total number of faces
 \return Total number of faces
 */
-size_t TessellationBase::GetTotalFacesNumber(void) const
+size_t TessellationBase::GetTotalFacesNumber() const
 {
 	return _faces.NumFaces();
 }
@@ -133,7 +133,7 @@ vector<size_t>const& TessellationBase::GetCellFaces(size_t index) const
 	return _cells[index]->GetFaces();
 }
 
-vector<Vector3D>& TessellationBase::GetMeshPoints(void)
+vector<Vector3D>& TessellationBase::GetMeshPoints()
 {
 	return _meshPoints;
 }

@@ -110,7 +110,7 @@ public:
 	/*! \brief Get Total number of mesh generating points
 	\return Number of mesh generating points
 	*/
-	virtual size_t GetPointNo(void) const;
+	virtual size_t GetPointNo() const;
 
 	/*! \brief Returns Position of mesh generating point
 	\param index Mesh generating point index
@@ -127,7 +127,7 @@ public:
 	/*! \brief Returns the total number of faces
 	\return Total number of faces
 	*/
-	virtual size_t GetTotalFacesNumber(void) const;
+	virtual size_t GetTotalFacesNumber() const;
 
 	/*! \brief Returns Face (interface between cells)
 	\param index Face index
@@ -157,7 +157,7 @@ public:
 	\brief Returns a reference to the point vector
 	\returns The reference
 	*/
-	virtual vector<Vector3D>& GetMeshPoints(void);
+	virtual vector<Vector3D>& GetMeshPoints();
 
 	/*!
 	\brief Returns a list of the neighbors of a cell
@@ -170,7 +170,7 @@ public:
 	\brief Returns the center of masses of the cells
 	\return The CM's
 	*/
-	virtual vector<Vector3D>& GetAllCM(void);
+	virtual vector<Vector3D>& GetAllCM();
 
 	/*!
 	\brief Returns the neighbors and neighbors of the neighbors of a cell

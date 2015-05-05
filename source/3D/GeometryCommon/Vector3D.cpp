@@ -53,7 +53,7 @@ double abs2(Vector3D const &v)
 	return v.x*v.x + v.y*v.y + v.z*v.z;
 }
 
-Vector3D::Vector3D(void) :
+Vector3D::Vector3D() :
 x(0), y(0), z(0) {}
 
 Vector3D::Vector3D(double ix, double iy, double iz) :

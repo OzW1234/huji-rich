@@ -38,7 +38,7 @@ public:
 	/*! \brief Get Total number of mesh generating points
 	\return Number of mesh generating points
 	*/
-	virtual size_t GetPointNo(void) const = 0;
+	virtual size_t GetPointNo() const = 0;
 
 	/*! \brief Indicates whether a point is a mesh point or ghost point 
 	\return True if ghost point
@@ -61,7 +61,7 @@ public:
 	/*! \brief Returns the total number of faces
 	\return Total number of faces
 	*/
-	virtual size_t GetTotalFacesNumber(void) const = 0;
+	virtual size_t GetTotalFacesNumber() const = 0;
 
 	/*! \brief Returns Face (interface between cells)
 	\param index Face index
@@ -104,7 +104,7 @@ public:
 	/*!
 	\brief Cloning function
 	*/
-	virtual Tessellation3D* clone(void) const = 0;
+	virtual Tessellation3D* clone() const = 0;
 
 	//! \brief Virtual destructor
 	virtual ~Tessellation3D() { };
@@ -128,7 +128,7 @@ public:
 	\return The sent points, outer vector is the index of the outer Face and inner vector are the points sent through the face
 	*/
 	// ITAY: Why both a const and non-const version? The non-const version seems redundant.
-	// virtual vector<vector<size_t> >& GetDuplicatedPoints(void) = 0;
+	// virtual vector<vector<size_t> >& GetDuplicatedPoints() = 0;
 	
 
 	//!\brief A handy structure for describing ghost points
