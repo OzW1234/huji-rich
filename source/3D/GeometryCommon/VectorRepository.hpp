@@ -22,7 +22,7 @@ public:
 	const Vector3D *operator->() const;
 	const Vector3D &operator*() const;
 
-	friend VectorRefHasher ;
+	friend class VectorRefHasher ;
 	friend bool operator==(const VectorRef &v1, const VectorRef &v2);
 	friend bool operator<(const VectorRef &v1, const VectorRef &v2);
 	VectorRef operator=(const VectorRef &other);
