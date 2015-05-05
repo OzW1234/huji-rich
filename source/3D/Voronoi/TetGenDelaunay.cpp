@@ -27,12 +27,12 @@ private:
 	const VectorRef GetPoint(size_t offset);
 
 public:
-	TetGenImpl(TetGenDelaunay &delaunay) : _delaunay(delaunay) { }
+	TetGenImpl(TetGenDelaunay &delaunay) : _delaunay(delaunay), in(), out() { }
 	void Run();
 };
 
 TetGenDelaunay::TetGenDelaunay(const std::vector<VectorRef> &points, const Tetrahedron &bigTetrahedron, bool runVoronoi)
-	: Delaunay(points, bigTetrahedron), _runVoronoi(runVoronoi)
+	: Delaunay(points, bigTetrahedron), _voronoiCellFaces(), _voronoiFaceEdges(), _voronoiFaceNeighbors(), _voronoiEdges(), _runVoronoi(runVoronoi)
 {
 }
 
