@@ -39,8 +39,8 @@ public:
 		return strm.str();
 	}
 
-	boost::unordered::unordered_map<VectorRef, string, VectorRefHasher>::const_iterator begin() const { return _vectors.cbegin(); }
-	boost::unordered::unordered_map<VectorRef, string, VectorRefHasher>::const_iterator end() const { return _vectors.cend(); }
+	boost::unordered::unordered_map<VectorRef, string, VectorRefHasher>::const_iterator begin() const { return _vectors.begin(); }
+	boost::unordered::unordered_map<VectorRef, string, VectorRefHasher>::const_iterator end() const { return _vectors.end(); }
 };
 
 #endif

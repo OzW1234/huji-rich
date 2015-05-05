@@ -21,7 +21,7 @@ void SplitCell(const std::vector<const Face *> &cell, std::vector<Tetrahedron> &
 		const Face *face = *itFace;
 		expectedNumTetrahedra += face->vertices.size() - 1;
 
-		for (std::vector<VectorRef>::const_iterator itVertex = face->vertices.cbegin(); itVertex != face->vertices.cend(); itVertex++)
+		for (std::vector<VectorRef>::const_iterator itVertex = face->vertices.begin(); itVertex != face->vertices.end(); itVertex++)
 		{
 			if (considered.find(*itVertex) != considered.end())  // See if we've used this vertex before
 				continue;
