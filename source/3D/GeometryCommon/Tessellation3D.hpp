@@ -135,7 +135,7 @@ public:
 	struct GhostPointInfo
 	{
 		GhostPointInfo(size_t ghostIndex, size_t meshPointIndex, Subcube subcube, Vector3D point) :
-			GhostIndex(ghostIndex), MeshPointIndex(meshPointIndex), Subcube(subcube), Point(point)
+			GhostIndex(ghostIndex), MeshPointIndex(meshPointIndex), GhostSubcube(subcube), Point(point)
 		{
 		}
 		//!\brief Index of the ghost point
@@ -143,7 +143,7 @@ public:
 		//!\brief Index of the original mesh point
 		size_t MeshPointIndex;
 		//!\brief Subcube through wich the mesh point was reflected
-		Subcube Subcube;
+		Subcube GhostSubcube;
 		//!\brief the point
 		Vector3D Point;
 	};
