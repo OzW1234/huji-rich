@@ -7,7 +7,7 @@
 #include "Delaunay.hpp"
 
 Delaunay::Delaunay(const std::vector<VectorRef> &points, const Tetrahedron &bigTetrahedron)
-	: _points(points), _bigTetrahedron(bigTetrahedron)
+	: _points(points), _bigTetrahedron(bigTetrahedron), _tetrahedra(), _tetrahedraNeighbors(), _vertices()
 {
 
 }
