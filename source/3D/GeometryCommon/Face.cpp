@@ -6,7 +6,7 @@
 using namespace std;
 
 Face::Face(const vector<VectorRef> &vert, boost::optional<size_t> neighbor1, boost::optional<size_t> neighbor2) :
-	_neighbor1(neighbor1), _neighbor2(neighbor2), vertices(vert)
+	_neighbor1(neighbor1), _neighbor2(neighbor2), _area(), _centroid(), vertices(vert)
 {
 }
 
@@ -15,6 +15,8 @@ const Face Face::Empty = Face(vector<VectorRef>());  // An empty face with no ve
 Face::Face(const Face &other):
   _neighbor1(other._neighbor1),
   _neighbor2(other._neighbor2),
+  _area(other._area),
+  _centroid(other._centroid),
   vertices(other.vertices)
 {
 }
