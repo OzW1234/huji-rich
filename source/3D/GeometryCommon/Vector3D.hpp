@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <cmath>
+#include <ostream>
 using namespace std;
 
 //! \brief 3D Mathematical vector
