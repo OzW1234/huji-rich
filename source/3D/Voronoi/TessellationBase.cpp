@@ -37,11 +37,14 @@ TessellationBase::Cell::Cell()
 }
 
 TessellationBase::Cell::Cell(const std::vector<size_t> &faces, double volume, VectorRef center, VectorRef centerOfMass) 
-	: _center(center), _centerOfMass(centerOfMass), _volume(volume), _faces(faces)
+	: _center(center), 
+	_centerOfMass(centerOfMass), 
+	_volume(volume),
+	_width(pow(3.0 / 4.0 * volume, 1.0 / 3.0)),
+	_faces(faces)
 {
 	// width is the radius of the sphere with the same volume as the cell
 	// volume = (4/3) * radius ^ 3
-	_width = pow(3.0 / 4.0 * volume, 1.0 / 3.0);
 }
 
 void TessellationBase::ClearCells()
