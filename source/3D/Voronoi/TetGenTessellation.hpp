@@ -10,19 +10,24 @@
 #include "TetGenDelaunay.hpp"
 #include "../GeometryCommon/CellCalculations.hpp"
 #include <boost/shared_ptr.hpp>
+#include <unordered_set>
 
 template <typename GhostBusterType>
 class TetGenTessellation : public TessellationBase
 {
 private:
+#ifndef STRICT_CPP03
 	// Make sure GhostBusterType is derived from GhostBuster. If you see an error on this line, you've instantiated the template
 	// with a wrong template argument
-	BOOST_STATIC_ASSERT(boost::is_base_of<typename GhostBuster, typename GhostBusterType>::value, "GhostBusterType must be derived from GhostBuster");
+	// This doesn't play well with Ubuntu's version of Boost for some reason (probably not the latest version),
+	// so just ignore it.
+	BOOST_STATIC_ASSERT(boost::is_base_of<typename GhostBuster, typename GhostBusterType>::value);
+#endif
 
 public:
 	virtual void Update(vector<Vector3D> const& points);
 
-	virtual Tessellation3D* clone() const;
+	virtual Tessellation3D* clone(void) const;
 	virtual const vector<GhostPointInfo> &GetDuplicatedPoints() const ;
 	virtual size_t GetTotalPointNumber() const;
 	virtual bool IsGhostPoint(size_t index) const;
@@ -38,7 +43,7 @@ private:
 
 	// TetGenDelaunay creates Voronoi cells for all the ghost points, too. We just need the cells of the original
 	// points, which are the first _meshPoints.size() cells, and the faces that  are part of these cells.
-	std::vector<boost::shared_ptr<Face> > _allFaces;  // All relevant faces
+	std::vector<boost::shared_ptr<Face>> _allFaces;  // All relevant faces
 	std::vector<double> _cellVolumes;		    // Volumes of the TetGenDelaunay calculated cells
 
 	std::vector<Vector3D> _allPoints;			// Includes the mesh points followed by the ghost points
