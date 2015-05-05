@@ -38,7 +38,7 @@ private:
 
 	// TetGenDelaunay creates Voronoi cells for all the ghost points, too. We just need the cells of the original
 	// points, which are the first _meshPoints.size() cells, and the faces that  are part of these cells.
-	std::vector<boost::shared_ptr<Face>> _allFaces;  // All relevant faces
+	std::vector<boost::shared_ptr<Face> > _allFaces;  // All relevant faces
 	std::vector<double> _cellVolumes;		    // Volumes of the TetGenDelaunay calculated cells
 
 	std::vector<Vector3D> _allPoints;			// Includes the mesh points followed by the ghost points

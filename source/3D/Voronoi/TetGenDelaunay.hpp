@@ -27,10 +27,10 @@ protected:
 	virtual void FillNeighbors();
 
 	// Voronoi output
-	std::vector<std::vector<int>> _voronoiCellFaces;  // Use ints for all the vectors, because that's what tetgen uses internally.
-	std::vector<std::vector<int>> _voronoiFaceEdges;  // Sometimes -1 is used as a marker
-	std::vector<std::pair<int, int>> _voronoiFaceNeighbors; // Neighbors of each face
-	std::vector<std::pair<int, int>> _voronoiEdges;
+	std::vector<std::vector<int> > _voronoiCellFaces;  // Use ints for all the vectors, because that's what tetgen uses internally.
+	std::vector<std::vector<int> > _voronoiFaceEdges;  // Sometimes -1 is used as a marker
+	std::vector<std::pair<int, int> > _voronoiFaceNeighbors; // Neighbors of each face
+	std::vector<std::pair<int, int> > _voronoiEdges;
 	std::vector<VectorRef> _voronoiVertices;
 
 	Face GetVoronoiFace(size_t faceNum) const;

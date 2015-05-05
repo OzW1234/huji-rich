@@ -21,7 +21,7 @@ protected:
 	Tetrahedron _bigTetrahedron;
 
 	std::vector<Tetrahedron> _tetrahedra;
-	std::vector<std::vector<size_t>> _tetrahedraNeighbors;  // Tetrahedra neighbors of each tetrahedron
+	std::vector<std::vector<size_t> > _tetrahedraNeighbors;  // Tetrahedra neighbors of each tetrahedron
 	
 	typedef boost::unordered::unordered_map<VectorRef, std::vector<size_t>, VectorRefHasher> VertexMap;
 	VertexMap _vertices; // Vector->list of tetrahedra it appears in
