@@ -18,6 +18,9 @@ private:
 	vector<Vector3D> _repository;
 
 public:
+	VectorRepository() : _vectorMap(), _repository()
+	{
+	}
 	size_t GetVectorId(const Vector3D &vec);
 	const Vector3D &GetVector(size_t index) const;
 };
@@ -36,7 +39,7 @@ size_t VectorRepository::GetVectorId(const Vector3D &vec)
 
 const Vector3D& VectorRepository::GetVector(size_t index) const
 {
-	BOOST_ASSERT(index >= 0 && index < _repository.size());
+	BOOST_ASSERT(index < _repository.size());
 	return _repository[index];
 }
 
