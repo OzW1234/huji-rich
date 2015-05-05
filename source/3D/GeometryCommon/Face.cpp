@@ -47,7 +47,7 @@ void Face::CalculateCentroid() const
 	// Now split into triangles - (middle, V0, V1), (middle, V1, V2), (middle, V2, V3) ... (middle, Vn, V0)
 	double totalArea = 0.0;
 	Vector3D centroid;
-	for (int i = 0; i < vertices.size(); i++)
+	for (size_t i = 0; i < vertices.size(); i++)
 	{
 		// The triangle
 		Vector3D a = middle;
