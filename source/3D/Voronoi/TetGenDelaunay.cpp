@@ -32,7 +32,7 @@ public:
 };
 
 TetGenDelaunay::TetGenDelaunay(const std::vector<VectorRef> &points, const Tetrahedron &bigTetrahedron, bool runVoronoi)
-	: Delaunay(points, bigTetrahedron), _voronoiCellFaces(), _voronoiFaceEdges(), _voronoiFaceNeighbors(), _voronoiEdges(), _runVoronoi(runVoronoi)
+	: Delaunay(points, bigTetrahedron), _voronoiCellFaces(), _voronoiFaceEdges(), _voronoiFaceNeighbors(), _voronoiEdges(), _voronoiVertices(), _runVoronoi(runVoronoi)
 {
 }
 
