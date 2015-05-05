@@ -13,7 +13,7 @@
 class VectorNamer
 {
 private:
-	std::unordered_map<VectorRef, std::string> _vectors;
+	std::unordered_map<VectorRef, std::string, VectorRefHasher> _vectors;
 	int _last;
 
 public:
@@ -39,8 +39,8 @@ public:
 		return strm.str();
 	}
 
-	std::unordered_map<VectorRef, string>::const_iterator begin() const { return _vectors.cbegin(); }
-	std::unordered_map<VectorRef, string>::const_iterator end() const { return _vectors.cend(); }
+	std::unordered_map<VectorRef, string, VectorRefHasher>::const_iterator begin() const { return _vectors.cbegin(); }
+	std::unordered_map<VectorRef, string, VectorRefHasher>::const_iterator end() const { return _vectors.cend(); }
 };
 
 #endif

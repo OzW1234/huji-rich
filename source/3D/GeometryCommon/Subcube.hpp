@@ -62,19 +62,17 @@ bool operator<(const Subcube &sc1, const Subcube &sc2);
 bool operator==(const Subcube &sc1, const Subcube &sc2);
 std::ostream& operator<<(std::ostream& output, const Subcube &sc);
 
-namespace std
+// Provide an hash function to the subcube
+// We're not using std::hash<Subcube> since on Ubuntu we're not using C++11, and std::hash wasn't implemented before that.
+struct SubcubeHasher
 {
-	template<>
-	struct hash<Subcube>
-	{
-		typedef Subcube argument_type;
-		typedef std::size_t result_type;
+	typedef Subcube argument_type;
+	typedef std::size_t result_type;
 
-		result_type operator()(const argument_type &sc) const
-		{
-			return sc.Num();
-		}
-	};
-}
+	result_type operator()(const argument_type &sc) const
+	{
+		return sc.Num();
+	}
+};
 
 #endif

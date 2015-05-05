@@ -79,7 +79,7 @@ GhostBuster::GhostMap RigidWallGhostBuster::operator()(const Delaunay &del, cons
 		GhostMap::mapped_type *ghostSet = NULL;
 
 		VectorRef pt = it->first;
-		for (unordered_set<Subcube>::iterator itSubcube = it->second.begin(); itSubcube != it->second.end(); itSubcube++)
+		for (unordered_set<Subcube, SubcubeHasher>::iterator itSubcube = it->second.begin(); itSubcube != it->second.end(); itSubcube++)
 		{
 			if (!ghostSet)
 			{
@@ -115,7 +115,7 @@ RigidWallGhostBuster::breach_map RigidWallGhostBuster::FindHullBreaches(const De
 					continue;
 
 				const vector<size_t> &tetrahedraIndices = del.VertexNeighbors(pt);
-				unordered_set<Subcube> breaches;
+				unordered_set<Subcube, SubcubeHasher> breaches;
 
 				for (vector<size_t>::const_iterator itTetrahedron = tetrahedraIndices.begin(); itTetrahedron != tetrahedraIndices.end(); itTetrahedron++)
 				{

@@ -23,7 +23,7 @@ protected:
 	std::vector<Tetrahedron> _tetrahedra;
 	std::vector<std::vector<size_t>> _tetrahedraNeighbors;  // Tetrahedra neighbors of each tetrahedron
 	
-	typedef std::unordered_map<VectorRef, std::vector<size_t>> VertexMap;
+	typedef std::unordered_map<VectorRef, std::vector<size_t>, VectorRefHasher> VertexMap;
 	VertexMap _vertices; // Vector->list of tetrahedra it appears in
 
 	virtual void FillNeighbors() = 0;

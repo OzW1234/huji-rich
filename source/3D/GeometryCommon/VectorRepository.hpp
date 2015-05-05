@@ -8,6 +8,7 @@
 #include "Vector3D.hpp"
 #include <iostream>
 
+struct VectorRefHasher;
 class VectorRef
 {
 private:
@@ -21,7 +22,7 @@ public:
 	const Vector3D *operator->() const;
 	const Vector3D &operator*() const;
 
-	friend std::hash<VectorRef> ;
+	friend VectorRefHasher ;
 	friend bool operator==(const VectorRef &v1, const VectorRef &v2);
 	friend bool operator<(const VectorRef &v1, const VectorRef &v2);
 	VectorRef operator=(const VectorRef &other);
@@ -29,20 +30,16 @@ public:
 	static std::vector<VectorRef> vector(const std::vector<Vector3D> &points);
 };
 
-namespace std
+struct VectorRefHasher
 {
-	template<>
-	struct hash<VectorRef>
-	{
-		typedef VectorRef argument_type;
-		typedef size_t result_type;
+	typedef VectorRef argument_type;
+	typedef size_t result_type;
 
-		result_type operator()(const argument_type &ref) const
-		{
-			return ref._id;
-		}
-	};
-}
+	result_type operator()(const argument_type &ref) const
+	{
+		return ref._id;
+	}
+};
 
 std::ostream& operator<<(std::ostream& output, const VectorRef &vref);
 bool operator==(const VectorRef &v1, const VectorRef &v2);

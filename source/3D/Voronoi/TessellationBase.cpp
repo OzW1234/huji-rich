@@ -274,7 +274,7 @@ void TessellationBase::FillPointIndices()
 
 boost::optional<size_t> TessellationBase::GetPointIndex(const VectorRef pt) const
 {
-	unordered_map<VectorRef, size_t>::const_iterator it = _pointIndices.find(pt);
+	unordered_map<VectorRef, size_t, VectorRefHasher>::const_iterator it = _pointIndices.find(pt);
 	if (it != _pointIndices.end())
 		return it->second;
 

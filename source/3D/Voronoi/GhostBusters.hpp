@@ -23,13 +23,13 @@ public:
 	{
 		size_t operator()(const GhostPoint &gp) const
 		{
-			std::hash<Subcube> subcubeHash;
-			std::hash<VectorRef> vectorHash;
+			SubcubeHasher subcubeHash;
+			VectorRefHasher vectorHash;
 
 			return subcubeHash(gp.first) ^ vectorHash(gp.second);
 		}
 	};
-	typedef std::unordered_map<VectorRef, std::unordered_set<GhostPoint, GhostPointHasher>> GhostMap;
+	typedef std::unordered_map<VectorRef, std::unordered_set<GhostPoint, GhostPointHasher>, VectorRefHasher> GhostMap;
 
 	virtual GhostMap operator()(const Delaunay &del, const OuterBoundary3D &boundary) const = 0;
 };
@@ -61,7 +61,7 @@ private:
 	unordered_set<size_t> FindOuterTetrahedra(const Delaunay &del) const ;
 	unordered_set<size_t> FindEdgeTetrahedra(const Delaunay &del, const unordered_set<size_t>& outerTetrahedra) const;
 
-	typedef unordered_map<VectorRef, unordered_set<Subcube>> breach_map;
+	typedef unordered_map<VectorRef, unordered_set<Subcube, SubcubeHasher>, VectorRefHasher> breach_map;
 	breach_map FindHullBreaches(const Delaunay &del, 
 		const unordered_set<size_t>& edgeTetrahedra,
 		const unordered_set<size_t> &outerTetrahedra,

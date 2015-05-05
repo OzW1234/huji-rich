@@ -75,7 +75,7 @@ protected:
 	FaceStore _faces;
 	std::vector<Vector3D> _meshPoints;
 	std::vector<Vector3D> _allCMs;
-	std::unordered_map<VectorRef, size_t> _pointIndices;
+	std::unordered_map<VectorRef, size_t, VectorRefHasher> _pointIndices;
 
 	void ClearCells();
 	void ClearData();

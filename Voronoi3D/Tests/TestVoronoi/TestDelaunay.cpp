@@ -30,7 +30,7 @@ TEST(Subcube, Sets)
 	set.insert(Subcube("   "));
 	ASSERT_EQ(set.size(), 3);
 
-	unordered_set<Subcube> hash;
+	unordered_set<Subcube, SubcubeHasher> hash;
 	hash.insert(set.begin(), set.end());
 	hash.insert(Subcube("+++"));
 	hash.insert(Subcube("   "));
