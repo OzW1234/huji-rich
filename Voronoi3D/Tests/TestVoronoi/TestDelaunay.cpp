@@ -3,8 +3,7 @@
 #include "GeometryCommon/Subcube.hpp"
 #include "GeometryCommon/OuterBoundary3D.hpp"
 #include "Utilities/assert.hpp"
-
-#include <unordered_set>
+#include <boost/unordered_set.hpp>
 #include <set>
 
 using namespace std;
@@ -30,7 +29,7 @@ TEST(Subcube, Sets)
 	set.insert(Subcube("   "));
 	ASSERT_EQ(set.size(), 3);
 
-	unordered_set<Subcube, SubcubeHasher> hash;
+	boost::unordered::unordered_set<Subcube, SubcubeHasher> hash;
 	hash.insert(set.begin(), set.end());
 	hash.insert(Subcube("+++"));
 	hash.insert(Subcube("   "));

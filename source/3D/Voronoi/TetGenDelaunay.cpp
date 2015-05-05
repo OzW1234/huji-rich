@@ -7,7 +7,6 @@
 #include "TetGenDelaunay.hpp"
 #include <tetgen.h>
 #include <vector>
-#include <unordered_map>
 #include <algorithm>
 
 using namespace std; 

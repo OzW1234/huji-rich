@@ -3,7 +3,7 @@
 
 #include "CellCalculations.hpp"
 #include <vector>
-#include <unordered_set>
+#include <boost/unordered_set.hpp>
 #include "VectorRepository.hpp"
 
 using namespace std;
@@ -12,7 +12,7 @@ using namespace std;
 void SplitCell(const std::vector<const Face *> &cell, std::vector<Tetrahedron> &tetrahedra)
 {
 	Vector3D center;
-	std::unordered_set<VectorRef, VectorRefHasher> considered;
+	boost::unordered::unordered_set<VectorRef, VectorRefHasher> considered;
 	size_t expectedNumTetrahedra = 0;  // Total number of expected tetrahedra, to save on reallocations
 
 	// Find the center of the cell (an average of all the vertices)

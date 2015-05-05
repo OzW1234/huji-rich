@@ -14,7 +14,7 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/unordered_set_of.hpp>
 #include <boost/bimap/vector_of.hpp>
-#include <unordered_map>
+#include <boost/unordered_map.hpp>
 
 class TessellationBase : public Tessellation3D
 {
@@ -75,7 +75,7 @@ protected:
 	FaceStore _faces;
 	std::vector<Vector3D> _meshPoints;
 	std::vector<Vector3D> _allCMs;
-	std::unordered_map<VectorRef, size_t, VectorRefHasher> _pointIndices;
+	boost::unordered::unordered_map<VectorRef, size_t, VectorRefHasher> _pointIndices;
 
 	void ClearCells();
 	void ClearData();

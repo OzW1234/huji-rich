@@ -4,7 +4,6 @@
 
 #include "GhostBusters.hpp"
 #include <set>
-#include <unordered_set>
 
 using namespace std;
 
@@ -65,8 +64,8 @@ GhostBuster::GhostMap FullBruteForceGhostBuster::operator()(const Delaunay &del,
 
 GhostBuster::GhostMap RigidWallGhostBuster::operator()(const Delaunay &del, const OuterBoundary3D &boundary) const
 {
-	unordered_set<size_t> outer = FindOuterTetrahedra(del);
-	unordered_set<size_t> edge = FindEdgeTetrahedra(del, outer);
+	boost::unordered::unordered_set<size_t> outer = FindOuterTetrahedra(del);
+	boost::unordered::unordered_set<size_t> edge = FindEdgeTetrahedra(del, outer);
 	breach_map breaches = FindHullBreaches(del, edge, outer, boundary);
 
 	GhostMap ghosts;
@@ -79,7 +78,7 @@ GhostBuster::GhostMap RigidWallGhostBuster::operator()(const Delaunay &del, cons
 		GhostMap::mapped_type *ghostSet = NULL;
 
 		VectorRef pt = it->first;
-		for (unordered_set<Subcube, SubcubeHasher>::iterator itSubcube = it->second.begin(); itSubcube != it->second.end(); itSubcube++)
+		for (boost::unordered::unordered_set<Subcube, SubcubeHasher>::iterator itSubcube = it->second.begin(); itSubcube != it->second.end(); itSubcube++)
 		{
 			if (!ghostSet)
 			{
@@ -94,16 +93,16 @@ GhostBuster::GhostMap RigidWallGhostBuster::operator()(const Delaunay &del, cons
 	return ghosts;
 }
 
-RigidWallGhostBuster::breach_map RigidWallGhostBuster::FindHullBreaches(const Delaunay &del, const unordered_set<size_t>& edgeTetrahedra,
-	const unordered_set<size_t> &outerTetrahedra, const OuterBoundary3D &boundary) const
+RigidWallGhostBuster::breach_map RigidWallGhostBuster::FindHullBreaches(const Delaunay &del, const boost::unordered::unordered_set<size_t>& edgeTetrahedra,
+	const boost::unordered::unordered_set<size_t> &outerTetrahedra, const OuterBoundary3D &boundary) const
 {
 	breach_map result;
-	unordered_set<size_t> candidateTetrahedra(edgeTetrahedra.begin(), edgeTetrahedra.end());
+	boost::unordered::unordered_set<size_t> candidateTetrahedra(edgeTetrahedra.begin(), edgeTetrahedra.end());
 	while (!candidateTetrahedra.empty())
 	{
-		unordered_set<size_t> nextCandidates;
+		boost::unordered::unordered_set<size_t> nextCandidates;
 
-		for (unordered_set<size_t>::iterator itTetra = candidateTetrahedra.begin(); itTetra != candidateTetrahedra.end(); itTetra++)
+		for (boost::unordered::unordered_set<size_t>::iterator itTetra = candidateTetrahedra.begin(); itTetra != candidateTetrahedra.end(); itTetra++)
 		{
 			const Tetrahedron &t = del[*itTetra];
 			for (int iv = 0; iv < 4; iv++)
@@ -115,7 +114,7 @@ RigidWallGhostBuster::breach_map RigidWallGhostBuster::FindHullBreaches(const De
 					continue;
 
 				const vector<size_t> &tetrahedraIndices = del.VertexNeighbors(pt);
-				unordered_set<Subcube, SubcubeHasher> breaches;
+				boost::unordered::unordered_set<Subcube, SubcubeHasher> breaches;
 
 				for (vector<size_t>::const_iterator itTetrahedron = tetrahedraIndices.begin(); itTetrahedron != tetrahedraIndices.end(); itTetrahedron++)
 				{
@@ -158,9 +157,9 @@ RigidWallGhostBuster::breach_map RigidWallGhostBuster::FindHullBreaches(const De
 
 //\brief Find all the Outer Tetrahedra
 //\remark An Outer Tetrahedron is a tetrahedron that has a vertex in the big tetrahedron
-unordered_set<size_t> RigidWallGhostBuster::FindOuterTetrahedra(const Delaunay &del) const
+boost::unordered::unordered_set<size_t> RigidWallGhostBuster::FindOuterTetrahedra(const Delaunay &del) const
 {
-	unordered_set<size_t> result;
+	boost::unordered::unordered_set<size_t> result;
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -174,12 +173,12 @@ unordered_set<size_t> RigidWallGhostBuster::FindOuterTetrahedra(const Delaunay &
 
 //\brief Find all the Edge Tetrahedra
 //\remark An Edge Tetrahedron has a vertex that belongs to an Outer Tetrahedron. Edge Tetrahedra are not Outer Tetrahedra
-unordered_set<size_t> RigidWallGhostBuster::FindEdgeTetrahedra(const Delaunay &del, const unordered_set<size_t>& outerTetrahedra) const
+boost::unordered::unordered_set<size_t> RigidWallGhostBuster::FindEdgeTetrahedra(const Delaunay &del, const boost::unordered::unordered_set<size_t>& outerTetrahedra) const
 {
-	unordered_set<size_t> edgeTetrahedra;
+	boost::unordered::unordered_set<size_t> edgeTetrahedra;
 
 	// Go over all the outer tetrahedra
-	for (unordered_set<size_t>::const_iterator it = outerTetrahedra.begin(); it != outerTetrahedra.end(); it++)
+	for (boost::unordered::unordered_set<size_t>::const_iterator it = outerTetrahedra.begin(); it != outerTetrahedra.end(); it++)
 	{
 		Tetrahedron t = del[*it];
 		// And all their vertices

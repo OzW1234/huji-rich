@@ -10,7 +10,6 @@
 #include "TetGenDelaunay.hpp"
 #include "../GeometryCommon/CellCalculations.hpp"
 #include <boost/shared_ptr.hpp>
-#include <unordered_set>
 
 template <typename GhostBusterType>
 class TetGenTessellation : public TessellationBase

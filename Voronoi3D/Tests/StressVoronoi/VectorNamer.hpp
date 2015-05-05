@@ -5,15 +5,15 @@
 #ifndef VECTORNAMER_HPP
 #define VECTORNAMER_HPP
 
-#include <unordered_map>
 #include <string>
 #include <sstream>
 #include "GeometryCommon/VectorRepository.hpp"
+#include <boost/unordered_map.hpp>
 
 class VectorNamer
 {
 private:
-	std::unordered_map<VectorRef, std::string, VectorRefHasher> _vectors;
+	boost::unordered::unordered_map<VectorRef, std::string, VectorRefHasher> _vectors;
 	int _last;
 
 public:
@@ -39,8 +39,8 @@ public:
 		return strm.str();
 	}
 
-	std::unordered_map<VectorRef, string, VectorRefHasher>::const_iterator begin() const { return _vectors.cbegin(); }
-	std::unordered_map<VectorRef, string, VectorRefHasher>::const_iterator end() const { return _vectors.cend(); }
+	boost::unordered::unordered_map<VectorRef, string, VectorRefHasher>::const_iterator begin() const { return _vectors.cbegin(); }
+	boost::unordered::unordered_map<VectorRef, string, VectorRefHasher>::const_iterator end() const { return _vectors.cend(); }
 };
 
 #endif

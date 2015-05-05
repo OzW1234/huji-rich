@@ -22,6 +22,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/unordered_set.hpp>
 
 namespace fs = boost::filesystem;
 using namespace std;
@@ -382,8 +383,8 @@ static void CompareCells(const Tessellation3D *tes1, const Tessellation3D *tes2,
 	} */
 
 
-	unordered_set<size_t> faceSet1(faces1.begin(), faces1.end());
-	unordered_set<size_t> faceSet2(faces2.begin(), faces2.end());
+	boost::unordered::unordered_set<size_t> faceSet1(faces1.begin(), faces1.end());
+	boost::unordered::unordered_set<size_t> faceSet2(faces2.begin(), faces2.end());
 
 	// First, look for identical faces
 	for (size_t j = 0; j < faces1.size(); j++)
@@ -413,14 +414,14 @@ static void CompareCells(const Tessellation3D *tes1, const Tessellation3D *tes2,
 	if (!faceSet1.empty())
 	{
 		cerr << "***     Can't find matches in C" << cellNum+1 << " for first faces ";
-		for (unordered_set<size_t>::iterator it = faceSet1.begin(); it != faceSet1.end(); it++)
+		for (boost::unordered::unordered_set<size_t>::iterator it = faceSet1.begin(); it != faceSet1.end(); it++)
 			cerr << "F" << *it << " ";
 		cerr << endl;
 	}
 	if (!faceSet2.empty())
 	{
 		cerr << "***     Can't find matches in C" << cellNum + 1 << " for second faces ";
-		for (unordered_set<size_t>::iterator it = faceSet2.begin(); it != faceSet2.end(); it++)
+		for (boost::unordered::unordered_set<size_t>::iterator it = faceSet2.begin(); it != faceSet2.end(); it++)
 			cerr << "F" << *it << " ";
 		cerr << endl;
 	}

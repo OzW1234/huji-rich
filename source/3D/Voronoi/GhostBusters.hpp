@@ -7,8 +7,8 @@
 
 #include <set>
 #include <vector>
-#include <unordered_map>
-#include <unordered_set>
+#include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>
 #include "../GeometryCommon/Vector3D.hpp"
 #include "../GeometryCommon/OuterBoundary3D.hpp"
 #include "../GeometryCommon/VectorRepository.hpp"
@@ -29,7 +29,7 @@ public:
 			return subcubeHash(gp.first) ^ vectorHash(gp.second);
 		}
 	};
-	typedef std::unordered_map<VectorRef, std::unordered_set<GhostPoint, GhostPointHasher>, VectorRefHasher> GhostMap;
+	typedef boost::unordered::unordered_map<VectorRef, boost::unordered::unordered_set<GhostPoint, GhostPointHasher>, VectorRefHasher> GhostMap;
 
 	virtual GhostMap operator()(const Delaunay &del, const OuterBoundary3D &boundary) const = 0;
 };
@@ -58,17 +58,17 @@ protected:
 	virtual const std::set<Subcube> &GetAllSubcubes() const;
 
 private:
-	unordered_set<size_t> FindOuterTetrahedra(const Delaunay &del) const ;
-	unordered_set<size_t> FindEdgeTetrahedra(const Delaunay &del, const unordered_set<size_t>& outerTetrahedra) const;
+	boost::unordered::unordered_set<size_t> FindOuterTetrahedra(const Delaunay &del) const ;
+	boost::unordered::unordered_set<size_t> FindEdgeTetrahedra(const Delaunay &del, const boost::unordered::unordered_set<size_t>& outerTetrahedra) const;
 
-	typedef unordered_map<VectorRef, unordered_set<Subcube, SubcubeHasher>, VectorRefHasher> breach_map;
+	typedef boost::unordered::unordered_map<VectorRef, boost::unordered::unordered_set<Subcube, SubcubeHasher>, VectorRefHasher> breach_map;
 	breach_map FindHullBreaches(const Delaunay &del, 
-		const unordered_set<size_t>& edgeTetrahedra,
-		const unordered_set<size_t> &outerTetrahedra,
+		const boost::unordered::unordered_set<size_t>& edgeTetrahedra,
+		const boost::unordered::unordered_set<size_t> &outerTetrahedra,
 		const OuterBoundary3D &boundary) const;
 
 	template<typename T>
-	static bool contains(const unordered_set<T> &set, const T &val)
+	static bool contains(const boost::unordered::unordered_set<T> &set, const T &val)
 	{
 		return set.find(val) != set.end();
 	}

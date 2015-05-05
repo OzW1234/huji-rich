@@ -1,7 +1,7 @@
 #include "TessellationBase.hpp"
 #include <set>
-#include <unordered_set>
 #include <sstream>
+#include <boost/unordered_set.hpp>
 
 static const double BOUNDARY_REGION = 1e-8;
 
@@ -168,7 +168,7 @@ vector<Vector3D>& TessellationBase::GetAllCM()
 
 void TessellationBase::GetNeighborNeighbors(vector<size_t> &result, size_t point) const
 {
-	unordered_set<size_t> allNeighbors;
+	boost::unordered::unordered_set<size_t> allNeighbors;
 	const vector<size_t> &neighbors = GetNeighbors(point);
 	for (vector<size_t>::const_iterator it = neighbors.begin(); it != neighbors.end(); it++)
 	{
@@ -274,7 +274,7 @@ void TessellationBase::FillPointIndices()
 
 boost::optional<size_t> TessellationBase::GetPointIndex(const VectorRef pt) const
 {
-	unordered_map<VectorRef, size_t, VectorRefHasher>::const_iterator it = _pointIndices.find(pt);
+	boost::unordered::unordered_map<VectorRef, size_t, VectorRefHasher>::const_iterator it = _pointIndices.find(pt);
 	if (it != _pointIndices.end())
 		return it->second;
 
