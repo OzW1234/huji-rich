@@ -25,7 +25,7 @@ public:
 	friend struct VectorRefHasher ;
 	friend bool operator==(const VectorRef &v1, const VectorRef &v2);
 	friend bool operator<(const VectorRef &v1, const VectorRef &v2);
-	VectorRef operator=(const VectorRef &other);
+	VectorRef& operator=(const VectorRef &other);
 
 	static std::vector<VectorRef> vector(const std::vector<Vector3D> &points);
 };

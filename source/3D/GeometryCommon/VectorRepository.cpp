@@ -68,7 +68,7 @@ std::vector<VectorRef> VectorRef::vector(const std::vector<Vector3D> &points)
 }
 
 
-VectorRef VectorRef::operator=(const VectorRef &other)
+VectorRef& VectorRef::operator=(const VectorRef &other)
 {
 	_id = other._id;
 	return *this;
