@@ -7,7 +7,7 @@ using namespace std;
 const double EPSILON = 1e-5;
 
 OuterBoundary3D::OuterBoundary3D(Vector3D frontUpperRight, Vector3D backLowerLeft) :
-	_frontUpperRight(frontUpperRight), _backLowerLeft(backLowerLeft)
+_frontUpperRight(frontUpperRight), _backLowerLeft(backLowerLeft), _dimensions()
 {
 	// Make sure frontUpperRight is indeed ahead, above and to the right of _backLowerLeft
 	_dimensions = _frontUpperRight - _backLowerLeft; // All coordinates must be positive
