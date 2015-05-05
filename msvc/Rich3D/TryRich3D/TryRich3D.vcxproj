@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -71,7 +71,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files\HDF_Group\HDF5\1.8.12\include;C:\boost;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\source\3D;C:\Program Files\HDF_Group\HDF5\1.8.12\include;C:\boost;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -144,7 +144,7 @@
     <ProjectReference Include="..\..\..\source\3D\3rdParty\tetgen-1.5.0\msvc\tetgen.vcxproj">
       <Project>{49fc313b-d9df-4366-a33f-ff8831b8bee1}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\source\3D\msvc\Geometry3D.vcxproj">
+    <ProjectReference Include="..\..\..\Voronoi3D\Geometry3D.vcxproj">
       <Project>{0edf2f0b-198a-4fcc-84d1-4f463f70dd93}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Rich3D\Rich3D.vcxproj">

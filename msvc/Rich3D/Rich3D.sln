@@ -1,17 +1,15 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tetgen", "..\..\source\3D\3rdParty\tetgen-1.5.0\msvc\tetgen.vcxproj", "{49FC313B-D9DF-4366-A33F-FF8831B8BEE1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tetgen", "..\..\external_libraries\tetgen1.5.0\msvc\tetgen.vcxproj", "{49FC313B-D9DF-4366-A33F-FF8831B8BEE1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Geometry3D", "..\..\source\3D\msvc\Geometry3D.vcxproj", "{0EDF2F0B-198A-4FCC-84D1-4F463F70DD93}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Geometry3D", "..\..\Voronoi3D\Geometry3D.vcxproj", "{0EDF2F0B-198A-4FCC-84D1-4F463F70DD93}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rich3D", "Rich3D\Rich3D.vcxproj", "{5B8E3312-2A8F-46C2-B86A-3A4926D132DB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TryRich3D", "TryRich3D\TryRich3D.vcxproj", "{ADB95BD4-CE8F-4EF4-99DF-0D29C5F5D946}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "voro++", "..\..\source\3D\3rdParty\voro++-0.4.6\msvc\voro++.vcxproj", "{EC858E24-556F-4F50-9030-A836DAE266AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,14 +51,6 @@ Global
 		{ADB95BD4-CE8F-4EF4-99DF-0D29C5F5D946}.Release|Win32.Build.0 = Release|Win32
 		{ADB95BD4-CE8F-4EF4-99DF-0D29C5F5D946}.Release|x64.ActiveCfg = Release|x64
 		{ADB95BD4-CE8F-4EF4-99DF-0D29C5F5D946}.Release|x64.Build.0 = Release|x64
-		{EC858E24-556F-4F50-9030-A836DAE266AE}.Debug|Win32.ActiveCfg = Debug|Win32
-		{EC858E24-556F-4F50-9030-A836DAE266AE}.Debug|Win32.Build.0 = Debug|Win32
-		{EC858E24-556F-4F50-9030-A836DAE266AE}.Debug|x64.ActiveCfg = Debug|x64
-		{EC858E24-556F-4F50-9030-A836DAE266AE}.Debug|x64.Build.0 = Debug|x64
-		{EC858E24-556F-4F50-9030-A836DAE266AE}.Release|Win32.ActiveCfg = Release|Win32
-		{EC858E24-556F-4F50-9030-A836DAE266AE}.Release|Win32.Build.0 = Release|Win32
-		{EC858E24-556F-4F50-9030-A836DAE266AE}.Release|x64.ActiveCfg = Release|x64
-		{EC858E24-556F-4F50-9030-A836DAE266AE}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
