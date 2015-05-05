@@ -36,7 +36,7 @@ private:
 
 public:
 	Subcube(const char offsets[3]);
-	const char operator[](int i) const { return _offsets[i]; }
+	char operator[](int i) const { return _offsets[i]; }
 
 	const static char MINUS = '-';
 	const static char CENTER = ' ';
