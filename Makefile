@@ -4,6 +4,7 @@ SOURCES := $(RAW_SOURCES)
 LIB_FILE = librich.a
 CC := g++
 LINT_FLAGS = -Werror -Wall -Wextra -pedantic -Wno-long-long -Wfatal-errors -Weffc++ -Wshadow -Wmissing-declarations -Wconversion
+MACROS = -DSTRICT_CPP03
 ARCHIVER_FUNC := ar
 ifeq ($(MODE),debug)
 	OPTIMIZATION_FLAGS := -O0 -g -pg 
@@ -35,13 +36,13 @@ $(LIBRARY_FOLDER)/$(LIB_FILE): $(OBJECTS)
 
 $(OBJECTS): $(LIBRARY_FOLDER)/%.o: $(SOURCE_DIR)/%.cpp
 	mkdir -p `dirname $@`
-	$(CC) -c $(OPTIMIZATION_FLAGS) $(LINT_FLAGS) $< -o $@
+	$(CC) -c $(OPTIMIZATION_FLAGS) $(LINT_FLAGS) $(MACROS) $< -o $@
 	$(CC) -MM $(LINT_FLAGS) $< -o $(LIBRARY_FOLDER)/$*.d
 	@sed 's,\(\w*\)\.o,$@,g' -i $(LIBRARY_FOLDER)/$*.d
 
 $(TREECODE_OBJECTS): $(LIBRARY_FOLDER)/%.o: $(SOURCE_DIR)/%.cpp
 	mkdir -p `dirname $@`
-	$(CC) -c $(OPTIMIZATION_FLAGS) $< -o $@
+	$(CC) -c $(OPTIMIZATION_FLAGS) $(MACROS) $< -o $@
 	$(CC) -MM $< -o $(LIBRARY_FOLDER)/$*.d
 	@sed 's,\(\w*\)\.o,$(LIBRARY_FOLDER)/\1.o,g' -i $(LIBRARY_FOLDER)/$*.d
 
