@@ -9,9 +9,9 @@
 
 using namespace std;
 
-Tetrahedron::Tetrahedron(const std::vector<VectorRef> &vertices) : _vertices(vertices)
+Tetrahedron::Tetrahedron(const std::vector<VectorRef> &verts) : _vertices(verts)
 {
-	BOOST_ASSERT(vertices.size() == 4);
+	BOOST_ASSERT(verts.size() == 4);
 }
 
 Tetrahedron::Tetrahedron(const VectorRef v1, const VectorRef v2, const VectorRef v3, const VectorRef v4)
