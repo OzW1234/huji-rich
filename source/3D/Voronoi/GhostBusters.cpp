@@ -66,7 +66,7 @@ GhostBuster::GhostMap RigidWallGhostBuster::operator()(const Delaunay &del, cons
 {
 	boost::unordered::unordered_set<size_t> outer = FindOuterTetrahedra(del);
 	boost::unordered::unordered_set<size_t> edge = FindEdgeTetrahedra(del, outer);
-	breach_map breaches = FindHullBreaches(del, edge, outer, boundary);
+	breach_map breaches = FindHullBreaches(del, edge, boundary);
 
 	GhostMap ghosts;
 
@@ -94,7 +94,7 @@ GhostBuster::GhostMap RigidWallGhostBuster::operator()(const Delaunay &del, cons
 }
 
 RigidWallGhostBuster::breach_map RigidWallGhostBuster::FindHullBreaches(const Delaunay &del, const boost::unordered::unordered_set<size_t>& edgeTetrahedra,
-	const boost::unordered::unordered_set<size_t> &outerTetrahedra, const OuterBoundary3D &boundary) const
+	const OuterBoundary3D &boundary) const
 {
 	breach_map result;
 	boost::unordered::unordered_set<size_t> candidateTetrahedra(edgeTetrahedra.begin(), edgeTetrahedra.end());

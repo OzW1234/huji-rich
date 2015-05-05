@@ -142,7 +142,6 @@ vector<size_t> TessellationBase::GetNeighbors(size_t index) const
 {
 	if (index >= GetPointNo())
 		return vector<size_t>();  // No neighbors for ghost cells
-	const Cell& cell = *_cells[index];
 	vector<size_t> neighbors;
 
 	const vector<size_t> &faceIndices = _cells[index]->GetFaces();

@@ -26,7 +26,6 @@ private:
 	Vector3D CalculateCenterOfMass() const;
 
 public:
-	Tetrahedron() { }  // Empty default constructor, for putting tetrahedra in maps
 	Tetrahedron(const std::vector<VectorRef> &vertices);
 	Tetrahedron(const VectorRef v1, const VectorRef v2, const VectorRef v3, const VectorRef v4);
 	Tetrahedron(const Tetrahedron &other);

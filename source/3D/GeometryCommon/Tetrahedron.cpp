@@ -92,12 +92,6 @@ Vector3D Tetrahedron::CalculateCenter() const
 		abs2(v4), v4.x, v4.y, 1 );
 	double Dz = m_Dz.determinant();
 
-	Mat44<double> m_c( abs2(v1), v1.x, v1.y, v1.z,
-		abs2(v2), v2.x, v2.y, v2.z,
-		abs2(v3), v3.x, v3.y, v3.z,
-		abs2(v4), v4.x, v4.y, v4.z );
-	double c = m_c.determinant();
-
 	return Vector3D(Dx / (2 * a), Dy / (2 * a), Dz / (2 * a));
 }
 

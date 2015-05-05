@@ -64,7 +64,6 @@ private:
 	typedef boost::unordered::unordered_map<VectorRef, boost::unordered::unordered_set<Subcube, SubcubeHasher>, VectorRefHasher> breach_map;
 	breach_map FindHullBreaches(const Delaunay &del, 
 		const boost::unordered::unordered_set<size_t>& edgeTetrahedra,
-		const boost::unordered::unordered_set<size_t> &outerTetrahedra,
 		const OuterBoundary3D &boundary) const;
 
 	template<typename T>
