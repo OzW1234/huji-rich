@@ -45,19 +45,16 @@ const Vector3D& VectorRepository::GetVector(size_t index) const
 
 static VectorRepository theRepository;
 
-VectorRef::VectorRef(const Vector3D &vec)
-{ 
-	_id = theRepository.GetVectorId(vec);
+VectorRef::VectorRef(const Vector3D &vec) : _id(theRepository.GetVectorId(vec))
+{
 }
 
-VectorRef::VectorRef()
+VectorRef::VectorRef() : _id((size_t)-1)
 {
-	_id = (size_t)-1;
 }
 
-VectorRef::VectorRef(const VectorRef &other)
+VectorRef::VectorRef(const VectorRef &other) : _id(other._id)
 {
-	_id = other._id;
 }
 
 std::vector<VectorRef> VectorRef::vector(const std::vector<Vector3D> &points)
