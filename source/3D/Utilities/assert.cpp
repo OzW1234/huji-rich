@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void(*BOOST_ASSERT_HANDLER)(const char *expr, const char *function, const char *file, long line) = nullptr;
+void(*BOOST_ASSERT_HANDLER)(const char *expr, const char *function, const char *file, long line) = NULL;
 
 namespace boost
 {
