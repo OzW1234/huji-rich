@@ -118,12 +118,12 @@ double Tetrahedron::CalculateRadius2() const
 Vector3D Tetrahedron::CalculateCenterOfMass() const
 {
 	// See here: http://www.globalspec.com/reference/52702/203279/4-8-the-centroid-of-a-tetrahedron
-	Vector3D centerOfMass;
+	Vector3D CoM;
 
 	for (int i = 0; i < 4; i++)
-		centerOfMass += *_vertices[i];
+		CoM += *_vertices[i];
 
-	return centerOfMass / 4.0;
+	return CoM / 4.0;
 }
 
 std::ostream& operator<<(std::ostream &output, const Tetrahedron &tetrahedron)
