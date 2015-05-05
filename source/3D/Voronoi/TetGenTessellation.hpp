@@ -17,7 +17,7 @@ class TetGenTessellation : public TessellationBase
 private:
 	// Make sure GhostBusterType is derived from GhostBuster. If you see an error on this line, you've instantiated the template
 	// with a wrong template argument
-	BOOST_STATIC_ASSERT(boost::is_base_of<typename GhostBuster, typename GhostBusterType>::value);
+	BOOST_STATIC_ASSERT(boost::is_base_of<typename GhostBuster, typename GhostBusterType>::value, "GhostBusterType must be derived from GhostBuster");
 
 public:
 	virtual void Update(vector<Vector3D> const& points);
