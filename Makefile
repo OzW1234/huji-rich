@@ -22,8 +22,8 @@ else ifeq ($(MODE),intel)
 	OPTIMIZATION_FLAGS := -O3 -ipo -xHost -fp-model precise
 	LINT_FLAGS := 
 	ARCHIVER_FUNC := xiar
-else ifeq($(MODE), mac)
-	LINT_FLAGS := -Werror -Wall -Wextra -pedantic-errors
+else ifeq ($(MODE), clang)
+	LINT_FLAGS := -Wall -Wextra
 	OPTIMIZATION_FLAGS := -O3 -march=native
 else
 	MODE = production
@@ -41,7 +41,7 @@ $(OBJECTS): $(LIBRARY_FOLDER)/%.o: $(SOURCE_DIR)/%.cpp
 	mkdir -p `dirname $@`
 	$(CC) -c $(OPTIMIZATION_FLAGS) $(LINT_FLAGS) $(MACROS) $< -o $@
 	$(CC) -MM $(LINT_FLAGS) $< -o $(LIBRARY_FOLDER)/$*.d
-	@sed 's,\(\w*\)\.o,$@,g' -i $(LIBRARY_FOLDER)/$*.d
+	# sed 's,\(\w*\)\.o,$@,g' -i $(LIBRARY_FOLDER)/$*.d
 
 $(TREECODE_OBJECTS): $(LIBRARY_FOLDER)/%.o: $(SOURCE_DIR)/%.cpp
 	mkdir -p `dirname $@`
@@ -82,9 +82,6 @@ external_libraries/boost_dump/boost_1_55_0/boost/container/static_vector.hpp: | 
 external_libraries/ann_tree_dump/ann_1.1.2/lib/libANN.a: | external_libraries/ann_tree_dump/ann_1.1.2/include/ANN/ANN.h
 	cd external_libraries/ann_tree_dump/ann_1.1.2 && make linux-g++
 
-external_libraries/ann_tree_dump/ann_1.1.2/include/ANN/ANN.h: | external_libraries/ann_tree_dump/ann_1.1.2.tar.gz
-	cd external_libraries/ann_tree_dump/ && tar xvf ./ann_1.1.2.tar.gz
-
 external_libraries/tetgen1.5.0/libtet.a: 
 	cd external_libraries/tetgen1.5.0 && \
 	make tetlib
@@ -99,9 +96,4 @@ external_libraries/boost_dump/boost_1_55_0.tar.bz2:
 	cd external_libraries/boost_dump && \
 	wget 'http://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.bz2/download'
 	cd external_libraries/boost_dump && mv download boost_1_55_0.tar.bz2
-
-external_libraries/ann_tree_dump/ann_1.1.2.tar.gz:
-	mkdir -p external_libraries/ann_tree_dump
-	cd external_libraries/ann_tree_dump && \
-	wget http://www.cs.umd.edu/~mount/ANN/Files/1.1.2/ann_1.1.2.tar.gz
 
