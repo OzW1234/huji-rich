@@ -22,6 +22,9 @@ else ifeq ($(MODE),intel)
 	OPTIMIZATION_FLAGS := -O3 -ipo -xHost -fp-model precise
 	LINT_FLAGS := 
 	ARCHIVER_FUNC := xiar
+else ifeq($(MODE), mac)
+	LINT_FLAGS := -Werror -Wall -Wextra -pedantic-errors
+	OPTIMIZATION_FLAGS := -O3 -march=native
 else
 	MODE = production
 	OPTIMIZATION_FLAGS := -O3 -march=native
