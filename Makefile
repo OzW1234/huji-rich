@@ -3,7 +3,7 @@ RAW_SOURCES := $(shell find $(SOURCE_DIR) -name '*.cpp')
 SOURCES := $(RAW_SOURCES)
 LIB_FILE = librich.a
 CC := g++
-LINT_FLAGS = -Werror -Wall -Wextra -pedantic -Wno-long-long -Weffc++ -Wshadow -Wmissing-declarations -Wconversion -Wno-maybe-uninitialized
+LINT_FLAGS = -Werror -Wall -Wextra -pedantic -Wno-long-long -Weffc++ -Wshadow -Wmissing-declarations -Wconversion -Wno-error=maybe-uninitialized
 MACROS = -DSTRICT_CPP03
 ARCHIVER_FUNC := ar
 ifeq ($(MODE),debug)
