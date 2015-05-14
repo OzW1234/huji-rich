@@ -18,7 +18,9 @@
 class GhostBuster
 {
 public:
+	//! \brief A GhostPoint - including its subcube.
 	typedef std::pair<Subcube, VectorRef> GhostPoint;
+	//! \brief Calculates the hash of the Ghost Point
 	struct GhostPointHasher
 	{
 		size_t operator()(const GhostPoint &gp) const
@@ -29,32 +31,45 @@ public:
 			return subcubeHash(gp.first) ^ vectorHash(gp.second);
 		}
 	};
+	//! \brief A mapping between points and their ghost points.
 	typedef boost::unordered::unordered_map<VectorRef, boost::unordered::unordered_set<GhostPoint, GhostPointHasher>, VectorRefHasher> GhostMap;
 
+	//! \brief Calculates the Ghost Points
+	//! \param del The Delaunay Triangulation
+	//! \param boundary The 3D boundary box
+	//! \return The Ghost points in a pt->{ghost points} map, each point and its ghost points.
 	virtual GhostMap operator()(const Delaunay &del, const OuterBoundary3D &boundary) const = 0;
 };
 
-//\brief A simple implementation that copies each point 26 times
+//! \brief A simple implementation that copies each point 6 times
 class BruteForceGhostBuster : public GhostBuster
 {
 public:
 	virtual GhostMap operator()(const Delaunay &del, const OuterBoundary3D &boundary) const;
 };
 
+//! \brief A simple implementation that duplicates each point 26 times
+//! \remark This should only be used in testing, there's no reason to use this and not BruteForceGhostBuster.
 class FullBruteForceGhostBuster : public GhostBuster
 {
 public:
 	virtual GhostMap operator()(const Delaunay &del, const OuterBoundary3D &boundary) const;
 };
 
-//\brief An implementation that checks only points that are on edge-faces.
+//! \brief An efficient algorithm that implements a "rigid-wall" boundary by duplicating just the necessary points
 class RigidWallGhostBuster : public GhostBuster
 {
 public:
 	virtual GhostMap operator()(const Delaunay &del, const OuterBoundary3D &boundary) const;
 
 protected:
+	//! \brief Ghost a point into a specific subcube
+	//! \param boundary The 3D box surrounding the points
+	//! \param pt The point to ghost
+	//! \param subcube The subcube of the new ghost point
 	virtual Vector3D GetGhostPoint(const OuterBoundary3D &boundary, const Vector3D pt, const Subcube subcube) const;
+
+	//! \brief Returns all the Subcubes that are relevant for this Ghost Buster.
 	virtual const std::set<Subcube> &GetAllSubcubes() const;
 
 private:
@@ -73,7 +88,7 @@ private:
 	}
 };
 
-//\brief An implementation that creates a period boundary
+//! \brief An implementation that creates a period boundary
 class PeriodicGhostBuster : public RigidWallGhostBuster
 {
 protected:

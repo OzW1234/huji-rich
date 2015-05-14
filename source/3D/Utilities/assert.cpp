@@ -8,6 +8,8 @@ void(*BOOST_ASSERT_HANDLER)(const char *expr, const char *function, const char *
 
 namespace boost
 {
+	//! \brief Custom Boost::assert handler
+	//! \remark Used for better integration with gtest.
 	void assertion_failed(const char *expr, const char *function, const char *file, long line)
 	{
 		cerr << "Assertion failed: " << expr << " at " << function << " line " << line;

@@ -1,6 +1,6 @@
-//\file TetGenTessellation.hpp
-//\brief Uses TetGen and a ghost buster for the entire Voronoi tessallation
-//\author Itay Zandbank
+//! \file TetGenTessellation.hpp
+//! \brief Uses TetGen and a ghost buster for the entire Voronoi tessallation
+//! \author Itay Zandbank
 
 #ifndef TETGENTESSELLATION_HPP
 #define TETGENTESSELLATION_HPP
@@ -12,6 +12,8 @@
 #include <boost/shared_ptr.hpp>
 #include <unordered_set>
 
+//! \brief A TetGen based 3D Voronoi Tessellation
+//! \remark GhostBusterType is the type of the GhostBuster algorithm to use
 template <typename GhostBusterType>
 class TetGenTessellation : public TessellationBase
 {
@@ -32,8 +34,8 @@ public:
 	virtual size_t GetTotalPointNumber() const;
 	virtual bool IsGhostPoint(size_t index) const;
 
-	std::vector<VectorRef> AllPoints;
-	const static double EDGE_RATIO;
+	std::vector<VectorRef> AllPoints;  //!< Used by StressVoronoi
+	const static double EDGE_RATIO;  //!< The ratio used to eliminate small edges
 
 	virtual Vector3D GetMeshPoint(size_t index) const;
 	virtual const vector<Vector3D> &GetMeshPoints() const;

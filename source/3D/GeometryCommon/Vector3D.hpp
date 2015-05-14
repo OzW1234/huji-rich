@@ -196,8 +196,8 @@ Vector3D RotateZ(Vector3D const& v, double a);
 
 /*! \brief Reflect vector
 \param v Vector
-\param axis Normal to the reflection plane
-\return Reflection of v about axis
+\param normal Normal to the reflection plane
+\return Reflection of v about normal
 */
 Vector3D Reflect(Vector3D const& v, Vector3D const& normal);
 

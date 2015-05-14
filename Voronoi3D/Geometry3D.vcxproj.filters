@@ -63,9 +63,6 @@
     <ClCompile Include="..\source\3D\Voronoi\TetGenDelaunay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\3D\Voronoi\VoroPlusPlus.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\3D\..\misc\universal_error.hpp">
@@ -129,9 +126,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\3D\Voronoi\TetGenTessellation.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\3D\Voronoi\VoroPlusPlus.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -163,7 +163,6 @@
     <ClCompile Include="..\source\3D\Voronoi\GhostBusters.cpp" />
     <ClCompile Include="..\source\3D\Voronoi\TessellationBase.cpp" />
     <ClCompile Include="..\source\3D\Voronoi\TetGenDelaunay.cpp" />
-    <ClCompile Include="..\source\3D\Voronoi\VoroPlusPlus.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\3D\..\misc\universal_error.hpp" />
@@ -187,7 +186,6 @@
     <ClInclude Include="..\source\3D\Voronoi\TessellationBase.hpp" />
     <ClInclude Include="..\source\3D\Voronoi\TetGenDelaunay.hpp" />
     <ClInclude Include="..\source\3D\Voronoi\TetGenTessellation.hpp" />
-    <ClInclude Include="..\source\3D\Voronoi\VoroPlusPlus.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\external_libraries\tetgen1.5.0\msvc\tetgen.vcxproj">

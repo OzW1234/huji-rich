@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Face::Face(const vector<VectorRef> &vert, boost::optional<size_t> neighbor1, boost::optional<size_t> neighbor2) :
+Face::Face(const std::vector<VectorRef> &vert, boost::optional<size_t> neighbor1, boost::optional<size_t> neighbor2) :
 	_neighbor1(neighbor1), _neighbor2(neighbor2), _area(), _centroid(), vertices(vert)
 {
 }
