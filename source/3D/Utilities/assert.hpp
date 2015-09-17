@@ -15,10 +15,6 @@
 
 #include <boost/assert.hpp>
 
-/*! \brief Function pointer to the assertion handler.
-	\remark This function will get called whenever BOOST_ASSERT fails. If the pointer isn't assigned,
-	BOOST_ASSERT will print information about the assertion to std::cout and call assert(false) to stop the process.
-*/
 extern void(*BOOST_ASSERT_HANDLER)(const char *expr, const char *function, const char *file, long line);
 
 #endif // ASSERT_HPP

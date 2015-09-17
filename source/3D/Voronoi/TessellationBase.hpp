@@ -1,5 +1,5 @@
-/*
-	\file TessallationBase.hpp
+/*!
+	\file TessellationBase.hpp
 	\brief A base class for the 3D Tessallations, containing various helpful data structures
 	\author Itay Zandbank
 */
@@ -16,29 +16,40 @@
 #include <boost/bimap/vector_of.hpp>
 #include <boost/unordered_map.hpp>
 
+//! \brief A base class for 3D Tessellations
 class TessellationBase : public Tessellation3D
 {
 protected:
 #ifdef GTEST
 	FRIEND_TEST(VoroPlusPlus, FaceStore);
 #endif
-	// A simple face store that manages the vector of faces, making sure faces aren't duplicate
+	//! \brief a Face store that manages the vector of faces, making sure faces aren't duplicate
 	class FaceStore
 	{
 	private:
 		std::vector<Face *> _faces;
 
 	public:
+
+		//! \brief Adds a face to the store
+		//! \returns The index of the face
 		size_t StoreFace(const std::vector<VectorRef>& vertices, size_t neighbor1, size_t neighbor2);
 		~FaceStore();
 
+		//! \brief Returns a face.
 		const Face& GetFace(size_t index) const { return *_faces[index]; }
+		//! \brief Returns the number of faces in the store
 		size_t NumFaces() const { return _faces.size(); }
 
+		//! \brief Reserves room for faces
+		//! \remark This is useful to save a little time
 		void Reserve(size_t numFaces) { _faces.reserve(numFaces); }
+
+		//! \brief Clears the store.
 		void Clear();
 	};
 
+	//! \brief A single Voronoi cell
 	class Cell
 	{
 	private:
@@ -47,58 +58,73 @@ protected:
 		std::vector<size_t> _faces;
 
 	public:
+		//! \brief The cell's Center of Mass
 		const VectorRef &GetCenterOfMass() const
 		{
 			return _centerOfMass;
 		}
+
+		//! \brief The cell's volume
 		double GetVolume() const
 		{
 			return _volume;
 		}
+
+		//! \brief The cell's width
 		double GetWidth() const
 		{
 			return _width;
 		}
+
+		//! \brief Returns the indices of the cell's faces.
+		//! \remark The Faces themselves are in the FaceStore.
 		const std::vector<size_t>& GetFaces() const
 		{
 			return _faces;
 		}
 
+		//! \brief Constructs a cell
+		//! \param faces Indices of faces
+		//! \param volume The cell's volume
+		//! \param center The cell's generating mesh point
+		//! \param centerOfMass The cell's Center Of Mass
 		Cell(const std::vector<size_t> &faces, double volume, VectorRef center, VectorRef centerOfMass);
+
+		//! \brief Default constructor
+		//! \remark for C++03 vectors.
 		Cell();
 
+		//! \brief Returns true of the cell is empty
 		bool empty() const { return _volume < 0; }
 	};
 
-	const OuterBoundary3D *_boundary;
-	std::vector<Cell *> _cells;
-	FaceStore _faces;
-	std::vector<Vector3D> _meshPoints;
-	std::vector<Vector3D> _allCMs;
-	boost::unordered::unordered_map<VectorRef, size_t, VectorRefHasher> _pointIndices;
+	const OuterBoundary3D *_boundary;	//!< The Tessellation boundary box
+	std::vector<Cell *> _cells;			//!< The resulting Voronoi Cells
+	FaceStore _faces;					//!< The Face Store
+	std::vector<Vector3D> _meshPoints;  //!< The original mesh points
+	std::vector<Vector3D> _allCMs;		//!< The vector with all the Center of Masses
+	boost::unordered::unordered_map<VectorRef, size_t, VectorRefHasher> _pointIndices; //!< Map between vector and mesh point index
 
-	void ClearCells();
-	void ClearData();
-	void FillPointIndices();
+	void ClearCells();					//!< Clears all the cells
+	void ClearData();					//!< Clears all the data
+	void FillPointIndices();			//!< Fills the _pointIndices map
 
-	//\brief Returns the index of a mesh point, or boost::none if this isn't a mesh point
+	//! \brief Returns the index of a mesh point, or boost::none if this isn't a mesh point
 	boost::optional<size_t> GetPointIndex(const VectorRef pt) const;
 
-	//\brief Gets the indices of all tetrahedron vertices (if they are mesh points)
+	//! \brief Gets the indices of all tetrahedron vertices (if they are mesh points)
 	void GetTetrahedronIndices(const Tetrahedron &t, boost::optional<size_t> *cells) const;
 
-	//\brief Makes sure all the points are well inside the boundary. Throws an exception if not.
+	//! \brief Makes sure all the points are well inside the boundary. Throws an exception if not.
 	void CheckBoundaryConformance(const std::vector<Vector3D> &points) const;
 
-	//\brief Finds a face with two neighbors
-	//\param n0 The first neighbor
-	//\param n1 The second neighbor
-	//\returns The index of the face with the two neighbors, or boost::none if none.
+	//! \brief Finds a face with two neighbors
+	//! \param n0 The first neighbor
+	//! \param n1 The second neighbor
+	//! \returns The index of the face with the two neighbors, or boost::none if none.
 	boost::optional<size_t> FindFaceWithNeighbors(size_t n0, size_t n1) const;
 
 public:
-	// Partial implementation of the Tessellation3D interface
-
 	~TessellationBase();
 
 	/*! \brief Initialises the tessellation
