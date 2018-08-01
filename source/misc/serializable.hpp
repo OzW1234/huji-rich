@@ -32,7 +32,7 @@ public:
   virtual void unserialize(const vector<double>& data) = 0;
 
   //! \brief Class destructor
-  virtual ~Serializable(void);
+  virtual ~Serializable(void); //! \pure virtual class doesn't need D'tor
 };
 
 namespace {
