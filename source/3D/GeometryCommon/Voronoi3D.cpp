@@ -7,15 +7,15 @@
 #include <stack>
 #include "Mat33.hpp"
 #include "Predicates3D.hpp"
-#include "../../misc/utils.hpp"
-#include "../../misc/io3D.hpp"
+#include "../../misc/utils.cpp"
+#include "../../misc/io3D.cpp"
 #include <fstream>
 #include <iostream>
 #include <boost/container/flat_map.hpp>
 #include <boost/container/flat_set.hpp>
 #include "HilbertOrder3D.hpp"
 #include "Intersections.hpp"
-#include "../../misc/int2str.hpp"
+#include "../../misc/int2str.cpp"
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
 bool PointInPoly(Tessellation3D const& tess, Vector3D const& point, std::size_t index)
